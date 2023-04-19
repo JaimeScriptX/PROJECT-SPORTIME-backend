@@ -76,6 +76,29 @@ class Events
      */
     private $fk_sport_center;
 
+    /**
+     * @ORM\OneToOne(targetEntity=EventsResults::class, mappedBy="fk_events", cascade={"persist", "remove"})
+     */
+    private $eventsResults;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Difficulty::class, inversedBy="events")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $fk_difficulty;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=TeamColor::class, inversedBy="events")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $fk_team_colours;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Sex::class, inversedBy="events")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $fk_sex;
+
     public function __construct()
     {
         $this->fk_person = new ArrayCollection();
@@ -232,6 +255,59 @@ class Events
     public function setFkSportCenter(?SportCenter $fk_sport_center): self
     {
         $this->fk_sport_center = $fk_sport_center;
+
+        return $this;
+    }
+
+    public function getEventsResults(): ?EventsResults
+    {
+        return $this->eventsResults;
+    }
+
+    public function setEventsResults(EventsResults $eventsResults): self
+    {
+        // set the owning side of the relation if necessary
+        if ($eventsResults->getFkEvents() !== $this) {
+            $eventsResults->setFkEvents($this);
+        }
+
+        $this->eventsResults = $eventsResults;
+
+        return $this;
+    }
+
+    public function getFkDifficulty(): ?Difficulty
+    {
+        return $this->fk_difficulty;
+    }
+
+    public function setFkDifficulty(?Difficulty $fk_difficulty): self
+    {
+        $this->fk_difficulty = $fk_difficulty;
+
+        return $this;
+    }
+
+    public function getFkTeamColours(): ?TeamColor
+    {
+        return $this->fk_team_colours;
+    }
+
+    public function setFkTeamColours(?TeamColor $fk_team_colours): self
+    {
+        $this->fk_team_colours = $fk_team_colours;
+
+        return $this;
+    }
+
+    public function getFkSex(): ?Sex
+    {
+        return $this->fk_sex;
+    }
+
+    public function setFkSex(?Sex $fk_sex): self
+    {
+        $this->fk_sex = $fk_sex;
 
         return $this;
     }

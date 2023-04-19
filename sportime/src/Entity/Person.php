@@ -58,6 +58,12 @@ class Person
      */
     private $events;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Sex::class, inversedBy="people")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $fk_sex;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -155,6 +161,18 @@ class Person
     public function setEvents(?Events $events): self
     {
         $this->events = $events;
+
+        return $this;
+    }
+
+    public function getFkSex(): ?Sex
+    {
+        return $this->fk_sex;
+    }
+
+    public function setFkSex(?Sex $fk_sex): self
+    {
+        $this->fk_sex = $fk_sex;
 
         return $this;
     }
