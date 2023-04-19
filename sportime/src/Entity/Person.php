@@ -38,11 +38,6 @@ class Person
     private $birthday;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $sex;
-
-    /**
      * @ORM\Column(type="float", nullable=true)
      */
     private $weight;
@@ -112,18 +107,6 @@ class Person
     public function setBirthday(\DateTimeInterface $birthday): self
     {
         $this->birthday = $birthday;
-
-        return $this;
-    }
-
-    public function getSex(): ?string
-    {
-        return $this->sex;
-    }
-
-    public function setSex(string $sex): self
-    {
-        $this->sex = $sex;
 
         return $this;
     }
