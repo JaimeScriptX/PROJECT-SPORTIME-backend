@@ -64,11 +64,17 @@ class SportCenter
      */
     private $locationSportCenters;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_sport_center")
+     */
+    private $events;
+
     public function __construct()
     {
         $this->fk_sport = new ArrayCollection();
         $this->timetables = new ArrayCollection();
         $this->locationSportCenters = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -226,6 +232,36 @@ class SportCenter
             // set the owning side to null (unless already changed)
             if ($locationSportCenter->getFkSportCenter() === $this) {
                 $locationSportCenter->setFkSportCenter(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Events>
+     */
+    public function getEvents(): Collection
+    {
+        return $this->events;
+    }
+
+    public function addEvent(Events $event): self
+    {
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->setFkSportCenter($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Events $event): self
+    {
+        if ($this->events->removeElement($event)) {
+            // set the owning side to null (unless already changed)
+            if ($event->getFkSportCenter() === $this) {
+                $event->setFkSportCenter(null);
             }
         }
 

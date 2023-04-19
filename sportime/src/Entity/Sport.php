@@ -39,9 +39,15 @@ class Sport
      */
     private $fk_sportcenter;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_sport")
+     */
+    private $events;
+
     public function __construct()
     {
         $this->fk_sportcenter = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -107,6 +113,36 @@ class Sport
     {
         if ($this->fk_sportcenter->removeElement($fkSportcenter)) {
             $fkSportcenter->removeFkSport($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Events>
+     */
+    public function getEvents(): Collection
+    {
+        return $this->events;
+    }
+
+    public function addEvent(Events $event): self
+    {
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->setFkSport($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Events $event): self
+    {
+        if ($this->events->removeElement($event)) {
+            // set the owning side to null (unless already changed)
+            if ($event->getFkSport() === $this) {
+                $event->setFkSport(null);
+            }
         }
 
         return $this;
