@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PersonRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -63,6 +65,16 @@ class Person
      * @ORM\JoinColumn(nullable=false)
      */
     private $fk_sex;
+
+    /**
+     * @ORM\OneToMany(targetEntity=EventPlayers::class, mappedBy="fk_person")
+     */
+    private $eventPlayers;
+
+    public function __construct()
+    {
+        $this->eventPlayers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -173,6 +185,36 @@ class Person
     public function setFkSex(?Sex $fk_sex): self
     {
         $this->fk_sex = $fk_sex;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EventPlayers>
+     */
+    public function getEventPlayers(): Collection
+    {
+        return $this->eventPlayers;
+    }
+
+    public function addEventPlayer(EventPlayers $eventPlayer): self
+    {
+        if (!$this->eventPlayers->contains($eventPlayer)) {
+            $this->eventPlayers[] = $eventPlayer;
+            $eventPlayer->setFkPerson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventPlayer(EventPlayers $eventPlayer): self
+    {
+        if ($this->eventPlayers->removeElement($eventPlayer)) {
+            // set the owning side to null (unless already changed)
+            if ($eventPlayer->getFkPerson() === $this) {
+                $eventPlayer->setFkPerson(null);
+            }
+        }
 
         return $this;
     }

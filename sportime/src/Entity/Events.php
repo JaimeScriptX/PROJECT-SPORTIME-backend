@@ -99,9 +99,15 @@ class Events
      */
     private $fk_sex;
 
+    /**
+     * @ORM\OneToMany(targetEntity=EventPlayers::class, mappedBy="fk_event")
+     */
+    private $eventPlayers;
+
     public function __construct()
     {
         $this->fk_person = new ArrayCollection();
+        $this->eventPlayers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -308,6 +314,36 @@ class Events
     public function setFkSex(?Sex $fk_sex): self
     {
         $this->fk_sex = $fk_sex;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EventPlayers>
+     */
+    public function getEventPlayers(): Collection
+    {
+        return $this->eventPlayers;
+    }
+
+    public function addEventPlayer(EventPlayers $eventPlayer): self
+    {
+        if (!$this->eventPlayers->contains($eventPlayer)) {
+            $this->eventPlayers[] = $eventPlayer;
+            $eventPlayer->setFkEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventPlayer(EventPlayers $eventPlayer): self
+    {
+        if ($this->eventPlayers->removeElement($eventPlayer)) {
+            // set the owning side to null (unless already changed)
+            if ($eventPlayer->getFkEvent() === $this) {
+                $eventPlayer->setFkEvent(null);
+            }
+        }
 
         return $this;
     }
