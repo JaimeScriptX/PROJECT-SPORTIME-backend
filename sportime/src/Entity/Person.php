@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Person
 {
-    
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -56,25 +55,26 @@ class Person
     private $nationality;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Events::class, inversedBy="fk_person")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $events;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Sex::class, inversedBy="people")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $fk_sex;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_person")
+     */
+    private $events;
 
     /**
      * @ORM\OneToMany(targetEntity=EventPlayers::class, mappedBy="fk_person")
      */
     private $eventPlayers;
 
+
     public function __construct()
     {
+        $this->events = new ArrayCollection();
         $this->eventPlayers = new ArrayCollection();
+   
     }
 
     public function getId(): ?int
@@ -166,18 +166,6 @@ class Person
         return $this;
     }
 
-    public function getEvents(): ?Events
-    {
-        return $this->events;
-    }
-
-    public function setEvents(?Events $events): self
-    {
-        $this->events = $events;
-
-        return $this;
-    }
-
     public function getFkSex(): ?Sex
     {
         return $this->fk_sex;
@@ -186,6 +174,36 @@ class Person
     public function setFkSex(?Sex $fk_sex): self
     {
         $this->fk_sex = $fk_sex;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Events>
+     */
+    public function getEvents(): Collection
+    {
+        return $this->events;
+    }
+
+    public function addEvent(Events $event): self
+    {
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->setFkPerson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Events $event): self
+    {
+        if ($this->events->removeElement($event)) {
+            // set the owning side to null (unless already changed)
+            if ($event->getFkPerson() === $this) {
+                $event->setFkPerson(null);
+            }
+        }
 
         return $this;
     }
@@ -219,4 +237,6 @@ class Person
 
         return $this;
     }
+
+    
 }

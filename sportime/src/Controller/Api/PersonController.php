@@ -2,13 +2,19 @@
 
 namespace App\Controller\Api;
 
-use App\Service\PersonFormProcessor;
+use App\Repository\PersonRepository;
+
 use App\Service\PersonManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Entity\Person;
+use App\Form\Type\PersonFormType;
+
+
 
 class PersonController extends AbstractFOSRestController
 {
@@ -17,75 +23,31 @@ class PersonController extends AbstractFOSRestController
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
      */
     public function getPerson(
-        PersonManager $personManager
+        PersonRepository $personRepository
     ) {
-        return $personManager->getRepository()->findAll();
+        return $personRepository->findAll();
     }
 
     /**
      * @Rest\Post(path="/persons")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
      */
-    public function PostPerson(
-        PersonManager $personManager,
-        PersonFormProcessor $personFormProcessor,
-        Request $request
+    public function postPerson(
+        Request $request,
+        EntityManagerInterface $em
     ) {
-        $person = $personManager->create();
-        [$person, $error] = ($personFormProcessor)($person, $request);
-        $statusCode = $person ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST;
-        $data = $person ?? $error;
-        return View::create($data, $statusCode);
+        $person = new Person();
+        $form = $this->createForm(PersonFormType::class, $person);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($person);
+            $em->flush();
+            return $person;
+        }
+
+        return $form;
     }
 
-    /**
-     * @Rest\Get(path="/persons/{id}", requirements={"id"="|d+"})
-     * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
-     */
-    public function getSinglePerson(
-        int $id,
-        PersonManager $personManager
-    ) {
-        $person = $personManager->find($id);
-        if (!$person){
-            return View::create('Person not found', Response::HTTP_BAD_REQUEST);
-        }
-        return $person;
-    }
 
-    /**
-     * @Rest\Post(path="/persons/{id}", requirements={"id"="|d+"})
-     * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
-     */
-    public function editPerson(
-        int $id,
-        PersonFormProcessor $personFormProcessor,
-        PersonManager $personManager,
-        Request $request
-    ) {
-        $person = $personManager->find($id);
-        if (!$person){
-            return View::create('Person not found', Response::HTTP_BAD_REQUEST);
-        }
-        [$person, $error] = ($personFormProcessor)($person, $request);
-        $statusCode = $person ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST;
-        $data = $person ?? $error;
-        return View::create($data, $statusCode);
-    }
 
-    /**
-     * @Rest\Delete(path="/persons/{id}", requirements={"id"="|d+"})
-     * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
-     */
-    public function deletePerson(
-        int $id,
-        PersonManager $personManager
-    ) {
-        $person = $personManager->find($id);
-        if (!$person){
-            return View::create('Person not found', Response::HTTP_BAD_REQUEST);
-        }
-        $personManager->delete($person);
-        return View::create(null, Response::HTTP_NO_CONTENT);
-    }
 }

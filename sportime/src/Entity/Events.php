@@ -60,54 +60,56 @@ class Events
     private $number_players;
 
     /**
-     * @ORM\OneToMany(targetEntity=Person::class, mappedBy="events")
+     * @ORM\OneToMany(targetEntity=EventsResults::class, mappedBy="fk_events")
      */
-    private $fk_person;
+    private $eventsResults;
 
     /**
      * @ORM\ManyToOne(targetEntity=Sport::class, inversedBy="events")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $fk_sport;
 
     /**
      * @ORM\ManyToOne(targetEntity=SportCenter::class, inversedBy="events")
-     * @ORM\JoinColumn(nullable=false)
      */
-    private $fk_sport_center;
-
-    /**
-     * @ORM\OneToOne(targetEntity=EventsResults::class, mappedBy="fk_events", cascade={"persist", "remove"})
-     */
-    private $eventsResults;
+    private $fk_sportcenter;
 
     /**
      * @ORM\ManyToOne(targetEntity=Difficulty::class, inversedBy="events")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $fk_difficulty;
 
     /**
-     * @ORM\ManyToOne(targetEntity=TeamColor::class, inversedBy="events")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $fk_team_colours;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Sex::class, inversedBy="events")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $fk_sex;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Person::class, inversedBy="events")
+     */
+    private $fk_person;
 
     /**
      * @ORM\OneToMany(targetEntity=EventPlayers::class, mappedBy="fk_event")
      */
     private $eventPlayers;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Events::class, inversedBy="events")
+     */
+    private $fk_team_colours;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_team_colours")
+     */
+    private $events;
+
+
     public function __construct()
     {
-        $this->fk_person = new ArrayCollection();
+        $this->eventsResults = new ArrayCollection();
         $this->eventPlayers = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -212,29 +214,29 @@ class Events
     }
 
     /**
-     * @return Collection<int, Person>
+     * @return Collection<int, EventsResults>
      */
-    public function getFkPerson(): Collection
+    public function getEventsResults(): Collection
     {
-        return $this->fk_person;
+        return $this->eventsResults;
     }
 
-    public function addFkPerson(Person $fkPerson): self
+    public function addEventsResult(EventsResults $eventsResult): self
     {
-        if (!$this->fk_person->contains($fkPerson)) {
-            $this->fk_person[] = $fkPerson;
-            $fkPerson->setEvents($this);
+        if (!$this->eventsResults->contains($eventsResult)) {
+            $this->eventsResults[] = $eventsResult;
+            $eventsResult->setFkEvents($this);
         }
 
         return $this;
     }
 
-    public function removeFkPerson(Person $fkPerson): self
+    public function removeEventsResult(EventsResults $eventsResult): self
     {
-        if ($this->fk_person->removeElement($fkPerson)) {
+        if ($this->eventsResults->removeElement($eventsResult)) {
             // set the owning side to null (unless already changed)
-            if ($fkPerson->getEvents() === $this) {
-                $fkPerson->setEvents(null);
+            if ($eventsResult->getFkEvents() === $this) {
+                $eventsResult->setFkEvents(null);
             }
         }
 
@@ -253,31 +255,14 @@ class Events
         return $this;
     }
 
-    public function getFkSportCenter(): ?SportCenter
+    public function getFkSportcenter(): ?SportCenter
     {
-        return $this->fk_sport_center;
+        return $this->fk_sportcenter;
     }
 
-    public function setFkSportCenter(?SportCenter $fk_sport_center): self
+    public function setFkSportcenter(?SportCenter $fk_sportcenter): self
     {
-        $this->fk_sport_center = $fk_sport_center;
-
-        return $this;
-    }
-
-    public function getEventsResults(): ?EventsResults
-    {
-        return $this->eventsResults;
-    }
-
-    public function setEventsResults(EventsResults $eventsResults): self
-    {
-        // set the owning side of the relation if necessary
-        if ($eventsResults->getFkEvents() !== $this) {
-            $eventsResults->setFkEvents($this);
-        }
-
-        $this->eventsResults = $eventsResults;
+        $this->fk_sportcenter = $fk_sportcenter;
 
         return $this;
     }
@@ -294,18 +279,6 @@ class Events
         return $this;
     }
 
-    public function getFkTeamColours(): ?TeamColor
-    {
-        return $this->fk_team_colours;
-    }
-
-    public function setFkTeamColours(?TeamColor $fk_team_colours): self
-    {
-        $this->fk_team_colours = $fk_team_colours;
-
-        return $this;
-    }
-
     public function getFkSex(): ?Sex
     {
         return $this->fk_sex;
@@ -314,6 +287,18 @@ class Events
     public function setFkSex(?Sex $fk_sex): self
     {
         $this->fk_sex = $fk_sex;
+
+        return $this;
+    }
+
+    public function getFkPerson(): ?Person
+    {
+        return $this->fk_person;
+    }
+
+    public function setFkPerson(?Person $fk_person): self
+    {
+        $this->fk_person = $fk_person;
 
         return $this;
     }
@@ -347,4 +332,47 @@ class Events
 
         return $this;
     }
+
+    public function getFkTeamColours(): ?self
+    {
+        return $this->fk_team_colours;
+    }
+
+    public function setFkTeamColours(?self $fk_team_colours): self
+    {
+        $this->fk_team_colours = $fk_team_colours;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getEvents(): Collection
+    {
+        return $this->events;
+    }
+
+    public function addEvent(self $event): self
+    {
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->setFkTeamColours($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(self $event): self
+    {
+        if ($this->events->removeElement($event)) {
+            // set the owning side to null (unless already changed)
+            if ($event->getFkTeamColours() === $this) {
+                $event->setFkTeamColours(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

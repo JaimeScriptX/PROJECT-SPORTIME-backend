@@ -25,19 +25,19 @@ class Sex
     private $gender;
 
     /**
-     * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_sex")
-     */
-    private $events;
-
-    /**
      * @ORM\OneToMany(targetEntity=Person::class, mappedBy="fk_sex")
      */
     private $people;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_sex")
+     */
+    private $events;
+
     public function __construct()
     {
-        $this->events = new ArrayCollection();
         $this->people = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -53,36 +53,6 @@ class Sex
     public function setGender(string $gender): self
     {
         $this->gender = $gender;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Events>
-     */
-    public function getEvents(): Collection
-    {
-        return $this->events;
-    }
-
-    public function addEvent(Events $event): self
-    {
-        if (!$this->events->contains($event)) {
-            $this->events[] = $event;
-            $event->setFkSex($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEvent(Events $event): self
-    {
-        if ($this->events->removeElement($event)) {
-            // set the owning side to null (unless already changed)
-            if ($event->getFkSex() === $this) {
-                $event->setFkSex(null);
-            }
-        }
 
         return $this;
     }
@@ -111,6 +81,36 @@ class Sex
             // set the owning side to null (unless already changed)
             if ($person->getFkSex() === $this) {
                 $person->setFkSex(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Events>
+     */
+    public function getEvents(): Collection
+    {
+        return $this->events;
+    }
+
+    public function addEvent(Events $event): self
+    {
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->setFkSex($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Events $event): self
+    {
+        if ($this->events->removeElement($event)) {
+            // set the owning side to null (unless already changed)
+            if ($event->getFkSex() === $this) {
+                $event->setFkSex(null);
             }
         }
 

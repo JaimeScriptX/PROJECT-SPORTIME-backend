@@ -37,7 +37,7 @@ class Sport
     /**
      * @ORM\ManyToMany(targetEntity=SportCenter::class, mappedBy="fk_sport")
      */
-    private $fk_sportcenter;
+    private $sportCenters;
 
     /**
      * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_sport")
@@ -46,7 +46,7 @@ class Sport
 
     public function __construct()
     {
-        $this->fk_sportcenter = new ArrayCollection();
+        $this->sportCenters = new ArrayCollection();
         $this->events = new ArrayCollection();
     }
 
@@ -94,25 +94,25 @@ class Sport
     /**
      * @return Collection<int, SportCenter>
      */
-    public function getFkSportcenter(): Collection
+    public function getSportCenters(): Collection
     {
-        return $this->fk_sportcenter;
+        return $this->sportCenters;
     }
 
-    public function addFkSportcenter(SportCenter $fkSportcenter): self
+    public function addSportCenter(SportCenter $sportCenter): self
     {
-        if (!$this->fk_sportcenter->contains($fkSportcenter)) {
-            $this->fk_sportcenter[] = $fkSportcenter;
-            $fkSportcenter->addFkSport($this);
+        if (!$this->sportCenters->contains($sportCenter)) {
+            $this->sportCenters[] = $sportCenter;
+            $sportCenter->addFkSport($this);
         }
 
         return $this;
     }
 
-    public function removeFkSportcenter(SportCenter $fkSportcenter): self
+    public function removeSportCenter(SportCenter $sportCenter): self
     {
-        if ($this->fk_sportcenter->removeElement($fkSportcenter)) {
-            $fkSportcenter->removeFkSport($this);
+        if ($this->sportCenters->removeElement($sportCenter)) {
+            $sportCenter->removeFkSport($this);
         }
 
         return $this;

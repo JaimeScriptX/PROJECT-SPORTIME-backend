@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\TeamColorRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -22,61 +20,38 @@ class TeamColor
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $colours;
+    private $team_a;
 
     /**
-     * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_team_colours")
+     * @ORM\Column(type="string", length=255)
      */
-    private $events;
-
-    public function __construct()
-    {
-        $this->events = new ArrayCollection();
-    }
+    private $team_b;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getColours(): ?string
+    public function getTeamA(): ?string
     {
-        return $this->colours;
+        return $this->team_a;
     }
 
-    public function setColours(string $colours): self
+    public function setTeamA(string $team_a): self
     {
-        $this->colours = $colours;
+        $this->team_a = $team_a;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Events>
-     */
-    public function getEvents(): Collection
+    public function getTeamB(): ?string
     {
-        return $this->events;
+        return $this->team_b;
     }
 
-    public function addEvent(Events $event): self
+    public function setTeamB(string $team_b): self
     {
-        if (!$this->events->contains($event)) {
-            $this->events[] = $event;
-            $event->setFkTeamColours($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEvent(Events $event): self
-    {
-        if ($this->events->removeElement($event)) {
-            // set the owning side to null (unless already changed)
-            if ($event->getFkTeamColours() === $this) {
-                $event->setFkTeamColours(null);
-            }
-        }
+        $this->team_b = $team_b;
 
         return $this;
     }
