@@ -28,8 +28,7 @@ class EventsResults
     private $team_b;
 
     /**
-     * @ORM\OneToOne(targetEntity=Events::class, inversedBy="eventsResults", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity=Events::class, inversedBy="eventsResults")
      */
     private $fk_events;
 
@@ -67,7 +66,7 @@ class EventsResults
         return $this->fk_events;
     }
 
-    public function setFkEvents(Events $fk_events): self
+    public function setFkEvents(?Events $fk_events): self
     {
         $this->fk_events = $fk_events;
 

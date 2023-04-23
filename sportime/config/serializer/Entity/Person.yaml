@@ -1,0 +1,25 @@
+App\Entity\Person:
+    attributes:
+        id:
+            groups: ['person']
+        image_profile:
+            groups: ['person']
+        name:
+            groups: ['person']
+        last_name:
+            groups: ['person']
+        birthday:
+            groups: ['person']
+        weight:
+            groups: ['person']
+        height:
+            groups: ['person']
+        nationality:
+            groups: ['person']
+        events:
+            groups: ['person']
+        fk_sex:
+            groups: ['person']
+# Da problemas "fk_eventPlayers"            
+#        fk_eventPlayers:
+#           groups: ['person']

@@ -1,0 +1,4 @@
+App\Form\Model\PersonDto:
+    properties:
+        name:
+            - NotBlank: ~

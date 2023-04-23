@@ -27,17 +27,12 @@ class SportCenter
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $state;
+    private $municipality;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $address;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $services;
 
     /**
      * @ORM\Column(type="string", length=512, nullable=true)
@@ -50,9 +45,19 @@ class SportCenter
     private $phone;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Sport::class, inversedBy="fk_sportcenter")
+     * @ORM\ManyToMany(targetEntity=Sport::class, inversedBy="sportCenters")
      */
     private $fk_sport;
+
+    /**
+     * @ORM\OneToMany(targetEntity=LocationSportCenter::class, mappedBy="fk_sport_center")
+     */
+    private $locationSportCenters;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Services::class, inversedBy="sportCenters")
+     */
+    private $fk_services;
 
     /**
      * @ORM\OneToMany(targetEntity=Timetable::class, mappedBy="fk_sportcenter")
@@ -60,20 +65,15 @@ class SportCenter
     private $timetables;
 
     /**
-     * @ORM\OneToMany(targetEntity=LocationSportCenter::class, mappedBy="fk_SportCenter")
-     */
-    private $locationSportCenters;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_sport_center")
+     * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_sportcenter")
      */
     private $events;
 
     public function __construct()
     {
         $this->fk_sport = new ArrayCollection();
-        $this->timetables = new ArrayCollection();
         $this->locationSportCenters = new ArrayCollection();
+        $this->timetables = new ArrayCollection();
         $this->events = new ArrayCollection();
     }
 
@@ -94,14 +94,14 @@ class SportCenter
         return $this;
     }
 
-    public function getState(): ?string
+    public function getMunicipality(): ?string
     {
-        return $this->state;
+        return $this->municipality;
     }
 
-    public function setState(string $state): self
+    public function setMunicipality(string $municipality): self
     {
-        $this->state = $state;
+        $this->municipality = $municipality;
 
         return $this;
     }
@@ -114,18 +114,6 @@ class SportCenter
     public function setAddress(string $address): self
     {
         $this->address = $address;
-
-        return $this;
-    }
-
-    public function getServices(): ?string
-    {
-        return $this->services;
-    }
-
-    public function setServices(?string $services): self
-    {
-        $this->services = $services;
 
         return $this;
     }
@@ -179,6 +167,48 @@ class SportCenter
     }
 
     /**
+     * @return Collection<int, LocationSportCenter>
+     */
+    public function getLocationSportCenters(): Collection
+    {
+        return $this->locationSportCenters;
+    }
+
+    public function addLocationSportCenter(LocationSportCenter $locationSportCenter): self
+    {
+        if (!$this->locationSportCenters->contains($locationSportCenter)) {
+            $this->locationSportCenters[] = $locationSportCenter;
+            $locationSportCenter->setFkSportCenter($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLocationSportCenter(LocationSportCenter $locationSportCenter): self
+    {
+        if ($this->locationSportCenters->removeElement($locationSportCenter)) {
+            // set the owning side to null (unless already changed)
+            if ($locationSportCenter->getFkSportCenter() === $this) {
+                $locationSportCenter->setFkSportCenter(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getFkServices(): ?Services
+    {
+        return $this->fk_services;
+    }
+
+    public function setFkServices(?Services $fk_services): self
+    {
+        $this->fk_services = $fk_services;
+
+        return $this;
+    }
+
+    /**
      * @return Collection<int, Timetable>
      */
     public function getTimetables(): Collection
@@ -209,36 +239,6 @@ class SportCenter
     }
 
     /**
-     * @return Collection<int, LocationSportCenter>
-     */
-    public function getLocationSportCenters(): Collection
-    {
-        return $this->locationSportCenters;
-    }
-
-    public function addLocationSportCenter(LocationSportCenter $locationSportCenter): self
-    {
-        if (!$this->locationSportCenters->contains($locationSportCenter)) {
-            $this->locationSportCenters[] = $locationSportCenter;
-            $locationSportCenter->setFkSportCenter($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLocationSportCenter(LocationSportCenter $locationSportCenter): self
-    {
-        if ($this->locationSportCenters->removeElement($locationSportCenter)) {
-            // set the owning side to null (unless already changed)
-            if ($locationSportCenter->getFkSportCenter() === $this) {
-                $locationSportCenter->setFkSportCenter(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Events>
      */
     public function getEvents(): Collection
@@ -250,7 +250,7 @@ class SportCenter
     {
         if (!$this->events->contains($event)) {
             $this->events[] = $event;
-            $event->setFkSportCenter($this);
+            $event->setFkSportcenter($this);
         }
 
         return $this;
@@ -260,8 +260,8 @@ class SportCenter
     {
         if ($this->events->removeElement($event)) {
             // set the owning side to null (unless already changed)
-            if ($event->getFkSportCenter() === $this) {
-                $event->setFkSportCenter(null);
+            if ($event->getFkSportcenter() === $this) {
+                $event->setFkSportcenter(null);
             }
         }
 

@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\TimetableRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -22,7 +20,7 @@ class Timetable
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $dia;
+    private $day;
 
     /**
      * @ORM\Column(type="time")
@@ -35,42 +33,23 @@ class Timetable
     private $close;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $day;
-
-    /**
-     * @ORM\Column(type="time")
-     */
-    private $opening;
-
-    /**
-     * @ORM\Column(type="time")
-     */
-    private $closing;
-
-    /**
      * @ORM\ManyToOne(targetEntity=SportCenter::class, inversedBy="timetables")
      */
     private $fk_sportcenter;
-
-    public function __construct()
-    {
-    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getDia(): ?string
+    public function getDay(): ?string
     {
-        return $this->dia;
+        return $this->day;
     }
 
-    public function setDia(string $dia): self
+    public function setDay(string $day): self
     {
-        $this->dia = $dia;
+        $this->day = $day;
 
         return $this;
     }
@@ -95,42 +74,6 @@ class Timetable
     public function setClose(\DateTimeInterface $close): self
     {
         $this->close = $close;
-
-        return $this;
-    }
-
-    public function getDay(): ?string
-    {
-        return $this->day;
-    }
-
-    public function setDay(string $day): self
-    {
-        $this->day = $day;
-
-        return $this;
-    }
-
-    public function getOpening(): ?\DateTimeInterface
-    {
-        return $this->opening;
-    }
-
-    public function setOpening(\DateTimeInterface $opening): self
-    {
-        $this->opening = $opening;
-
-        return $this;
-    }
-
-    public function getClosing(): ?\DateTimeInterface
-    {
-        return $this->closing;
-    }
-
-    public function setClosing(\DateTimeInterface $closing): self
-    {
-        $this->closing = $closing;
 
         return $this;
     }
