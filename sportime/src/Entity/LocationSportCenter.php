@@ -28,14 +28,14 @@ class LocationSportCenter
     private $longitude;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", length=255)
      */
     private $destination;
 
     /**
      * @ORM\ManyToOne(targetEntity=SportCenter::class, inversedBy="locationSportCenters")
      */
-    private $fk_SportCenter;
+    private $fk_sport_center;
 
     public function getId(): ?int
     {
@@ -80,12 +80,12 @@ class LocationSportCenter
 
     public function getFkSportCenter(): ?SportCenter
     {
-        return $this->fk_SportCenter;
+        return $this->fk_sport_center;
     }
 
-    public function setFkSportCenter(?SportCenter $fk_SportCenter): self
+    public function setFkSportCenter(?SportCenter $fk_sport_center): self
     {
-        $this->fk_SportCenter = $fk_SportCenter;
+        $this->fk_sport_center = $fk_sport_center;
 
         return $this;
     }
