@@ -1,0 +1,30 @@
+App\Entity\Events:
+    attributes:
+        id:
+            groups: ['Events']
+        name:
+            groups: ['Events']
+        is_private:
+            groups: ['Events']
+        details:
+            groups: ['Events']
+        price:
+            groups: ['Events']
+        date:
+            groups: ['Events']
+        time:
+            groups: ['Events']
+        duration:
+            groups: ['Events']
+        number_players:
+            groups: ['Events']
+        #eventsResults:
+         #   groups: ['Events']
+        #fk_sport
+        #fk_sportcenter
+        #fk_difficulty
+        #fk_sex
+        #fk_person
+        #eventPlayers
+        #fk_team_colours
+        # events

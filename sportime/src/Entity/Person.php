@@ -69,6 +69,11 @@ class Person
      */
     private $eventPlayers;
 
+    /**
+     * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
+     */
+    private $fk_user;
+
 
     public function __construct()
     {
@@ -234,6 +239,18 @@ class Person
                 $eventPlayer->setFkPerson(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getFkUser(): ?User
+    {
+        return $this->fk_user;
+    }
+
+    public function setFkUser(?User $fk_user): self
+    {
+        $this->fk_user = $fk_user;
 
         return $this;
     }
