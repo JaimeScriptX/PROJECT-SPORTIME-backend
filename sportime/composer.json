@@ -13,6 +13,7 @@
         "doctrine/orm": "^2.14",
         "friendsofsymfony/rest-bundle": "*",
         "lexik/jwt-authentication-bundle": "^2.18",
+        "nelmio/cors-bundle": "^2.3",
         "phpdocumentor/reflection-docblock": "^5.3",
         "phpstan/phpdoc-parser": "^1.20",
         "sensio/framework-extra-bundle": "^6.2",
