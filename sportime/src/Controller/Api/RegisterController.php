@@ -28,6 +28,8 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
     $user->setRoles(['ROLE_USER']);
     // Aquí puedes agregar otros campos de usuario, como nombre, apellido, etc.
     $user->setUsername($data['username']);
+    $user->setNameAndLastname($data['name_and_lastname']);
+    $user->setPhone($data['phone']);
 
 
      //Verifica si ya existe un usuario con este correo electrónico en la base de datos
@@ -45,6 +47,15 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
         $response = [
             'status' => 'error',
             'message' => 'Ya existe el nombre de usuario'
+        ];
+        return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
+     }
+
+     $existingUser = $this->getDoctrine()->getRepository(User::class)->findOneBy(['name_and_lastname' => $data['name_and_lastname']]);
+     if ($existingUser) {
+        $response = [
+            'status' => 'error',
+            'message' => 'Ya existe el número de telefono'
         ];
         return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
      }
