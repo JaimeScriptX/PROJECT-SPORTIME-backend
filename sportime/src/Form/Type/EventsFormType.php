@@ -3,15 +3,15 @@
 namespace App\Form\Type;
 
 use App\Entity\Events;
-use Doctrine\DBAL\Types\BooleanType;
-use Doctrine\DBAL\Types\TimeType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 class EventsFormType extends AbstractType
 {
@@ -19,25 +19,35 @@ class EventsFormType extends AbstractType
         FormBuilderInterface $builder, 
         array $options
     ){
-        $builder
-            ->add('image_profile', TextType::class)
-            ->add('name', TextType::class)
-            ->add('is_private', BooleanType::class)
-            ->add('details', TextType::class)
-            ->add('price', NumberType::class)
-            ->add('date', DateType::class)
-            ->add('time', TimeType::class)
-            ->add('duration', TimeType::class)
-            ->add('number_players', NumberType::class);
-            #faltan: 
-                #fk_sport
-                #fk_sportcenter
-                #fk_difficulty
-                #fk_sex
-                #fk_person
-                #eventPlayers
-                #fk_team_colours
-                # events
+       $builder
+           # ->add('fk_sport_id', IntegerType::class)
+           # ->add('fk_sportcenter_id', IntegerType::class)
+           # ->add('fk_difficulty_id', IntegerType::class)
+           # ->add('fk_sex_id', IntegerType::class)
+           # ->add('fk_person_id', IntegerType::class)
+           # ->add('fk_team_colours_id', IntegerType::class)
+            ->add('name')
+            ->add('is_private', CheckboxType::class, [
+                'required' => false,
+            ])
+            ->add('details', TextareaType::class, [
+                'required' => false,
+            ])
+            ->add('price', IntegerType::class, [
+                'required' => false,
+            ])
+            ->add('date', DateType::class, [
+                'widget' => 'single_text',
+            ])
+            ->add('time', TimeType::class, [
+                'widget' => 'single_text',
+            ])
+            ->add('duration', TimeType::class, [
+                'widget' => 'single_text',
+            ])
+            ->add('number_players', IntegerType::class)
+            ->add('submit', SubmitType::class)
+        ;
             
                 
     }

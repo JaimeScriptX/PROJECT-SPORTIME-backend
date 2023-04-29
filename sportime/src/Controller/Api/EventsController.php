@@ -37,18 +37,16 @@ class EventsController extends AbstractFOSRestController
         Request $request,
         EntityManagerInterface $em
     ) {
-        $event = new Events();
-        $form = $this->createForm(EventsType::class, $event);
-        $form->submit(json_decode($request->getContent(), true));
-
+        $events = new Events();
+        $form = $this->createForm(EventsFormType::class, $events);
+        $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($event);
+            $em->persist($events);
             $em->flush();
-
-            return $this->json($event, 201, [], ['groups' => 'events']);
+            return $events;
         }
 
-        return $this->json($form->getErrors(true), 400);
+        return $form;
     }
 
     /**
@@ -73,13 +71,12 @@ class EventsController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Delete(path="/events")
-     * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
-     */
-    public function DeleteEvents(
-        Request $request,
-        EntityManagerInterface $em,
-        Events $event
+    * @Rest\Delete(path="/events/{id}")
+    * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
+    */
+    public function deleteEvent(
+        Events $event,
+        EntityManagerInterface $em
     ) {
         $em->remove($event);
         $em->flush();
