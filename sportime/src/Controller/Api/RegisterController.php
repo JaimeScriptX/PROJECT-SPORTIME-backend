@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+
 
 
 class RegisterController extends AbstractController{
@@ -18,7 +20,7 @@ class RegisterController extends AbstractController{
      *@Route("/register", name="register", methods={"POST","GET"})
     */
 
-public function registro(Request $request, UserPasswordEncoderInterface $encoder): JsonResponse
+public function registro(Request $request, UserPasswordEncoderInterface $encoder, JWTTokenManagerInterface $jwtManager): JsonResponse
 {
     $data = json_decode($request->getContent(), true);
 
@@ -30,6 +32,7 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
     $user->setUsername($data['username']);
     $user->setNameAndLastname($data['name_and_lastname']);
     $user->setPhone($data['phone']);
+    $token = $jwtManager->create($user);
 
 
      //Verifica si ya existe un usuario con este correo electrónico en la base de datos
@@ -51,7 +54,7 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
         return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
      }
 
-     $existingUser = $this->getDoctrine()->getRepository(User::class)->findOneBy(['name_and_lastname' => $data['name_and_lastname']]);
+     $existingUser = $this->getDoctrine()->getRepository(User::class)->findOneBy(['phone' => $data['phone']]);
      if ($existingUser) {
         $response = [
             'status' => 'error',
@@ -67,6 +70,16 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
     $response = [
         'status' => 'success',
         'message' => 'El usuario ha sido registrado exitosamente',
+        'user' => [
+            'id' => $user->getId(),
+            'email' => $user->getEmail(),
+            'roles' => $user->getRoles(),
+            'username' => $user->getUsername(),
+            'name_and_lastname' => $user->getNameAndLastname(),
+            'phone' => $user->getPhone(),
+            'token' => $token,
+            // ...
+        ]
     ];
 
     return new JsonResponse($response, Response::HTTP_CREATED);
