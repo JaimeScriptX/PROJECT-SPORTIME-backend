@@ -13,8 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Events;
 use App\Form\Type\EventsFormType;
-
-
+use App\Service\EventsFormProcessor;
 
 class EventsController extends AbstractFOSRestController
 {
@@ -22,10 +21,10 @@ class EventsController extends AbstractFOSRestController
      * @Rest\Get(path="/events")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
-    public function getEvents(
-        EventsRepository $eventsRepository
+    public function getAction(
+        EventsManager $eventsManager
     ) {
-        return $eventsRepository->findAll();
+        return $eventsManager->getRepository()->findAll();
         
     }
 
@@ -33,55 +32,54 @@ class EventsController extends AbstractFOSRestController
      * @Rest\Post(path="/events")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
-    public function postEvents(
-        Request $request,
-        EntityManagerInterface $em
+    public function postAction(
+        EventsManager $eventsManager,
+        EventsFormProcessor $eventsFormProcessor,
+        Request $request
     ) {
-        $events = new Events();
-        $form = $this->createForm(EventsFormType::class, $events);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($events);
-            $em->flush();
-            return $events;
-        }
-
-        return $form;
+        $events = $eventsManager->create();
+        [$events, $error] = $eventsFormProcessor($events, $request);
+        $statusCode = $events ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST;
+        $data = $events ?? $error;
+        return View::create($data, $statusCode);
     }
 
     /**
-     * @Rest\Put(path="/events")
+     * @Rest\Put(path="/event/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
-    public function putEvents(
-        Request $request,
-        EntityManagerInterface $em,
-        Events $event
+    public function putAction(
+        int $id,
+        EventsManager $eventsManager,
+        EventsFormProcessor $eventsFormProcessor,
+        Request $request
     ) {
-        $form = $this->createForm(EventsType::class, $event);
-        $form->submit(json_decode($request->getContent(), true));
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
-
-            return $this->json($event, 200, [], ['groups' => 'events']);
-        }
-
-        return $this->json($form->getErrors(true), 400);
+       $events = $eventsManager->find($id);
+       if (!$events){
+        return View::create("Event not found", Response::HTTP_BAD_REQUEST);
+       }
+        [$events, $error] = $eventsFormProcessor($events, $request); 
+        $statusCode = $events ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST;
+        $data = $events ?? $error;
+        return View::create($data, $statusCode);
     }
 
     /**
     * @Rest\Delete(path="/events/{id}")
     * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
     */
-    public function deleteEvent(
-        Events $event,
-        EntityManagerInterface $em
+    public function deleteAction(
+        int $id,
+        EventsManager $eventsManager,
+        EventsFormProcessor $eventsFormProcessor,
+        Request $request
     ) {
-        $em->remove($event);
-        $em->flush();
-
-        return new Response(null, 204);
+        $events = $eventsManager->find($id);
+        if (!$events){
+            return View::create("Event not found", Response::HTTP_BAD_REQUEST);
+        }
+        $eventsManager->delete($events);
+        return View::create(null, Response::HTTP_NO_CONTENT);
     }
 
 

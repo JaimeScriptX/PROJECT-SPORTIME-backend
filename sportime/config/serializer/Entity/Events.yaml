@@ -18,6 +18,8 @@ App\Entity\Events:
             groups: ['Events']
         number_players:
             groups: ['Events']
+       # fk_team_colours:
+       #     groups: ['Events']
         #eventsResults:
          #   groups: ['Events']
         #fk_sport

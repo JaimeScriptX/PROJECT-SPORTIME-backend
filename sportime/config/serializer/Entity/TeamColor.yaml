@@ -1,0 +1,9 @@
+App\Entity\TeamColor:
+    attributes:
+        id:
+            groups: ['teamColor']
+        team_a:
+            groups: ['teamColor']
+        team_b:
+            groups: ['teamColor']
+            
