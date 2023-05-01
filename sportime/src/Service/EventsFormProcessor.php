@@ -4,9 +4,7 @@ namespace App\Service;
 
 use App\Entity\Events;
 use App\Form\Model\EventsDto;
-use App\Form\Model\TeamColorDto;
 use App\Form\Type\EventsFormType;
-use App\Repository\TeamColorRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\EventsManager;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,16 +14,13 @@ use Symfony\Component\HttpFoundation\Request;
 class EventsFormProcessor
 {
     private $eventsManager;
-    private $teamColorManager;
     private $formFactory;
 
     public function __construct(
         EventsManager $eventsManager,
-        TeamColorManager $teamColorManager,
         FormFactoryInterface $formFactory
     ){
         $this->eventsManager = $eventsManager;
-        $this->teamColorManager = $teamColorManager;
         $this->formFactory = $formFactory;
     }
 

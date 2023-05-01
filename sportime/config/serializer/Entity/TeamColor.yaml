@@ -6,4 +6,3 @@ App\Entity\TeamColor:
             groups: ['teamColor']
         team_b:
             groups: ['teamColor']
-            

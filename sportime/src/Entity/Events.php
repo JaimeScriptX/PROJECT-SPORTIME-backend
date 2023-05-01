@@ -95,14 +95,14 @@ class Events
     private $eventPlayers;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Events::class, inversedBy="events")
-     */
-    private $fk_team_colours;
-
-    /**
      * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_team_colours")
      */
     private $events;
+
+    /**
+     * @ORM\OneToOne(targetEntity=TeamColor::class, cascade={"persist", "remove"})
+     */
+    private $fk_teamcolor;
 
 
     public function __construct()
@@ -333,17 +333,6 @@ class Events
         return $this;
     }
 
-    public function getFkTeamColours(): ?self
-    {
-        return $this->fk_team_colours;
-    }
-
-    public function setFkTeamColours(?self $fk_team_colours): self
-    {
-        $this->fk_team_colours = $fk_team_colours;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, self>
@@ -353,26 +342,18 @@ class Events
         return $this->events;
     }
 
-    public function addEvent(self $event): self
+    public function getFkTeamcolor(): ?TeamColor
     {
-        if (!$this->events->contains($event)) {
-            $this->events[] = $event;
-            $event->setFkTeamColours($this);
-        }
+        return $this->fk_teamcolor;
+    }
+
+    public function setFkTeamcolor(?TeamColor $fk_teamcolor): self
+    {
+        $this->fk_teamcolor = $fk_teamcolor;
 
         return $this;
     }
 
-    public function removeEvent(self $event): self
-    {
-        if ($this->events->removeElement($event)) {
-            // set the owning side to null (unless already changed)
-            if ($event->getFkTeamColours() === $this) {
-                $event->setFkTeamColours(null);
-            }
-        }
 
-        return $this;
-    }
 
 }

@@ -13,7 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Person;
 use App\Form\Type\PersonFormType;
-
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\Sex;
 
 
 class PersonController extends AbstractFOSRestController
@@ -23,10 +24,43 @@ class PersonController extends AbstractFOSRestController
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
      */
     public function getPerson(
-        PersonRepository $personRepository
+        PersonRepository $personRepository,
+        EntityManagerInterface $entityManager
     ) {
-        return $personRepository->findAll();
+        $personRepository = $entityManager->getRepository(Person::class);
+        $persons = $personRepository->findAll();
+        
+        $data = [];
+        foreach ($persons as $person) {
+            $sex = $person->getFkSex();
+            $data[] = [
+                'id' => $person->getId(),
+                'image_profile' => $person->getImageProfile(),
+                'name' => $person->getName(),
+                'last_name' => $person->getLastName(),
+                'birthday' => $person->getBirthday(),
+                'weight' => $person->getWeight(),
+                'geight' => $person->getHeight(),
+                'nationality' => $person->getNationality(),
+                'fk_sex_id' => [
+                    'id' => $sex->getId(),
+                    'gender' => $sex->getGender(),
+                ],
+                'fk_user_id' => [
+                    'id' => $person->getFkUser()->getId(),
+                    'email' => $person->getFkUser()->getEmail(),
+                    'roles' => $person->getFkUser()->getRoles(),
+                    'password' => $person->getFkUser()->getPassword(),
+                    'username' => $person->getFkUser()->getUsername(),
+                    'name_and_lastname' => $person->getFkUser()->getNameAndLastname(),
+                    'phone' => $person->getFkUser()->getPhone(),
+                ],
+            ];
+        }
+        
+        return new JsonResponse($data);
     }
+
 
     /**
      * @Rest\Post(path="/persons")
@@ -36,18 +70,30 @@ class PersonController extends AbstractFOSRestController
         Request $request,
         EntityManagerInterface $em
     ) {
+        $entityManager = $this->getDoctrine()->getManager();
+        
+        $data = json_decode($request->getContent(), true);
+        
         $person = new Person();
-        $form = $this->createForm(PersonFormType::class, $person);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($person);
-            $em->flush();
-            return $person;
-        }
+        $person->setImageProfile($data['image_profile']);
+        $person->setName($data['name']);
+        $person->setLastName($data['last_name']);
+        $person->setBirthday(new \DateTime($data['birthday']));
+        $person->setWeight($data['weight']);
+        $person->setHeight($data['height']);
+        $person->setNationality($data['nationality']);
 
-        return $form;
+        // Agregar campo foráneo "sex"
+        $sex = $entityManager->getRepository(Sex::class)->findOneBy(['gender' => $data['fk_sex']]);
+        $person->setFkSex($sex);
+        
+        $entityManager->persist($person);
+        $entityManager->flush();
+        
+        return $this->view($person, Response::HTTP_CREATED);
     }
-
-
-
 }
+
+
+
+

@@ -31,7 +31,7 @@ class EventsDto{
         $dto->time = $events->getTime();
         $dto->duration = $events->getDuration();
         $dto->number_players = $events->getNumberPlayers();
-        $dto->fk_team_colours = $events->getFkTeamColours();
+        $dto->fk_team_colours = $events->getFkTeamcolor();
 
         return $dto;
     }
