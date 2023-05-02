@@ -25,10 +25,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class EventsController extends AbstractFOSRestController
 {
     /**
-     * @Rest\Get(path="/events")
+     * @Rest\Get(path="/eventsSportime")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
-    public function getEvents(
+    public function getEventsSportime(
         EventsRepository $eventsRepository,
         EntityManagerInterface $entityManager
     ) {
@@ -120,10 +120,10 @@ class EventsController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Get(path="/eventsAlt")
+     * @Rest\Get(path="/eventsCustom")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
-    public function getEventsAlt(
+    public function getEventsCustom(
         EventsRepository $eventsRepository,
         EntityManagerInterface $entityManager
     ) {
@@ -205,10 +205,10 @@ class EventsController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Post(path="/events")
+     * @Rest\Post(path="/eventsSportime")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
-    public function postEvents(
+    public function postEventsSportime(
         Request $request,
         EntityManagerInterface $em
     ) {
@@ -253,10 +253,10 @@ class EventsController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Post(path="/eventsAlt")
+     * @Rest\Post(path="/eventsCustom")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
-    public function postEventsAlt(
+    public function postEventsCustom(
         Request $request,
         EntityManagerInterface $em
     ) {
@@ -299,10 +299,10 @@ class EventsController extends AbstractFOSRestController
 
     
     /**
-     * @Rest\Put(path="/events/{id}")
+     * @Rest\Put(path="/eventsSportime/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
-    public function putEvents(
+    public function putEventsSportime(
         Request $request, 
         int $id,
         EventsRepository $eventsRepository
@@ -339,10 +339,10 @@ class EventsController extends AbstractFOSRestController
     
 
     /**
-     * @Rest\Put(path="/eventsAlt/{id}")
+     * @Rest\Put(path="/eventsCustom/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
-    public function putEventsAlt(
+    public function putEventsCustom(
         Request $request, 
         int $id,
         EventsRepository $eventsRepository
@@ -378,10 +378,10 @@ class EventsController extends AbstractFOSRestController
     }
 
     /**
-    * @Rest\Delete(path="/events/{id}")
+    * @Rest\Delete(path="/eventsSportime/{id}")
     * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
     */
-    public function deleteEvents(
+    public function deleteEventsSportime(
         EntityManagerInterface $entityManager,
         Request $request,
         int $id
