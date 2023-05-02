@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Events;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @extends ServiceEntityRepository<Events>
@@ -39,6 +40,13 @@ class EventsRepository extends ServiceEntityRepository
         }
     }
 
+    public function updateEvents(Events $events): Events
+    {
+        $this->getEntityManager()->persist($events);
+        $this->getEntityManager()->flush();
+
+        return $events;
+    }
 //    /**
 //     * @return Events[] Returns an array of Events objects
 //     */

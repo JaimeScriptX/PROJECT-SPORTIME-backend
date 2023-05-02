@@ -30,7 +30,13 @@ class PersonController extends AbstractFOSRestController
         $personRepository = $entityManager->getRepository(Person::class);
         $persons = $personRepository->findAll();
         
-        $data = [];
+        if (!$persons) {
+            return new JsonResponse(
+                ['code' => 204, 'message' => 'No persons found for this query.'],
+                Response::HTTP_NO_CONTENT
+            );
+        } else {
+            $data = [];
         foreach ($persons as $person) {
             $sex = $person->getFkSex();
             $data[] = [
@@ -40,7 +46,7 @@ class PersonController extends AbstractFOSRestController
                 'last_name' => $person->getLastName(),
                 'birthday' => $person->getBirthday(),
                 'weight' => $person->getWeight(),
-                'geight' => $person->getHeight(),
+                'height' => $person->getHeight(),
                 'nationality' => $person->getNationality(),
                 'fk_sex_id' => [
                     'id' => $sex->getId(),
@@ -49,7 +55,7 @@ class PersonController extends AbstractFOSRestController
                 'fk_user_id' => [
                     'id' => $person->getFkUser()->getId(),
                     'email' => $person->getFkUser()->getEmail(),
-                    'roles' => $person->getFkUser()->getRoles(),
+                   // 'roles' => $person->getFkUser()->getRoles(),
                     'password' => $person->getFkUser()->getPassword(),
                     'username' => $person->getFkUser()->getUsername(),
                     'name_and_lastname' => $person->getFkUser()->getNameAndLastname(),
@@ -57,8 +63,12 @@ class PersonController extends AbstractFOSRestController
                 ],
             ];
         }
+        return new JsonResponse($data, Response::HTTP_OK);
+        }
+
         
-        return new JsonResponse($data);
+        
+
     }
 
 

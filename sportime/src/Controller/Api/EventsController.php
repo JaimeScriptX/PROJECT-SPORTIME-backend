@@ -2,8 +2,11 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\Difficulty;
 use App\Repository\EventsRepository;
 
+use App\Entity\Sport;
+use App\Entity\Sex;
 use App\Service\EventsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -12,8 +15,12 @@ use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Events;
+use App\Entity\Person;
+use App\Entity\SportCenter;
+use App\Entity\TeamColor;
 use App\Form\Type\EventsFormType;
 use App\Service\EventsFormProcessor;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class EventsController extends AbstractFOSRestController
 {
@@ -21,10 +28,179 @@ class EventsController extends AbstractFOSRestController
      * @Rest\Get(path="/events")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
-    public function getAction(
-        EventsManager $eventsManager
+    public function getEvents(
+        EventsRepository $eventsRepository,
+        EntityManagerInterface $entityManager
     ) {
-        return $eventsManager->getRepository()->findAll();
+        $eventsRepository = $entityManager ->getRepository(Events::class);
+        $events = $eventsRepository->findAll();
+
+        if (!$events) {
+            return new JsonResponse(
+                ['code' => 204, 'message' => 'No events found for this query.'],
+                Response::HTTP_NO_CONTENT
+            );
+        } else {
+            $data = [];
+        foreach ($events as $event){
+
+            $data[] =[
+                'id' => $event->getId(),
+                'name' => $event->getName(),
+                'is_private' => $event->isIsPrivate(),
+                'details' => $event->getDetails(),
+                'price' => $event->getPrice(),
+                'date' => $event->getDate(),
+                'time' => $event->getTime(),
+                'duration' => $event->getDuration(),
+                'number_players' => $event->getNumberPlayers(),
+                'fk_sports_id' => [
+                    'id' => $event->getFkSport()->getId(),
+                    'name' => $event->getFkSport()->getName(),
+                    'need_team' => $event->getFkSport()->isNeedTeam(),
+                    'image' => $event->getFkSport()->getImage()
+                ],
+                'fk_sportcenter_id' => [
+                    'id' => $event->getFkSportcenter()->getId(),
+                    'fk_services_id' => [
+                        'id' => $event->getFkSportcenter()->getFkServices()->getId(),
+                        'type' => $event->getFkSportcenter()->getFkServices()->getType()
+                    ],
+                    'name' => $event->getFkSportcenter()->getName(),
+                    'municipality' => $event->getFkSportcenter()->getMunicipality(),
+                    'address' => $event->getFkSportcenter()->getAddress(),
+                    'image' => $event->getFkSportcenter()->getImage(),
+                    'phone' => $event->getFkSportcenter()->getPhone()
+                ],
+                'fk_difficulty_id' => [
+                    'id' => $event->getFkDifficulty()->getId(),
+                    'type' => $event->getFkDifficulty()->getType(),
+                ],
+                'fk_sex_id' => [
+                    'id' => $event->getFkSex()->getId(),
+                    'gender' => $event->getFkSex()->getGender(),
+                ],
+                'fk_person_id' => [
+                    'id' => $event->getFkPerson()->getId(),
+                    'image_profile' => $event->getFkPerson()->getImageProfile(),
+                    'name' => $event->getFkPerson()->getName(),
+                    'last_name' => $event->getFkPerson()->getLastName(),
+                    'birthday' => $event->getFkPerson()->getBirthday(),
+                    'weight' => $event->getFkPerson()->getWeight(),
+                    'geight' => $event->getFkPerson()->getHeight(),
+                    'nationality' => $event->getFkPerson()->getNationality(),
+                    'fk_sex_id' => [
+                        'id' => $event->getFkPerson()->getFkSex()->getId(),
+                        'gender' => $event->getFkPerson()->getFkSex()->getGender(),
+                    ],
+                    //'fk_user_id' => [
+                    //    'id' => $event->getFkPerson()->getFkUser()->getId(),
+                    //    'email' => $event->getFkPerson()->getFkUser()->getEmail(),
+                    //  'roles' => $event->getFkPerson()->getFkUser()->getRoles(),
+                    //    'password' => $event->getFkPerson()->getFkUser()->getPassword(),
+                    //    'username' => $event->getFkPerson()->getFkUser()->getUsername(),
+                    //    'name_and_lastname' => $event->getFkPerson()->getFkUser()->getNameAndLastname(),
+                    //    'phone' => $event->getFkPerson()->getFkUser()->getPhone(),
+                    //],
+                    'fk_teamcolor_id' => [
+                        'id' => $event->getFkTeamColor()->getId(),
+                        'team_a' => $event->getFkTeamColor()->getTeamA(),
+                        'team_b' => $event->getFkTeamColor()->getTeamB(),
+                    ],
+                ],
+
+            ];
+        }
+        return new JsonResponse($data, Response::HTTP_OK);
+
+        
+        }
+        
+        
+    }
+
+    /**
+     * @Rest\Get(path="/eventsAlt")
+     * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function getEventsAlt(
+        EventsRepository $eventsRepository,
+        EntityManagerInterface $entityManager
+    ) {
+        $eventsRepository = $entityManager ->getRepository(Events::class);
+        $events = $eventsRepository->findAll();
+
+        $data = [];
+        foreach ($events as $event){
+
+            $data[] =[
+                'id' => $event->getId(),
+                'name' => $event->getName(),
+                'is_private' => $event->isIsPrivate(),
+                'details' => $event->getDetails(),
+                'price' => $event->getPrice(),
+                'date' => $event->getDate(),
+                'time' => $event->getTime(),
+                'duration' => $event->getDuration(),
+                'number_players' => $event->getNumberPlayers(),
+                'fk_sports_id' => [
+                    'id' => $event->getFkSport()->getId(),
+                    'name' => $event->getFkSport()->getName(),
+                    'need_team' => $event->getFkSport()->isNeedTeam(),
+                    'image' => $event->getFkSport()->getImage()
+                ],
+                //'fk_sportcenter_id' => [
+                //    'id' => $event->getFkSportcenter()->getId(),
+                //    'fk_services_id' => [
+                //        'id' => $event->getFkSportcenter()->getFkServices()->getId(),
+                //        'type' => $event->getFkSportcenter()->getFkServices()->getType()
+                //    ],
+                //    'name' => $event->getFkSportcenter()->getName(),
+                //    'municipality' => $event->getFkSportcenter()->getMunicipality(),
+                //    'address' => $event->getFkSportcenter()->getAddress(),
+                //    'image' => $event->getFkSportcenter()->getImage(),
+                //    'phone' => $event->getFkSportcenter()->getPhone()
+                //],
+                'fk_difficulty_id' => [
+                    'id' => $event->getFkDifficulty()->getId(),
+                    'type' => $event->getFkDifficulty()->getType(),
+                ],
+                'fk_sex_id' => [
+                    'id' => $event->getFkSex()->getId(),
+                    'gender' => $event->getFkSex()->getGender(),
+                ],
+                'fk_person_id' => [
+                    'id' => $event->getFkPerson()->getId(),
+                    'image_profile' => $event->getFkPerson()->getImageProfile(),
+                    'name' => $event->getFkPerson()->getName(),
+                    'last_name' => $event->getFkPerson()->getLastName(),
+                    'birthday' => $event->getFkPerson()->getBirthday(),
+                    'weight' => $event->getFkPerson()->getWeight(),
+                    'geight' => $event->getFkPerson()->getHeight(),
+                    'nationality' => $event->getFkPerson()->getNationality(),
+                    'fk_sex_id' => [
+                        'id' => $event->getFkPerson()->getFkSex()->getId(),
+                        'gender' => $event->getFkPerson()->getFkSex()->getGender(),
+                    ],
+                    //'fk_user_id' => [
+                    //    'id' => $event->getFkPerson()->getFkUser()->getId(),
+                    //    'email' => $event->getFkPerson()->getFkUser()->getEmail(),
+                    //  'roles' => $event->getFkPerson()->getFkUser()->getRoles(),
+                    //    'password' => $event->getFkPerson()->getFkUser()->getPassword(),
+                    //    'username' => $event->getFkPerson()->getFkUser()->getUsername(),
+                    //    'name_and_lastname' => $event->getFkPerson()->getFkUser()->getNameAndLastname(),
+                    //    'phone' => $event->getFkPerson()->getFkUser()->getPhone(),
+                    //],
+                    'fk_teamcolor_id' => [
+                        'id' => $event->getFkTeamColor()->getId(),
+                        'team_a' => $event->getFkTeamColor()->getTeamA(),
+                        'team_b' => $event->getFkTeamColor()->getTeamB(),
+                    ],
+                ],
+
+            ];
+        }
+        return new JsonResponse($data);
         
     }
 
@@ -32,74 +208,204 @@ class EventsController extends AbstractFOSRestController
      * @Rest\Post(path="/events")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
-    public function postAction(
-        EventsManager $eventsManager,
-        EventsFormProcessor $eventsFormProcessor,
-        Request $request
+    public function postEvents(
+        Request $request,
+        EntityManagerInterface $em
     ) {
-        $events = $eventsManager->create();
-        [$events, $error] = $eventsFormProcessor($events, $request);
-        $statusCode = $events ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST;
-        $data = $events ?? $error;
-        return View::create($data, $statusCode);
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $data = json_decode($request->getContent(), true);
+
+        $events = new Events();
+        $events->setName($data['name']);
+        $events->setIsPrivate($data['is_private']);
+        $events->setDetails($data['details']);
+        $events->setPrice($data['price']);
+        $events->setDate(new \DateTime($data['date']));
+        $events->setTime(new \DateTime($data['time']));
+        $events->setDuration(new \DateTime($data['duration']));
+        $events->setNumberPlayers($data['number_players']);
+
+        // fk
+        $sport = $entityManager->getRepository(Sport::class)->findOneBy(['name' => $data['fk_sport']]);
+        $events->setFkSport($sport);
+
+        $sportCenter = $entityManager->getRepository(SportCenter::class)->findOneBy(['name' => $data['fk_sportcenter']]);
+        $events->setFkSport($sportCenter);
+
+        $difficulty = $entityManager->getRepository(Difficulty::class)->findOneBy(['type' => $data['fk_difficulty']]);
+        $events->setFkDifficulty($difficulty);
+    
+        $sex = $entityManager->getRepository(Sex::class)->findOneBy(['gender' => $data['fk_sex']]);
+        $events->setFkSex($sex);
+        
+        $person = $entityManager->getRepository(Person::class)->find(['id' => $data['fk_person']]);
+        $events->setFkPerson($person);
+
+        $teamColor = $entityManager->getRepository(TeamColor::class)->find(['id' => $data['fk_teamcolor']]);
+        $events->setFkTeamcolor($teamColor);
+
+        $entityManager->persist($events);
+        $entityManager->flush();
+
+        return $this->view($events, Response::HTTP_CREATED);
+
     }
 
     /**
-     * @Rest\Put(path="/event/{id}")
+     * @Rest\Post(path="/eventsAlt")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
-    public function putAction(
-        int $id,
-        EventsManager $eventsManager,
-        EventsFormProcessor $eventsFormProcessor,
-        Request $request
+    public function postEventsAlt(
+        Request $request,
+        EntityManagerInterface $em
     ) {
-       $events = $eventsManager->find($id);
-       if (!$events){
-        return View::create("Event not found", Response::HTTP_BAD_REQUEST);
-       }
-        [$events, $error] = $eventsFormProcessor($events, $request); 
-        $statusCode = $events ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST;
-        $data = $events ?? $error;
-        return View::create($data, $statusCode);
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $data = json_decode($request->getContent(), true);
+
+        $events = new Events();
+        $events->setName($data['name']);
+        $events->setIsPrivate($data['is_private']);
+        $events->setDetails($data['details']);
+        $events->setPrice($data['price']);
+        $events->setDate(new \DateTime($data['date']));
+        $events->setTime(new \DateTime($data['time']));
+        $events->setDuration(new \DateTime($data['duration']));
+        $events->setNumberPlayers($data['number_players']);
+
+        // fk
+        $sport = $entityManager->getRepository(Sport::class)->findOneBy(['name' => $data['fk_sport']]);
+        $events->setFkSport($sport);
+
+        $difficulty = $entityManager->getRepository(Difficulty::class)->findOneBy(['type' => $data['fk_difficulty']]);
+        $events->setFkDifficulty($difficulty);
+    
+        $sex = $entityManager->getRepository(Sex::class)->findOneBy(['gender' => $data['fk_sex']]);
+        $events->setFkSex($sex);
+        
+        $person = $entityManager->getRepository(Person::class)->find(['id' => $data['fk_person']]);
+        $events->setFkPerson($person);
+
+        $teamColor = $entityManager->getRepository(TeamColor::class)->find(['id' => $data['fk_teamcolor']]);
+        $events->setFkTeamcolor($teamColor);
+
+        $entityManager->persist($events);
+        $entityManager->flush();
+
+        return $this->view($events, Response::HTTP_CREATED);
+
+    }
+
+    
+    /**
+     * @Rest\Put(path="/events/{id}")
+     * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function putEvents(
+        Request $request, 
+        int $id,
+        EventsRepository $eventsRepository
+        )
+    {
+        $events = $eventsRepository->findOneBy(['id' => $id]);
+        $data = json_decode($request->getContent(), true);
+
+        empty($data['name']) ? true : $events->setName($data['name']);
+        empty($data['is_private']) ? true : $events->setIsPrivate($data['is_private']);
+        empty($data['details']) ? true : $events->setDetails($data['details']);
+        empty($data['price']) ? true : $events->setPrice($data['price']);
+        empty($data['date']) ? true : $events->setDate(new \DateTime($data['date']));
+        empty($data['time']) ? true : $events->setTime(new \DateTime($data['time']));
+        empty($data['duration']) ? true : $events->setDuration(new \DateTime($data['duration']));
+        empty($data['number_players']) ? true : $events->setNumberPlayers($data['number_players']);
+
+        // fk
+        empty($data['fk_sport']) ? true : $events->setFkSport($data['fk_sport']);
+        empty($data['fk_sportcenter']) ? true : $events->setFkSportcenter($data['fk_sportcenter']);
+        empty($data['fk_difficulty']) ? true : $events->setFkDifficulty($data['fk_difficulty']);
+        empty($data['fk_sex']) ? true : $events->setFkSex($data['fk_sex']);
+        empty($data['fk_person']) ? true : $events->setFkPerson($data['fk_person']);
+        empty($data['fk_teamcolor']) ? true : $events->setFkTeamcolor($data['fk_teamcolor']);
+
+        $updatedEvents = $eventsRepository->updateEvents($events);
+
+        return new JsonResponse(
+            ['code' => 200, 'message' => 'Event updated successfully.'],
+            Response::HTTP_OK
+        );
+
+    }
+    
+
+    /**
+     * @Rest\Put(path="/eventsAlt/{id}")
+     * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function putEventsAlt(
+        Request $request, 
+        int $id,
+        EventsRepository $eventsRepository
+        )
+    {
+        $events = $eventsRepository->findOneBy(['id' => $id]);
+        $data = json_decode($request->getContent(), true);
+
+        empty($data['name']) ? true : $events->setName($data['name']);
+        empty($data['is_private']) ? true : $events->setIsPrivate($data['is_private']);
+        empty($data['details']) ? true : $events->setDetails($data['details']);
+        empty($data['price']) ? true : $events->setPrice($data['price']);
+        empty($data['date']) ? true : $events->setDate(new \DateTime($data['date']));
+        empty($data['time']) ? true : $events->setTime(new \DateTime($data['time']));
+        empty($data['duration']) ? true : $events->setDuration(new \DateTime($data['duration']));
+        empty($data['number_players']) ? true : $events->setNumberPlayers($data['number_players']);
+
+        // fk
+        empty($data['fk_sport']) ? true : $events->setFkSport($data['fk_sport']);
+        //empty($data['fk_sportcenter']) ? true : $events->setFkSportcenter($data['fk_sportcenter']);
+        empty($data['fk_difficulty']) ? true : $events->setFkDifficulty($data['fk_difficulty']);
+        empty($data['fk_sex']) ? true : $events->setFkSex($data['fk_sex']);
+        empty($data['fk_person']) ? true : $events->setFkPerson($data['fk_person']);
+        empty($data['fk_teamcolor']) ? true : $events->setFkTeamcolor($data['fk_teamcolor']);
+
+        $updatedEvents = $eventsRepository->updateEvents($events);
+
+        return new JsonResponse(
+            ['code' => 200, 'message' => 'Event updated successfully.'],
+            Response::HTTP_OK
+        );
+
     }
 
     /**
     * @Rest\Delete(path="/events/{id}")
     * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
     */
-    public function deleteAction(
-        int $id,
-        EventsManager $eventsManager,
-        EventsFormProcessor $eventsFormProcessor,
-        Request $request
+    public function deleteEvents(
+        EntityManagerInterface $entityManager,
+        Request $request,
+        int $id
     ) {
-        $events = $eventsManager->find($id);
-        if (!$events){
-            return View::create("Event not found", Response::HTTP_BAD_REQUEST);
+        $eventRepository = $entityManager->getRepository(Events::class);
+        $event = $eventRepository->find($id);
+    
+        if (!$event) {
+            return new JsonResponse(
+                ['code' => 404, 'message' => 'Event not found.'],
+                Response::HTTP_NOT_FOUND
+            );
         }
-        $eventsManager->delete($events);
-        return View::create(null, Response::HTTP_NO_CONTENT);
+    
+        $entityManager->remove($event);
+        $entityManager->flush();
+    
+        return new JsonResponse(
+            ['code' => 200, 'message' => 'Event deleted successfully.'],
+            Response::HTTP_OK
+        );
     }
 
 
 
 }
 
-/*
-public function postEvents(
-        Request $request,
-        EntityManagerInterface $em
-    ) {
-        $events = new Events();
-        $form = $this->createForm(EventsFormType::class, $events);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($events);
-            $em->flush();
-            return $events;
-        }
-
-        return $form;
-    }
-*/
