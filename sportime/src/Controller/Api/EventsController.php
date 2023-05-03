@@ -119,6 +119,97 @@ class EventsController extends AbstractFOSRestController
         
     }
 
+     /**
+     * @Rest\Get(path="/eventsSportime/{id}")
+     * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function getEventsById(
+        int $id,
+        EventsRepository $eventsRepository
+        ){
+            $event = $eventsRepository->find($id);
+
+            if (!$event) {
+                return new JsonResponse(
+                    ['code' => 204, 'message' => 'No event found for this query.'],
+                    Response::HTTP_NO_CONTENT
+                );
+            }
+    
+            $data = [
+                'id' => $event->getId(),
+                'name' => $event->getName(),
+                'is_private' => $event->isIsPrivate(),
+                'details' => $event->getDetails(),
+                'price' => $event->getPrice(),
+                'date' => $event->getDate(),
+                'time' => $event->getTime(),
+                'duration' => $event->getDuration(),
+                'number_players' => $event->getNumberPlayers(),
+                'fk_sports_id' => [
+                    'id' => $event->getFkSport()->getId(),
+                    'name' => $event->getFkSport()->getName(),
+                    'need_team' => $event->getFkSport()->isNeedTeam(),
+                    'image' => $event->getFkSport()->getImage()
+                ],
+                'fk_sportcenter_id' => [
+                    'id' => $event->getFkSportcenter()->getId(),
+                    'fk_services_id' => [
+                        'id' => $event->getFkSportcenter()->getFkServices()->getId(),
+                        'type' => $event->getFkSportcenter()->getFkServices()->getType()
+                    ],
+                    'name' => $event->getFkSportcenter()->getName(),
+                    'municipality' => $event->getFkSportcenter()->getMunicipality(),
+                    'address' => $event->getFkSportcenter()->getAddress(),
+                    'image' => $event->getFkSportcenter()->getImage(),
+                    'phone' => $event->getFkSportcenter()->getPhone()
+                ],
+                'fk_difficulty_id' => [
+                    'id' => $event->getFkDifficulty()->getId(),
+                    'type' => $event->getFkDifficulty()->getType(),
+                ],
+                'fk_sex_id' => [
+                    'id' => $event->getFkSex()->getId(),
+                    'gender' => $event->getFkSex()->getGender(),
+                ],
+                'fk_person_id' => [
+                    'id' => $event->getFkPerson()->getId(),
+                    'image_profile' => $event->getFkPerson()->getImageProfile(),
+                    'name' => $event->getFkPerson()->getName(),
+                    'last_name' => $event->getFkPerson()->getLastName(),
+                    'birthday' => $event->getFkPerson()->getBirthday(),
+                    'weight' => $event->getFkPerson()->getWeight(),
+                    'geight' => $event->getFkPerson()->getHeight(),
+                    'nationality' => $event->getFkPerson()->getNationality(),
+                    'fk_sex_id' => [
+                        'id' => $event->getFkPerson()->getFkSex()->getId(),
+                        'gender' => $event->getFkPerson()->getFkSex()->getGender(),
+                    ],
+                    //'fk_user_id' => [
+                    //    'id' => $event->getFkPerson()->getFkUser()->getId(),
+                    //    'email' => $event->getFkPerson()->getFkUser()->getEmail(),
+                    //  'roles' => $event->getFkPerson()->getFkUser()->getRoles(),
+                    //    'password' => $event->getFkPerson()->getFkUser()->getPassword(),
+                    //    'username' => $event->getFkPerson()->getFkUser()->getUsername(),
+                    //    'name_and_lastname' => $event->getFkPerson()->getFkUser()->getNameAndLastname(),
+                    //    'phone' => $event->getFkPerson()->getFkUser()->getPhone(),
+                    //],
+                    'fk_teamcolor_id' => [
+                        'id' => $event->getFkTeamColor()->getId(),
+                        'team_a' => $event->getFkTeamColor()->getTeamA(),
+                        'team_b' => $event->getFkTeamColor()->getTeamB(),
+                    ],
+                ],
+
+            ];
+        
+        return new JsonResponse($data, Response::HTTP_OK);
+
+        
+        
+    }
+
+
     /**
      * @Rest\Get(path="/eventsCustom")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
@@ -203,6 +294,97 @@ class EventsController extends AbstractFOSRestController
         return new JsonResponse($data);
         
     }
+
+     /**
+     * @Rest\Get(path="/eventsCustom/{id}")
+     * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function getEventsCustomById(
+        int $id,
+        EventsRepository $eventsRepository
+        ){
+            $event = $eventsRepository->find($id);
+
+            if (!$event) {
+                return new JsonResponse(
+                    ['code' => 204, 'message' => 'No event found for this query.'],
+                    Response::HTTP_NO_CONTENT
+                );
+            }
+    
+            $data = [
+                'id' => $event->getId(),
+                'name' => $event->getName(),
+                'is_private' => $event->isIsPrivate(),
+                'details' => $event->getDetails(),
+                'price' => $event->getPrice(),
+                'date' => $event->getDate(),
+                'time' => $event->getTime(),
+                'duration' => $event->getDuration(),
+                'number_players' => $event->getNumberPlayers(),
+                'fk_sports_id' => [
+                    'id' => $event->getFkSport()->getId(),
+                    'name' => $event->getFkSport()->getName(),
+                    'need_team' => $event->getFkSport()->isNeedTeam(),
+                    'image' => $event->getFkSport()->getImage()
+                ],
+                //'fk_sportcenter_id' => [
+                //    'id' => $event->getFkSportcenter()->getId(),
+                //    'fk_services_id' => [
+                //        'id' => $event->getFkSportcenter()->getFkServices()->getId(),
+                //        'type' => $event->getFkSportcenter()->getFkServices()->getType()
+                //    ],
+                //    'name' => $event->getFkSportcenter()->getName(),
+                //    'municipality' => $event->getFkSportcenter()->getMunicipality(),
+                //    'address' => $event->getFkSportcenter()->getAddress(),
+                //    'image' => $event->getFkSportcenter()->getImage(),
+                //    'phone' => $event->getFkSportcenter()->getPhone()
+                //],
+                'fk_difficulty_id' => [
+                    'id' => $event->getFkDifficulty()->getId(),
+                    'type' => $event->getFkDifficulty()->getType(),
+                ],
+                'fk_sex_id' => [
+                    'id' => $event->getFkSex()->getId(),
+                    'gender' => $event->getFkSex()->getGender(),
+                ],
+                'fk_person_id' => [
+                    'id' => $event->getFkPerson()->getId(),
+                    'image_profile' => $event->getFkPerson()->getImageProfile(),
+                    'name' => $event->getFkPerson()->getName(),
+                    'last_name' => $event->getFkPerson()->getLastName(),
+                    'birthday' => $event->getFkPerson()->getBirthday(),
+                    'weight' => $event->getFkPerson()->getWeight(),
+                    'geight' => $event->getFkPerson()->getHeight(),
+                    'nationality' => $event->getFkPerson()->getNationality(),
+                    'fk_sex_id' => [
+                        'id' => $event->getFkPerson()->getFkSex()->getId(),
+                        'gender' => $event->getFkPerson()->getFkSex()->getGender(),
+                    ],
+                    //'fk_user_id' => [
+                    //    'id' => $event->getFkPerson()->getFkUser()->getId(),
+                    //    'email' => $event->getFkPerson()->getFkUser()->getEmail(),
+                    //  'roles' => $event->getFkPerson()->getFkUser()->getRoles(),
+                    //    'password' => $event->getFkPerson()->getFkUser()->getPassword(),
+                    //    'username' => $event->getFkPerson()->getFkUser()->getUsername(),
+                    //    'name_and_lastname' => $event->getFkPerson()->getFkUser()->getNameAndLastname(),
+                    //    'phone' => $event->getFkPerson()->getFkUser()->getPhone(),
+                    //],
+                    'fk_teamcolor_id' => [
+                        'id' => $event->getFkTeamColor()->getId(),
+                        'team_a' => $event->getFkTeamColor()->getTeamA(),
+                        'team_b' => $event->getFkTeamColor()->getTeamB(),
+                    ],
+                ],
+
+            ];
+        
+        return new JsonResponse($data, Response::HTTP_OK);
+
+        
+        
+    }
+
 
     /**
      * @Rest\Post(path="/eventsSportime")
