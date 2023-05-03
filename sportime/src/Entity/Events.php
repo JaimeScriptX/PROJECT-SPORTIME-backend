@@ -104,6 +104,11 @@ class Events
      */
     private $fk_teamcolor;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $sport_center_custom;
+
 
     public function __construct()
     {
@@ -350,6 +355,18 @@ class Events
     public function setFkTeamcolor(?TeamColor $fk_teamcolor): self
     {
         $this->fk_teamcolor = $fk_teamcolor;
+
+        return $this;
+    }
+
+    public function getSportCenterCustom(): ?string
+    {
+        return $this->sport_center_custom;
+    }
+
+    public function setSportCenterCustom(?string $sport_center_custom): self
+    {
+        $this->sport_center_custom = $sport_center_custom;
 
         return $this;
     }
