@@ -234,6 +234,7 @@ class EventsController extends AbstractFOSRestController
                 'time' => $event->getTime(),
                 'duration' => $event->getDuration(),
                 'number_players' => $event->getNumberPlayers(),
+                'sport_center_custom' => $event->getSportCenterCustom(),
                 'fk_sports_id' => [
                     'id' => $event->getFkSport()->getId(),
                     'name' => $event->getFkSport()->getName(),
@@ -322,6 +323,7 @@ class EventsController extends AbstractFOSRestController
                 'time' => $event->getTime(),
                 'duration' => $event->getDuration(),
                 'number_players' => $event->getNumberPlayers(),
+                'sport_center_custom' => $event->getSportCenterCustom(),
                 'fk_sports_id' => [
                     'id' => $event->getFkSport()->getId(),
                     'name' => $event->getFkSport()->getName(),
