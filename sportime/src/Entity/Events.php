@@ -100,7 +100,7 @@ class Events
     private $events;
 
     /**
-     * @ORM\OneToOne(targetEntity=TeamColor::class, cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=TeamColor::class, inversedBy="events")
      */
     private $fk_teamcolor;
 
@@ -353,7 +353,6 @@ class Events
 
         return $this;
     }
-
 
 
 }
