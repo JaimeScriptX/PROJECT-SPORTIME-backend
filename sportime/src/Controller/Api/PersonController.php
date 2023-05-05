@@ -15,6 +15,7 @@ use App\Entity\Person;
 use App\Form\Type\PersonFormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Sex;
+use App\Entity\User;
 
 
 class PersonController extends AbstractFOSRestController
@@ -71,6 +72,49 @@ class PersonController extends AbstractFOSRestController
 
     }
 
+    /**
+     * @Rest\Get(path="/persons/{id}")
+     * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function getPersonById(
+        int $id,
+        PersonRepository $personRepository
+    ){
+        $person= $personRepository->find($id);
+
+        if (!$person){
+            return new JsonResponse(
+                ['code' => 204, 'message' => 'No person found for this query.'],
+                Response::HTTP_NO_CONTENT
+            );
+        }
+
+        $data = [
+            'id' => $person->getId(),
+            'image_profile' => $person->getImageProfile(),
+            'name' => $person->getName(),
+            'last_name' => $person->getLastName(),
+            'birthday' => $person->getBirthday(),
+            'weight' => $person->getWeight(),
+            'height' => $person->getHeight(),
+            'nationality' => $person->getNationality(),
+            'fk_sex_id' => [
+                'id' => $person->getFkSex()->getId(),
+                'gender' => $person->getFkSex()->getGender(),
+            ],
+            'fk_user_id' => [
+                'id' => $person->getFkUser()->getId(),
+                'email' => $person->getFkUser()->getEmail(),
+               // 'roles' => $person->getFkUser()->getRoles(),
+                'password' => $person->getFkUser()->getPassword(),
+                'username' => $person->getFkUser()->getUsername(),
+                'name_and_lastname' => $person->getFkUser()->getNameAndLastname(),
+                'phone' => $person->getFkUser()->getPhone(),
+            ],
+        ];
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
+
 
     /**
      * @Rest\Post(path="/persons")
@@ -96,11 +140,75 @@ class PersonController extends AbstractFOSRestController
         // Agregar campo foráneo "sex"
         $sex = $entityManager->getRepository(Sex::class)->findOneBy(['gender' => $data['fk_sex']]);
         $person->setFkSex($sex);
+
+        $user = $entityManager->getRepository(User::class)->findOneBy(['id' => $data['fk_user']]);
+        $person->setFkUser($user);
         
         $entityManager->persist($person);
         $entityManager->flush();
         
         return $this->view($person, Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Rest\Put(path="/persons/{id}")
+     * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function putEventsCustom(
+        Request $request, 
+        int $id,
+        PersonRepository $personRepository
+    ){
+        $person = $personRepository->findOneBy(['id' => $id]);
+        $data = json_decode($request->getContent(), true);
+
+        empty($data['image_profile']) ? true : $person->setImageProfile($data['image_profile']);
+        empty($data['name']) ? true : $person->setName($data['name']);
+        empty($data['last_name']) ? true : $person->setLastName($data['last_name']);
+        empty($data['birthday']) ? true : $person->setBirthday(new \DateTime($data['birthday']));
+        empty($data['weight']) ? true : $person->setWeight($data['weight']);
+        empty($data['height']) ? true : $person->setHeight($data['height']);
+        empty($data['nationality']) ? true : $person->setNationality($data['nationality']);
+
+        //fk
+        empty($data['fk_sex']) ? true : $person->setFkSex($data['fk_sex']);
+        empty($data['fk_user']) ? true : $person->setFkUser($data['fk_user']);
+
+        $updatedPersons = $personRepository->updateEvents($person);
+
+        return new JsonResponse(
+            ['code' => 200, 'message' => 'Person updated successfully.'],
+            Response::HTTP_OK
+        );
+
+    }
+
+    /**
+     * @Rest\Delete(path="/persons/{id}")
+     * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function deleteEventsSportime(
+        EntityManagerInterface $entityManager,
+        Request $request,
+        int $id
+    ) {
+        $personRepository = $entityManager->getRepository(Events::class);
+        $person = $personRepository->find($id);
+    
+        if (!$person) {
+            return new JsonResponse(
+                ['code' => 404, 'message' => 'Person not found.'],
+                Response::HTTP_NOT_FOUND
+            );
+        }
+    
+        $entityManager->remove($person);
+        $entityManager->flush();
+    
+        return new JsonResponse(
+            ['code' => 200, 'message' => 'Person deleted successfully.'],
+            Response::HTTP_OK
+        );
     }
 }
 
