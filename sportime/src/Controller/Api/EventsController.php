@@ -54,12 +54,12 @@ class EventsController extends AbstractFOSRestController
                 'time' => $event->getTime(),
                 'duration' => $event->getDuration(),
                 'number_players' => $event->getNumberPlayers(),
-                'fk_sports_id' => [
+                'fk_sports_id' => $event->getFkSport() ?[
                     'id' => $event->getFkSport()->getId(),
                     'name' => $event->getFkSport()->getName(),
                     'need_team' => $event->getFkSport()->isNeedTeam(),
                     'image' => $event->getFkSport()->getImage()
-                ],
+                ] : null,
                 'fk_sportcenter_id' => $event->getFkSportcenter() ? [
                     'id' => $event->getFkSportcenter()->getId(),
                     'fk_services_id' => $event->getFkSportcenter()->getFkServices() ? [
