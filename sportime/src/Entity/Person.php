@@ -74,6 +74,16 @@ class Person
      */
     private $fk_user;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $games_played;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $victories;
+
 
     public function __construct()
     {
@@ -254,6 +264,32 @@ class Person
 
         return $this;
     }
+
+    public function getGamesPlayed(): ?int
+    {
+        return $this->games_played;
+    }
+
+    public function setGamesPlayed(int $games_played): self
+    {
+        $this->games_played = $games_played;
+
+        return $this;
+    }
+
+    public function getVictories(): ?int
+    {
+        return $this->victories;
+    }
+
+    public function setVictories(int $victories): self
+    {
+        $this->victories = $victories;
+
+        return $this;
+    }
+
+
 
     
 }
