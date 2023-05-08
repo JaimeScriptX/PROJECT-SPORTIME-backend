@@ -83,8 +83,8 @@ class EventsController extends AbstractFOSRestController
                 'fk_person_id' => $event->getFkPerson() ? [
                     'id' => $event->getFkPerson()->getId(),
                 //    'image_profile' => $event->getFkPerson()->getImageProfile(),
-                //    'name' => $event->getFkPerson()->getName(),
-                //    'last_name' => $event->getFkPerson()->getLastName(),
+                    'name' => $event->getFkPerson()->getName(),
+                    'last_name' => $event->getFkPerson()->getLastName(),
                 //    'birthday' => $event->getFkPerson()->getBirthday(),
                 //    'weight' => $event->getFkPerson()->getWeight(),
                 //    'height' => $event->getFkPerson()->getHeight(),
@@ -176,8 +176,8 @@ class EventsController extends AbstractFOSRestController
                 'fk_person_id' => $event->getFkPerson() ? [
                     'id' => $event->getFkPerson()->getId(),
                 //    'image_profile' => $event->getFkPerson()->getImageProfile(),
-                //    'name' => $event->getFkPerson()->getName(),
-                //    'last_name' => $event->getFkPerson()->getLastName(),
+                    'name' => $event->getFkPerson()->getName(),
+                    'last_name' => $event->getFkPerson()->getLastName(),
                 //    'birthday' => $event->getFkPerson()->getBirthday(),
                 //    'weight' => $event->getFkPerson()->getWeight(),
                 //    'geight' => $event->getFkPerson()->getHeight(),
@@ -265,8 +265,8 @@ class EventsController extends AbstractFOSRestController
                 'fk_person_id' => $event->getFkPerson() ? [
                     'id' => $event->getFkPerson()->getId(),
              //       'image_profile' => $event->getFkPerson()->getImageProfile(),
-             //       'name' => $event->getFkPerson()->getName(),
-             //       'last_name' => $event->getFkPerson()->getLastName(),
+                    'name' => $event->getFkPerson()->getName(),
+                    'last_name' => $event->getFkPerson()->getLastName(),
              //       'birthday' => $event->getFkPerson()->getBirthday(),
              //       'weight' => $event->getFkPerson()->getWeight(),
              //       'geight' => $event->getFkPerson()->getHeight(),
