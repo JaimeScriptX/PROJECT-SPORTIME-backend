@@ -154,6 +154,72 @@ class PersonController extends AbstractFOSRestController
 
 
     /**
+     * @Rest\Get(path="/personsByName/{name}/{last_name}")
+     * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function getPersonByName(
+        string $name,
+        string $last_name,
+        PersonRepository $personRepository,
+        EntityManagerInterface $em
+    ){
+        //$person= $personRepository->find($id);
+
+        $person = $em->getRepository(Person::class)->findOneBy(['name' => $name, 'last_name' => $last_name]);
+
+
+
+        if (!$person){
+            return new JsonResponse(
+                ['code' => 204, 'message' => 'No person found for this query.'],
+                Response::HTTP_NO_CONTENT
+            );
+        }
+
+        
+       
+        $victorias = $person->getVictories();
+        $partidosJugados = $person->getGamesPlayed();
+        $ratio = 0;
+
+        if($partidosJugados > 0 && $victorias > 0) {
+        $ratio = $victorias / $partidosJugados;
+         }
+        
+        
+
+        $data = [
+            'id' => $person->getId(),
+            'image_profile' => $person->getImageProfile(),
+            'name' => $person->getName(),
+            'last_name' => $person->getLastName(),
+            'birthday' => $person->getBirthday(),
+            'weight' => $person->getWeight(),
+            'height' => $person->getHeight(),
+            'nationality' => $person->getNationality(),
+            'games_played' => $person->getGamesPlayed(),
+            'victories' => $person->getVictories(),
+            'ratio' => $ratio,
+            'fk_sex_id' => $person-> getFkSex() ? [
+                'id' => $person->getFkSex()->getId(),
+                'gender' => $person->getFkSex()->getGender()
+            ] : null,
+           // 'fk_user_id' => $person->getFkUser() ? [
+             //   'id' => $person->getFkUser()->getId(),
+               // 'email' => $person->getFkUser()->getEmail(),
+               // 'roles' => $person->getFkUser()->getRoles(),
+            //    'password' => $person->getFkUser()->getPassword(),
+               // 'username' => $person->getFkUser()->getUsername(),
+               // 'name_and_lastname' => $person->getFkUser()->getNameAndLastname(),
+               // 'phone' => $person->getFkUser()->getPhone(),
+            //] : null,
+        ];
+    
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
+
+
+    /**
      * @Rest\Post(path="/persons")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
      */
