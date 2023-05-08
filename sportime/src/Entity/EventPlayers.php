@@ -27,6 +27,11 @@ class EventPlayers
      */
     private $fk_person;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $equipo;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +57,18 @@ class EventPlayers
     public function setFkPerson(?Person $fk_person): self
     {
         $this->fk_person = $fk_person;
+
+        return $this;
+    }
+
+    public function getEquipo(): ?int
+    {
+        return $this->equipo;
+    }
+
+    public function setEquipo(?int $equipo): self
+    {
+        $this->equipo = $equipo;
 
         return $this;
     }
