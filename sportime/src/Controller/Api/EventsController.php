@@ -8,6 +8,7 @@ use App\Repository\EventsRepository;
 use App\Entity\Sport;
 use App\Entity\Sex;
 use App\Service\EventsManager;
+use App\Service\EventPlayers;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -19,18 +20,20 @@ use App\Entity\Person;
 use App\Entity\SportCenter;
 use App\Entity\TeamColor;
 use App\Form\Type\EventsFormType;
+use App\Repository\EventPlayersRepository;
 use App\Service\EventsFormProcessor;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class EventsController extends AbstractFOSRestController
 {
     /**
-     * @Rest\Get(path="/eventsSportime")
+     * @Rest\Get(path="/events")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
     public function getEventsSportime(
         EventsRepository $eventsRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        EventPlayersRepository $eventPlayersRepository
     ) {
         $eventsRepository = $entityManager ->getRepository(Events::class);
         $events = $eventsRepository->findAll();
@@ -43,6 +46,21 @@ class EventsController extends AbstractFOSRestController
         } else {
             $data = [];
         foreach ($events as $event){
+            $id = $event->getId();
+            $eventPlayers = $eventPlayersRepository->findBy(['fk_event' => $id]);
+
+            $eventPlayerData = [];
+            $numParticipantes=0;
+            foreach ($eventPlayers as $eventPlayer) {
+                $numParticipantes++;
+                $eventPlayerData[] = [
+                    'id' => $eventPlayer->getId(),
+                    'fk_event_id' => $eventPlayer->getFkEvent()->getId(),
+                    'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
+                    'equipo' => $eventPlayer->getEquipo(),
+                   
+                ];
+            }
 
             $data[] =[
                 'id' => $event->getId(),
@@ -54,6 +72,7 @@ class EventsController extends AbstractFOSRestController
                 'time' => $event->getTime(),
                 'duration' => $event->getDuration(),
                 'number_players' => $event->getNumberPlayers(),
+                'sport_center_custom' => $event->getSportCenterCustom(),
                 'fk_sports_id' => $event->getFkSport() ?[
                     'id' => $event->getFkSport()->getId(),
                     'name' => $event->getFkSport()->getName(),
@@ -108,7 +127,9 @@ class EventsController extends AbstractFOSRestController
                         'team_b' => $event->getFkTeamColor()->getTeamB(),
                     ] : null,
                 ] : null,
-
+                'event_players' => $eventPlayerData ? $eventPlayerData : null,
+                'players_registered' => $numParticipantes,
+                'missing_players' => $event->getNumberPlayers() - $numParticipantes,
             ];
         }
         return new JsonResponse($data, Response::HTTP_OK);
@@ -125,9 +146,11 @@ class EventsController extends AbstractFOSRestController
      */
     public function getEventsById(
         int $id,
-        EventsRepository $eventsRepository
+        EventsRepository $eventsRepository,
+        EventPlayersRepository $eventPlayersRepository
         ){
             $event = $eventsRepository->find($id);
+            $eventPlayers = $eventPlayersRepository->findBy(['fk_event' => $id]);
 
             if (!$event) {
                 return new JsonResponse(
@@ -136,6 +159,21 @@ class EventsController extends AbstractFOSRestController
                 );
             }
     
+            $eventPlayerData = [];
+            $numParticipantes=0;
+            foreach ($eventPlayers as $eventPlayer) {
+                $numParticipantes++;
+                $eventPlayerData[] = [
+                    'id' => $eventPlayer->getId(),
+                    'fk_event_id' => $eventPlayer->getFkEvent()->getId(),
+                    'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
+                    'equipo' => $eventPlayer->getEquipo(),
+                   
+                ];
+                    
+            
+            }
+
             $data = [
                 'id' => $event->getId(),
                 'name' => $event->getName(),
@@ -201,6 +239,11 @@ class EventsController extends AbstractFOSRestController
                         'team_b' => $event->getFkTeamColor()->getTeamB(),
                     ] : null,
                 ] : null,
+                
+                'event_players' => $eventPlayerData ? $eventPlayerData : null,
+                'players_registered' => $numParticipantes,
+                'missing_players' => $event->getNumberPlayers() - $numParticipantes,
+
 
             ];
         
@@ -211,91 +254,7 @@ class EventsController extends AbstractFOSRestController
     }
 
 
-    /**
-     * @Rest\Get(path="/eventsCustom")
-     * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
-     */
-    public function getEventsCustom(
-        EventsRepository $eventsRepository,
-        EntityManagerInterface $entityManager
-    ) {
-        $eventsRepository = $entityManager ->getRepository(Events::class);
-        $events = $eventsRepository->findAll();
-
-        $data = [];
-        foreach ($events as $event){
-
-            $data[] =[
-                'id' => $event->getId(),
-                'name' => $event->getName(),
-                'is_private' => $event->isIsPrivate(),
-                'details' => $event->getDetails(),
-                'price' => $event->getPrice(),
-                'date' => $event->getDate(),
-                'time' => $event->getTime(),
-                'duration' => $event->getDuration(),
-                'number_players' => $event->getNumberPlayers(),
-                'sport_center_custom' => $event->getSportCenterCustom(),
-                'fk_sports_id' => $event->getFkSport() ? [
-                    'id' => $event->getFkSport()->getId(),
-                    'name' => $event->getFkSport()->getName(),
-                    'need_team' => $event->getFkSport()->isNeedTeam(),
-                    'image' => $event->getFkSport()->getImage()
-                ] : null,
-                //'fk_sportcenter_id' => [
-                //    'id' => $event->getFkSportcenter()->getId(),
-                //    'fk_services_id' => [
-                //        'id' => $event->getFkSportcenter()->getFkServices()->getId(),
-                //        'type' => $event->getFkSportcenter()->getFkServices()->getType()
-                //    ],
-                //    'name' => $event->getFkSportcenter()->getName(),
-                //    'municipality' => $event->getFkSportcenter()->getMunicipality(),
-                //    'address' => $event->getFkSportcenter()->getAddress(),
-                //    'image' => $event->getFkSportcenter()->getImage(),
-                //    'phone' => $event->getFkSportcenter()->getPhone()
-                //],
-                'fk_difficulty_id' => $event->getFkDifficulty() ? [
-                    'id' => $event->getFkDifficulty()->getId(),
-                    'type' => $event->getFkDifficulty()->getType(),
-                ] : null,
-                'fk_sex_id' => $event->getFkSex() ? [
-                    'id' => $event->getFkSex()->getId(),
-                    'gender' => $event->getFkSex()->getGender(),
-                ] : null,
-                'fk_person_id' => $event->getFkPerson() ? [
-                    'id' => $event->getFkPerson()->getId(),
-             //       'image_profile' => $event->getFkPerson()->getImageProfile(),
-                    'name' => $event->getFkPerson()->getName(),
-                    'last_name' => $event->getFkPerson()->getLastName(),
-             //       'birthday' => $event->getFkPerson()->getBirthday(),
-             //       'weight' => $event->getFkPerson()->getWeight(),
-             //       'geight' => $event->getFkPerson()->getHeight(),
-             //       'nationality' => $event->getFkPerson()->getNationality(),
-             //       'fk_sex_id' => $event->getFkPerson() ? [
-             //           'id' => $event->getFkPerson()->getFkSex()->getId(),
-             //           'gender' => $event->getFkPerson()->getFkSex()->getGender(),
-             //       ] : null,
-                    //'fk_user_id' => [
-                    //    'id' => $event->getFkPerson()->getFkUser()->getId(),
-                    //    'email' => $event->getFkPerson()->getFkUser()->getEmail(),
-                    //  'roles' => $event->getFkPerson()->getFkUser()->getRoles(),
-                    //    'password' => $event->getFkPerson()->getFkUser()->getPassword(),
-                    //    'username' => $event->getFkPerson()->getFkUser()->getUsername(),
-                    //    'name_and_lastname' => $event->getFkPerson()->getFkUser()->getNameAndLastname(),
-                    //    'phone' => $event->getFkPerson()->getFkUser()->getPhone(),
-                    //],
-                    'fk_teamcolor_id' => $event->getFkTeamColor() ? [
-                        'id' => $event->getFkTeamColor()->getId(),
-                        'team_a' => $event->getFkTeamColor()->getTeamA(),
-                        'team_b' => $event->getFkTeamColor()->getTeamB(),
-                    ] : null,
-                ] : null,
-
-            ];
-        }
-        return new JsonResponse($data);
-        
-    }
+    
 
     
 
