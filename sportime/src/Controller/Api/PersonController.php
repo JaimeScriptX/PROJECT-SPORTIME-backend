@@ -193,7 +193,7 @@ class PersonController extends AbstractFOSRestController
      * @Rest\Put(path="/persons/{id}")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
      */
-    public function putEventsCustom(
+    public function putPerson(
         Request $request, 
         int $id,
         PersonRepository $personRepository
@@ -228,12 +228,12 @@ class PersonController extends AbstractFOSRestController
      * @Rest\Delete(path="/persons/{id}")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
      */
-    public function deleteEventsSportime(
+    public function deletePerson(
         EntityManagerInterface $entityManager,
         Request $request,
         int $id
     ) {
-        $personRepository = $entityManager->getRepository(Events::class);
+        $personRepository = $entityManager->getRepository(Person::class);
         $person = $personRepository->find($id);
     
         if (!$person) {
