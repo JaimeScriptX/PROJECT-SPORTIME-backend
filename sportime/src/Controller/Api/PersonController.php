@@ -61,8 +61,10 @@ class PersonController extends AbstractFOSRestController
                 'weight' => $person->getWeight(),
                 'height' => $person->getHeight(),
                 'nationality' => $person->getNationality(),
+                'city' => $person->getCity(),
                 'games_played' => $person->getGamesPlayed(),
                 'victories' => $person->getVictories(),
+                'defeat' => $person->getDefeat(),
                 'ratio' => $ratio,
             
                 'fk_sex_id' => [
@@ -131,8 +133,10 @@ class PersonController extends AbstractFOSRestController
             'weight' => $person->getWeight(),
             'height' => $person->getHeight(),
             'nationality' => $person->getNationality(),
+            'city' => $person->getCity(),
             'games_played' => $person->getGamesPlayed(),
             'victories' => $person->getVictories(),
+            'defeat' => $person->getDefeat(),
             'ratio' => $ratio,
             'fk_sex_id' => $person-> getFkSex() ? [
                 'id' => $person->getFkSex()->getId(),
@@ -184,10 +188,9 @@ class PersonController extends AbstractFOSRestController
 
         if($partidosJugados > 0 && $victorias > 0) {
         $ratio = $victorias / $partidosJugados;
+        
          }
         
-        
-
         $data = [
             'id' => $person->getId(),
             'image_profile' => $person->getImageProfile(),
@@ -197,9 +200,11 @@ class PersonController extends AbstractFOSRestController
             'weight' => $person->getWeight(),
             'height' => $person->getHeight(),
             'nationality' => $person->getNationality(),
+            'city' => $person->getCity(),
             'games_played' => $person->getGamesPlayed(),
             'victories' => $person->getVictories(),
             'ratio' => $ratio,
+            'defeat' => $person->getDefeat(),
             'fk_sex_id' => $person-> getFkSex() ? [
                 'id' => $person->getFkSex()->getId(),
                 'gender' => $person->getFkSex()->getGender()
@@ -239,9 +244,11 @@ class PersonController extends AbstractFOSRestController
         $person->setWeight($data['weight']);
         $person->setHeight($data['height']);
         $person->setNationality($data['nationality']);
+        $person->setCity($data['city']);
         $person->setGamesPlayed($data['games_played']);
         $person->setVictories($data['victories']);
-
+        $person->setDefeat($data['defeat']);
+        
         // Agregar campo foráneo "sex"
         $sex = $entityManager->getRepository(Sex::class)->findOneBy(['gender' => $data['fk_sex']]);
         $person->setFkSex($sex);
@@ -274,8 +281,10 @@ class PersonController extends AbstractFOSRestController
         empty($data['weight']) ? true : $person->setWeight($data['weight']);
         empty($data['height']) ? true : $person->setHeight($data['height']);
         empty($data['nationality']) ? true : $person->setNationality($data['nationality']);
+        empty($data['city']) ? true : $person->setCity($data['city']);
         empty($data['games_played']) ? true : $person->setGamesPlayed($data['games_played']);
         empty($data['victories']) ? true : $person->setVictories($data['victories']);
+        empty($data['defeat']) ? true : $person->setDefeat($data['defeat']);
 
         //fk
         empty($data['fk_sex']) ? true : $person->setFkSex($data['fk_sex']);

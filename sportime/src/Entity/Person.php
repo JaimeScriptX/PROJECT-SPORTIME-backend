@@ -84,6 +84,16 @@ class Person
      */
     private $victories;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $defeat;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $city;
+
 
     public function __construct()
     {
@@ -285,6 +295,30 @@ class Person
     public function setVictories(int $victories): self
     {
         $this->victories = $victories;
+
+        return $this;
+    }
+
+    public function getDefeat(): ?int
+    {
+        return $this->defeat;
+    }
+
+    public function setDefeat(int $defeat): self
+    {
+        $this->defeat = $defeat;
+
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(string $city): self
+    {
+        $this->city = $city;
 
         return $this;
     }
