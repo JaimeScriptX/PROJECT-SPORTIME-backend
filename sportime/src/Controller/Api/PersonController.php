@@ -55,8 +55,7 @@ class PersonController extends AbstractFOSRestController
             $data[] = [
                 'id' => $person->getId(),
                 'image_profile' => $person->getImageProfile(),
-                'name' => $person->getName(),
-                'last_name' => $person->getLastName(),
+                'name_and_lastname' => $person->getNameAndLastname(),
                 'birthday' => $person->getBirthday(),
                 'weight' => $person->getWeight(),
                 'height' => $person->getHeight(),
@@ -127,8 +126,7 @@ class PersonController extends AbstractFOSRestController
         $data = [
             'id' => $person->getId(),
             'image_profile' => $person->getImageProfile(),
-            'name' => $person->getName(),
-            'last_name' => $person->getLastName(),
+            'name_and_lastname' => $person->getNameAndLastname(),
             'birthday' => $person->getBirthday(),
             'weight' => $person->getWeight(),
             'height' => $person->getHeight(),
@@ -158,18 +156,17 @@ class PersonController extends AbstractFOSRestController
 
 
     /**
-     * @Rest\Get(path="/personsByName/{name}/{last_name}")
+     * @Rest\Get(path="/personsByName/{name_and_lastname}")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
      */
     public function getPersonByName(
-        string $name,
-        string $last_name,
+        string $name_and_lastname,
         PersonRepository $personRepository,
         EntityManagerInterface $em
     ){
         //$person= $personRepository->find($id);
 
-        $person = $em->getRepository(Person::class)->findOneBy(['name' => $name, 'last_name' => $last_name]);
+        $person = $em->getRepository(Person::class)->findOneBy(['name_and_lastname' => $name_and_lastname]);
 
 
 
@@ -180,7 +177,7 @@ class PersonController extends AbstractFOSRestController
             );
         }
 
-        
+
        
         $victorias = $person->getVictories();
         $partidosJugados = $person->getGamesPlayed();
@@ -194,8 +191,7 @@ class PersonController extends AbstractFOSRestController
         $data = [
             'id' => $person->getId(),
             'image_profile' => $person->getImageProfile(),
-            'name' => $person->getName(),
-            'last_name' => $person->getLastName(),
+            'name_and_lastname' => $person->getNameAndLastname(),
             'birthday' => $person->getBirthday(),
             'weight' => $person->getWeight(),
             'height' => $person->getHeight(),
@@ -239,8 +235,7 @@ class PersonController extends AbstractFOSRestController
         
         $person = new Person();
         $person->setImageProfile($data['image_profile']);
-        $person->setName($data['name']);
-        $person->setLastName($data['last_name']);
+        $person->setNameAndLastname($data['name_and_lastname']);
         $person->setBirthday(new \DateTime($data['birthday']));
         $person->setWeight($data['weight']);
         $person->setHeight($data['height']);
@@ -277,8 +272,7 @@ class PersonController extends AbstractFOSRestController
         $data = json_decode($request->getContent(), true);
 
         empty($data['image_profile']) ? true : $person->setImageProfile($data['image_profile']);
-        empty($data['name']) ? true : $person->setName($data['name']);
-        empty($data['last_name']) ? true : $person->setLastName($data['last_name']);
+        empty($data['name_and_lastname']) ? true : $person->setNameAndLastname($data['name_and_lastname']);
         empty($data['birthday']) ? true : $person->setBirthday(new \DateTime($data['birthday']));
         empty($data['weight']) ? true : $person->setWeight($data['weight']);
         empty($data['height']) ? true : $person->setHeight($data['height']);
