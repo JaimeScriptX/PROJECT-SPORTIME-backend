@@ -30,7 +30,6 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
     $user->setRoles(['ROLE_USER']);
     // Aquí puedes agregar otros campos de usuario, como nombre, apellido, etc.
     $user->setUsername($data['username']);
-    $user->setNameAndLastname($data['name_and_lastname']);
     $user->setPhone($data['phone']);
     $token = $jwtManager->create($user);
 
@@ -75,7 +74,7 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
             'email' => $user->getEmail(),
             'roles' => $user->getRoles(),
             'username' => $user->getUsername(),
-            'name_and_lastname' => $user->getNameAndLastname(),
+            
             'phone' => $user->getPhone(),
             'token' => $token,
             // ...

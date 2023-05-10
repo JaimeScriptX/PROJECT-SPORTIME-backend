@@ -40,15 +40,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $username;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name_and_lastname;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $phone;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Person", mappedBy="fk_user")
+     */
+    private $person;
+
+  
 
     public function getId(): ?int
     {
@@ -148,17 +151,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getNameAndLastname(): ?string
-    {
-        return $this->name_and_lastname;
-    }
-
-    public function setNameAndLastname(string $name_and_lastname): self
-    {
-        $this->name_and_lastname = $name_and_lastname;
-
-        return $this;
-    }
 
     public function getPhone(): ?string
     {
@@ -171,4 +163,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+  /**
+     * Get the person associated with the user.
+     *
+     * @return Person|null
+     */
+    public function getPerson(): ?Person
+    {
+        return $this->person;
+    }
+
+    /**
+     * Set the person associated with the user.
+     *
+     * @param Person|null $person
+     *
+     * @return self
+     */
+    public function setPerson(?Person $person): self
+    {
+        $this->person = $person;
+
+        // set the owning side of the relation if necessary
+        if ($person && $person->getFkUser() !== $this) {
+            $person->setFkUser($this);
+        }
+
+        return $this;
+    }
+
+   
+
+
+
 }

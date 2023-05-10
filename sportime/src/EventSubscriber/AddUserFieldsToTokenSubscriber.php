@@ -18,12 +18,24 @@ class AddUserFieldsToTokenSubscriber implements EventSubscriberInterface
     
         $user = $event->getUser();
 
+        // Obtener la instancia de Person asociada al objeto User
+        $person = $user->getPerson();
+
+        // Verificar si la instancia de Person es válida
+        if ($person instanceof Person) {
+            // Agregar la propiedad 'image_profile' al payload del token
+            $payload['image_profile'] = $person->getImageProfile();
+            $payload['name'] = $person->getName();
+            $payload['last_name'] = $person->getLastName();
+}
+        
+
         // Add the `username` and `id` fields to the token payload
-        $payload = $event->getData();
+
         $payload['id'] = $user->getId();
         $payload['username'] = $user->getUsername();
-        $payload['name_and_lastname'] = $user->getNameAndLastname();
-        
+        $payload['email'] = $user->getEmail();
+
         $event->setData($payload);
     }
 

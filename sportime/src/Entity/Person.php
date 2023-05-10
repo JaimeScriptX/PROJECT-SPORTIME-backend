@@ -70,7 +70,8 @@ class Person
     private $eventPlayers;
 
     /**
-     * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="App\Entity\User", inversedBy="person")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $fk_user;
 
