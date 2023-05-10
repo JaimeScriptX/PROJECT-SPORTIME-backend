@@ -23,17 +23,7 @@ class Person
      * @ORM\Column(type="string", length=512, nullable=true)
      */
     private $image_profile;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $last_name;
-
+    
     /**
      * @ORM\Column(type="date")
      */
@@ -100,6 +90,11 @@ class Person
      */
     private $image_banner;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name_and_lastname;
+
    
 
     public function __construct()
@@ -126,29 +121,7 @@ class Person
         return $this;
     }
 
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getLastName(): ?string
-    {
-        return $this->last_name;
-    }
-
-    public function setLastName(string $last_name): self
-    {
-        $this->last_name = $last_name;
-
-        return $this;
-    }
+   
 
     public function getBirthday(): ?\DateTimeInterface
     {
@@ -338,6 +311,18 @@ class Person
     public function setImageBanner(?string $image_banner): self
     {
         $this->image_banner = $image_banner;
+
+        return $this;
+    }
+
+    public function getNameAndLastname(): ?string
+    {
+        return $this->name_and_lastname;
+    }
+
+    public function setNameAndLastname(string $name_and_lastname): self
+    {
+        $this->name_and_lastname = $name_and_lastname;
 
         return $this;
     }
