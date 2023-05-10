@@ -266,28 +266,43 @@ class PersonController extends AbstractFOSRestController
     public function putPerson(
         Request $request, 
         int $id,
-        PersonRepository $personRepository
+        PersonRepository $personRepository,
+        EntityManagerInterface $em
     ){
-        $person = $personRepository->findOneBy(['id' => $id]);
+        $person = $em->getRepository(Person::class)->find($id);
+
+
+        if (!$person) {
+            throw $this->createNotFoundException('Person not found');
+        }
+        
+            
+            
+
         $data = json_decode($request->getContent(), true);
 
-        empty($data['image_profile']) ? true : $person->setImageProfile($data['image_profile']);
-        empty($data['name_and_lastname']) ? true : $person->setNameAndLastname($data['name_and_lastname']);
-        empty($data['birthday']) ? true : $person->setBirthday(new \DateTime($data['birthday']));
-        empty($data['weight']) ? true : $person->setWeight($data['weight']);
-        empty($data['height']) ? true : $person->setHeight($data['height']);
-        empty($data['nationality']) ? true : $person->setNationality($data['nationality']);
-        empty($data['city']) ? true : $person->setCity($data['city']);
-        empty($data['games_played']) ? true : $person->setGamesPlayed($data['games_played']);
-        empty($data['victories']) ? true : $person->setVictories($data['victories']);
-        empty($data['defeat']) ? true : $person->setDefeat($data['defeat']);
-        empty($data['image_banner']) ? true : $person->setImageBanner($data['image_banner']);
+        $person->setImageProfile($data['image_profile']);
+        $person->setNameAndLastname($data['name_and_lastname']);
+        $person->setBirthday(new \DateTime($data['birthday']));
+        $person->setWeight($data['weight']);
+        $person->setHeight($data['height']);
+        $person->setNationality($data['nationality']);
+        $person->setCity($data['city']);
+        $person->setGamesPlayed($data['games_played']);
+        $person->setVictories($data['victories']);
+        $person->setDefeat($data['defeat']);
+        $person->setImageBanner($data['image_banner']);
 
-        //fk
-        empty($data['fk_sex']) ? true : $person->setFkSex($data['fk_sex']);
-        empty($data['fk_user']) ? true : $person->setFkUser($data['fk_user']);
+        //FK
+        $sex = $em->getRepository(Sex::class)->findOneBy(['gender' => $data['fk_sex']]);
+        $person->setFkSex($sex);
 
-        $updatedPersons = $personRepository->updateEvents($person);
+        $user = $em->getRepository(User::class)->findOneBy(['id' => $data['fk_user']]);
+        $person->setFkUser($user);
+
+
+        $em->flush();
+
 
         return new JsonResponse(
             ['code' => 200, 'message' => 'Person updated successfully.'],
