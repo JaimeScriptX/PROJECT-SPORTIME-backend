@@ -6,6 +6,9 @@
 parameters:
 
 services:
+    App\EventSubscriber\AddUserFieldsToTokenSubscriber:
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJwtCreated }
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
