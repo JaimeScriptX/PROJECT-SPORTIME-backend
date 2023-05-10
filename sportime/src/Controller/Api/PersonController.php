@@ -66,6 +66,7 @@ class PersonController extends AbstractFOSRestController
                 'victories' => $person->getVictories(),
                 'defeat' => $person->getDefeat(),
                 'ratio' => $ratio,
+                'image_banner' => $person->getImageBanner(),
             
                 'fk_sex_id' => [
                     'id' => $sex->getId(),
@@ -77,7 +78,6 @@ class PersonController extends AbstractFOSRestController
                    // 'roles' => $person->getFkUser()->getRoles(),
                     'password' => $person->getFkUser()->getPassword(),
                     'username' => $person->getFkUser()->getUsername(),
-                    'name_and_lastname' => $person->getFkUser()->getNameAndLastname(),
                     'phone' => $person->getFkUser()->getPhone(),
                 ],
             ];
@@ -138,6 +138,7 @@ class PersonController extends AbstractFOSRestController
             'victories' => $person->getVictories(),
             'defeat' => $person->getDefeat(),
             'ratio' => $ratio,
+            'image_banner' => $person->getImageBanner(),
             'fk_sex_id' => $person-> getFkSex() ? [
                 'id' => $person->getFkSex()->getId(),
                 'gender' => $person->getFkSex()->getGender()
@@ -148,7 +149,6 @@ class PersonController extends AbstractFOSRestController
                // 'roles' => $person->getFkUser()->getRoles(),
                 'password' => $person->getFkUser()->getPassword(),
                 'username' => $person->getFkUser()->getUsername(),
-                'name_and_lastname' => $person->getFkUser()->getNameAndLastname(),
                 'phone' => $person->getFkUser()->getPhone(),
             ] : null,
         ];
@@ -205,6 +205,7 @@ class PersonController extends AbstractFOSRestController
             'victories' => $person->getVictories(),
             'ratio' => $ratio,
             'defeat' => $person->getDefeat(),
+            'image_banner' => $person->getImageBanner(),
             'fk_sex_id' => $person-> getFkSex() ? [
                 'id' => $person->getFkSex()->getId(),
                 'gender' => $person->getFkSex()->getGender()
@@ -248,6 +249,7 @@ class PersonController extends AbstractFOSRestController
         $person->setGamesPlayed($data['games_played']);
         $person->setVictories($data['victories']);
         $person->setDefeat($data['defeat']);
+        $person->setImageBanner($data['image_banner']);
         
         // Agregar campo foráneo "sex"
         $sex = $entityManager->getRepository(Sex::class)->findOneBy(['gender' => $data['fk_sex']]);
@@ -285,6 +287,7 @@ class PersonController extends AbstractFOSRestController
         empty($data['games_played']) ? true : $person->setGamesPlayed($data['games_played']);
         empty($data['victories']) ? true : $person->setVictories($data['victories']);
         empty($data['defeat']) ? true : $person->setDefeat($data['defeat']);
+        empty($data['image_banner']) ? true : $person->setImageBanner($data['image_banner']);
 
         //fk
         empty($data['fk_sex']) ? true : $person->setFkSex($data['fk_sex']);

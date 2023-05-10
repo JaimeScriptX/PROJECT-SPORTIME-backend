@@ -47,7 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $phone;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Person", mappedBy="fk_user")
+     * @ORM\OneToOne(targetEntity="App\Entity\Person", mappedBy="fk_user", cascade={"persist", "remove"})
      */
     private $person;
 

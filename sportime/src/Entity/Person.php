@@ -95,6 +95,12 @@ class Person
      */
     private $city;
 
+    /**
+     * @ORM\Column(type="string", length=512, nullable=true)
+     */
+    private $image_banner;
+
+   
 
     public function __construct()
     {
@@ -324,7 +330,17 @@ class Person
         return $this;
     }
 
+    public function getImageBanner(): ?string
+    {
+        return $this->image_banner;
+    }
 
+    public function setImageBanner(?string $image_banner): self
+    {
+        $this->image_banner = $image_banner;
+
+        return $this;
+    }
 
     
 }
