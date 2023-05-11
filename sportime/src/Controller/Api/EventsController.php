@@ -53,6 +53,7 @@ class EventsController extends AbstractFOSRestController
             $numParticipantes=0;
             foreach ($eventPlayers as $eventPlayer) {
                 $numParticipantes++;
+                $numParticipantes++;
                 $eventPlayerData[] = [
                     'id' => $eventPlayer->getId(),
                     'fk_event_id' => $eventPlayer->getFkEvent()->getId(),
@@ -161,6 +162,7 @@ class EventsController extends AbstractFOSRestController
             $eventPlayerData = [];
             $numParticipantes=0;
             foreach ($eventPlayers as $eventPlayer) {
+                $numParticipantes++;
                 $numParticipantes++;
                 $eventPlayerData[] = [
                     'id' => $eventPlayer->getId(),
