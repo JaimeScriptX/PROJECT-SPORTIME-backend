@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Entity\Person;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,11 +26,13 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
     $data = json_decode($request->getContent(), true);
 
     $user = new User();
+    $person= new Person();
     $user->setEmail($data['email']);
     $user->setPassword($encoder->encodePassword($user, $data['password']));
     $user->setRoles(['ROLE_USER']);
     // Aquí puedes agregar otros campos de usuario, como nombre, apellido, etc.
     $user->setUsername($data['username']);
+    //$person->setNameAndLastname($data['name_lastname']);
     $user->setPhone($data['phone']);
     $token = $jwtManager->create($user);
 
@@ -63,6 +66,7 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
      }
 
     $entityManager = $this->getDoctrine()->getManager();
+    //$entityManager->persist($person);
     $entityManager->persist($user);
     $entityManager->flush();
 
@@ -74,7 +78,7 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
             'email' => $user->getEmail(),
             'roles' => $user->getRoles(),
             'username' => $user->getUsername(),
-            
+            //'name_lastname' => $person->getNameAndLastname(), // 'name_lastname' es el nombre de la propiedad en la entidad 'Person
             'phone' => $user->getPhone(),
             'token' => $token,
             // ...

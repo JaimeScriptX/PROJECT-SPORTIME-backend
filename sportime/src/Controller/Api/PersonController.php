@@ -72,12 +72,12 @@ class PersonController extends AbstractFOSRestController
                     'gender' => $sex->getGender(),
                 ],
                 'fk_user_id' => [
-                    'id' => $person->getFkUser()->getId(),
-                    'email' => $person->getFkUser()->getEmail(),
+                   // 'id' => $person->getFkUser()->getId(),
+                   // 'email' => $person->getFkUser()->getEmail(),
                    // 'roles' => $person->getFkUser()->getRoles(),
-                    'password' => $person->getFkUser()->getPassword(),
+                    // 'password' => $person->getFkUser()->getPassword(),
                     'username' => $person->getFkUser()->getUsername(),
-                    'phone' => $person->getFkUser()->getPhone(),
+                   // 'phone' => $person->getFkUser()->getPhone(),
                 ],
             ];
         }
@@ -142,12 +142,12 @@ class PersonController extends AbstractFOSRestController
                 'gender' => $person->getFkSex()->getGender()
             ] : null,
             'fk_user_id' => $person->getFkUser() ? [
-                'id' => $person->getFkUser()->getId(),
-                'email' => $person->getFkUser()->getEmail(),
+               // 'id' => $person->getFkUser()->getId(),
+               // 'email' => $person->getFkUser()->getEmail(),
                // 'roles' => $person->getFkUser()->getRoles(),
-                'password' => $person->getFkUser()->getPassword(),
+              //  'password' => $person->getFkUser()->getPassword(),
                 'username' => $person->getFkUser()->getUsername(),
-                'phone' => $person->getFkUser()->getPhone(),
+              //  'phone' => $person->getFkUser()->getPhone(),
             ] : null,
         ];
     
@@ -206,15 +206,15 @@ class PersonController extends AbstractFOSRestController
                 'id' => $person->getFkSex()->getId(),
                 'gender' => $person->getFkSex()->getGender()
             ] : null,
-           // 'fk_user_id' => $person->getFkUser() ? [
+            'fk_user_id' => $person->getFkUser() ? [
              //   'id' => $person->getFkUser()->getId(),
-               // 'email' => $person->getFkUser()->getEmail(),
+              //  'email' => $person->getFkUser()->getEmail(),
                // 'roles' => $person->getFkUser()->getRoles(),
             //    'password' => $person->getFkUser()->getPassword(),
-               // 'username' => $person->getFkUser()->getUsername(),
+                'username' => $person->getFkUser()->getUsername(),
                // 'name_and_lastname' => $person->getFkUser()->getNameAndLastname(),
                // 'phone' => $person->getFkUser()->getPhone(),
-            //] : null,
+            ] : null,
         ];
     
         return new JsonResponse($data, Response::HTTP_OK);
