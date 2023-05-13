@@ -22,6 +22,7 @@ use App\Entity\TeamColor;
 use App\Form\Type\EventsFormType;
 use App\Repository\EventPlayersRepository;
 use App\Service\EventsFormProcessor;
+use DateInterval;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class EventsController extends AbstractFOSRestController
@@ -71,16 +72,24 @@ class EventsController extends AbstractFOSRestController
                 }
             }
             
+            $duration = $event->getDuration();
+            $hours = $duration->format('H');
+            $minutes = $duration->format('i');
 
+            $timeEnd = new \DateTime($event->getTime()->format('H:i'));
+            $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
+
+            
             $data[] =[
                 'id' => $event->getId(),
                 'name' => $event->getName(),
                 'is_private' => $event->isIsPrivate(),
                 'details' => $event->getDetails(),
                 'price' => $event->getPrice(),
-                'date' => $event->getDate(),
-                'time' => $event->getTime(),
-                'duration' => $event->getDuration(),
+                'date' => $event->getDate()->format('d/m/Y'),
+                'time' => $event->getTime()->format('H:i'),                
+                'time_end' => $timeEnd->format('H:i'), // 'H:i:s
+                'duration' => $event->getDuration()->format('H:i'),
                 'number_players' => $event->getNumberPlayers(),
                 'sport_center_custom' => $event->getSportCenterCustom(),
                 'fk_sports_id' => $event->getFkSport() ?[
@@ -197,6 +206,12 @@ class EventsController extends AbstractFOSRestController
                 }
             }
             
+            $duration = $event->getDuration();
+            $hours = $duration->format('H');
+            $minutes = $duration->format('i');
+
+            $timeEnd = new \DateTime($event->getTime()->format('H:i'));
+            $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
 
             $data = [
                 'id' => $event->getId(),
@@ -204,9 +219,10 @@ class EventsController extends AbstractFOSRestController
                 'is_private' => $event->isIsPrivate(),
                 'details' => $event->getDetails(),
                 'price' => $event->getPrice(),
-                'date' => $event->getDate(),
-                'time' => $event->getTime(),
-                'duration' => $event->getDuration(),
+                'date' => $event->getDate()->format('d/m/Y'),
+                'time' => $event->getTime()->format('H:i'),                
+                'time_end' => $timeEnd->format('H:i'), // 'H:i:s
+                'duration' => $event->getDuration()->format('H:i'),
                 'number_players' => $event->getNumberPlayers(),
                 'sport_center_custom' => $event->getSportCenterCustom(),
                 'fk_sports_id' => $event->getFkSport() ? [
@@ -543,15 +559,23 @@ class EventsController extends AbstractFOSRestController
                     ];
                 }
 
+            $duration = $event->getDuration();
+            $hours = $duration->format('H');
+            $minutes = $duration->format('i');
+
+            $timeEnd = new \DateTime($event->getTime()->format('H:i'));
+            $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
+
             $jointEvents = [
                 'id' => $event->getId(),
                 'name' => $event->getName(),
                 'is_private' => $event->isIsPrivate(),
                 'details' => $event->getDetails(),
                 'price' => $event->getPrice(),
-                'date' => $event->getDate(),
-                'time' => $event->getTime(),
-                'duration' => $event->getDuration(),
+                'date' => $event->getDate()->format('d/m/Y'),
+                'time' => $event->getTime()->format('H:i'),                
+                'time_end' => $timeEnd->format('H:i'), // 'H:i:s
+                'duration' => $event->getDuration()->format('H:i'),
                 'number_players' => $event->getNumberPlayers(),
                 'sport_center_custom' => $event->getSportCenterCustom(),
                 'fk_sports_id' => $event->getFkSport() ?[
