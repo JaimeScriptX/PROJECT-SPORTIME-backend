@@ -52,7 +52,7 @@ class EventsController extends AbstractFOSRestController
             $eventPlayersA=[];
             $eventPlayersB=[];
 
-            $eventPlayerData = [];
+            
             $numParticipantes=0;
             foreach ($eventPlayers as $eventPlayer) {
                 $numParticipantes++;
@@ -70,11 +70,7 @@ class EventsController extends AbstractFOSRestController
                     ];
                 }
             }
-            $eventPlayerData[] = [
-                'event_players_A' => $eventPlayersA,
-                'event_players_B' => $eventPlayersB,
-               
-            ];
+            
 
             $data[] =[
                 'id' => $event->getId(),
@@ -140,7 +136,11 @@ class EventsController extends AbstractFOSRestController
                         'team_b' => $event->getFkTeamColor()->getTeamB(),
                     ] : null,
                 ] : null,
-                'event_players' => $eventPlayerData ? $eventPlayerData : null,
+                'event_players' => [
+                    'event_players_A' => $eventPlayersA,
+                    'event_players_B' => $eventPlayersB,
+                ],
+
                 'players_registered' => $numParticipantes,
                 'missing_players' => $event->getNumberPlayers() *2 - $numParticipantes,
                 
@@ -178,7 +178,7 @@ class EventsController extends AbstractFOSRestController
             $eventPlayersA=[];
             $eventPlayersB=[];
 
-            $eventPlayerData = [];
+
             $numParticipantes=0;
             foreach ($eventPlayers as $eventPlayer) {
                 $numParticipantes++;
@@ -196,11 +196,7 @@ class EventsController extends AbstractFOSRestController
                     ];
                 }
             }
-            $eventPlayerData[] = [
-                'event_players_A' => $eventPlayersA,
-                'event_players_B' => $eventPlayersB,
-               
-            ];
+            
 
             $data = [
                 'id' => $event->getId(),
@@ -267,7 +263,10 @@ class EventsController extends AbstractFOSRestController
                     ] : null,
                 ] : null,
                 
-                'event_players' => $eventPlayerData ? $eventPlayerData : null,
+                'event_players' => [
+                    'event_players_A' => $eventPlayersA,
+                    'event_players_B' => $eventPlayersB,
+                ],
                 'players_registered' => $numParticipantes,
                 'missing_players' => $event->getNumberPlayers() *2 - $numParticipantes,
 
