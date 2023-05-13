@@ -53,7 +53,7 @@ class EventsController extends AbstractFOSRestController
             $numParticipantes=0;
             foreach ($eventPlayers as $eventPlayer) {
                 $numParticipantes++;
-                $numParticipantes++;
+                
                 $eventPlayerData[] = [
                     'id' => $eventPlayer->getId(),
                     'fk_event_id' => $eventPlayer->getFkEvent()->getId(),
@@ -129,7 +129,7 @@ class EventsController extends AbstractFOSRestController
                 ] : null,
                 'event_players' => $eventPlayerData ? $eventPlayerData : null,
                 'players_registered' => $numParticipantes,
-                'missing_players' => $event->getNumberPlayers() - $numParticipantes,
+                'missing_players' => $event->getNumberPlayers() *2 - $numParticipantes,
             ];
         }
         return new JsonResponse($data, Response::HTTP_OK);
@@ -163,7 +163,7 @@ class EventsController extends AbstractFOSRestController
             $numParticipantes=0;
             foreach ($eventPlayers as $eventPlayer) {
                 $numParticipantes++;
-                $numParticipantes++;
+                
                 $eventPlayerData[] = [
                     'id' => $eventPlayer->getId(),
                     'fk_event_id' => $eventPlayer->getFkEvent()->getId(),
@@ -242,7 +242,7 @@ class EventsController extends AbstractFOSRestController
                 
                 'event_players' => $eventPlayerData ? $eventPlayerData : null,
                 'players_registered' => $numParticipantes,
-                'missing_players' => $event->getNumberPlayers() - $numParticipantes,
+                'missing_players' => $event->getNumberPlayers() *2 - $numParticipantes,
 
 
             ];
