@@ -49,19 +49,32 @@ class EventsController extends AbstractFOSRestController
             $id = $event->getId();
             $eventPlayers = $eventPlayersRepository->findBy(['fk_event' => $id]);
 
+            $eventPlayersA=[];
+            $eventPlayersB=[];
+
             $eventPlayerData = [];
             $numParticipantes=0;
             foreach ($eventPlayers as $eventPlayer) {
                 $numParticipantes++;
                 
-                $eventPlayerData[] = [
-                    'id' => $eventPlayer->getId(),
-                    'fk_event_id' => $eventPlayer->getFkEvent()->getId(),
-                    'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
-                    'equipo' => $eventPlayer->getEquipo(),
-                   
-                ];
+                if ($eventPlayer->getEquipo() == 1){
+                    $eventPlayersA[] = [
+                        'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
+                        'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                    ];
+
+                }else{
+                    $eventPlayersB[] = [
+                        'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
+                        'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                    ];
+                }
             }
+            $eventPlayerData[] = [
+                'event_players_A' => $eventPlayersA,
+                'event_players_B' => $eventPlayersB,
+               
+            ];
 
             $data[] =[
                 'id' => $event->getId(),
@@ -130,6 +143,9 @@ class EventsController extends AbstractFOSRestController
                 'event_players' => $eventPlayerData ? $eventPlayerData : null,
                 'players_registered' => $numParticipantes,
                 'missing_players' => $event->getNumberPlayers() *2 - $numParticipantes,
+                
+
+                
             ];
         }
         return new JsonResponse($data, Response::HTTP_OK);
@@ -159,21 +175,32 @@ class EventsController extends AbstractFOSRestController
                 );
             }
     
+            $eventPlayersA=[];
+            $eventPlayersB=[];
+
             $eventPlayerData = [];
             $numParticipantes=0;
             foreach ($eventPlayers as $eventPlayer) {
                 $numParticipantes++;
                 
-                $eventPlayerData[] = [
-                    'id' => $eventPlayer->getId(),
-                    'fk_event_id' => $eventPlayer->getFkEvent()->getId(),
-                    'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
-                    'equipo' => $eventPlayer->getEquipo(),
-                   
-                ];
-                    
-            
+                if ($eventPlayer->getEquipo() == 1){
+                    $eventPlayersA[] = [
+                        'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
+                        'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                    ];
+
+                }else{
+                    $eventPlayersB[] = [
+                        'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
+                        'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                    ];
+                }
             }
+            $eventPlayerData[] = [
+                'event_players_A' => $eventPlayersA,
+                'event_players_B' => $eventPlayersB,
+               
+            ];
 
             $data = [
                 'id' => $event->getId(),
