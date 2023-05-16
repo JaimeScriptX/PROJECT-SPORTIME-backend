@@ -26,7 +26,7 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
     $data = json_decode($request->getContent(), true);
 
     $user = new User();
-    $person= new Person();
+    
     $user->setEmail($data['email']);
     $user->setPassword($encoder->encodePassword($user, $data['password']));
     $user->setRoles(['ROLE_USER']);
@@ -70,6 +70,12 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
     $entityManager->persist($user);
     $entityManager->flush();
 
+    $person= new Person();
+    $person->setFkUser($user);
+    $person->setNameAndLastname($data['name_and_lastname']);
+    $entityManager->persist($person);
+    $entityManager->flush();
+
     $response = [
         'status' => 'success',
         'message' => 'El usuario ha sido registrado exitosamente',
@@ -78,7 +84,7 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
             'email' => $user->getEmail(),
             'roles' => $user->getRoles(),
             'username' => $user->getUsername(),
-            //'name_lastname' => $person->getNameAndLastname(), // 'name_lastname' es el nombre de la propiedad en la entidad 'Person
+            'name_and_lastname' => $person->getNameAndLastname(), // 'name_lastname' es el nombre de la propiedad en la entidad 'Person
             'phone' => $user->getPhone(),
             'token' => $token,
             // ...

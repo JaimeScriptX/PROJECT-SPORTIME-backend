@@ -30,7 +30,7 @@ class EventPlayers
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $equipo;
+    private $team;
 
     public function getId(): ?int
     {
@@ -63,12 +63,12 @@ class EventPlayers
 
     public function getEquipo(): ?int
     {
-        return $this->equipo;
+        return $this->team;
     }
 
-    public function setEquipo(?int $equipo): self
+    public function setEquipo(?int $team): self
     {
-        $this->equipo = $equipo;
+        $this->team = $team;
 
         return $this;
     }
