@@ -520,9 +520,12 @@ class EventsController extends AbstractFOSRestController
                 Response::HTTP_NO_CONTENT
             );
         } else {
-            $dataCreatedEvents = [];
-            $dataParticipatingEvents = [];
-            $data = [];
+           // $dataCreatedEvents = [];
+           // $dataParticipatingEvents = [];
+            $data = [
+                'created_events' => [],
+                'participating_events' => [],
+            ];
 
             foreach ($participatingEvents as $participatingEvent){
                 if ($participatingEvent->getFkPerson()!=$participatingEvent->getFkEvent()->getFkPerson()){
@@ -557,7 +560,7 @@ class EventsController extends AbstractFOSRestController
 
                     $timeEnd = new \DateTime($participatingEvent->getFkEvent()->getTime()->format('H:i'));
                     $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
-                    $dataParticipatingEvents = [
+                    $data['participating_events'][] = [
                         'id' => $event->getId(),
                         'name' => $event->getName(),
                         'is_private' => $event->isIsPrivate(),
@@ -597,25 +600,7 @@ class EventsController extends AbstractFOSRestController
                         ] : null,
                         'fk_person_id' => $event->getFkPerson() ? [
                             'id' => $event->getFkPerson()->getId(),
-                        //    'image_profile' => $event->getFkPerson()->getImageProfile(),
                            'name_and_lastname' => $event->getFkPerson()->getNameAndLastname(),
-                        //    'birthday' => $event->getFkPerson()->getBirthday(),
-                        //    'weight' => $event->getFkPerson()->getWeight(),
-                        //    'height' => $event->getFkPerson()->getHeight(),
-                        //    'nationality' => $event->getFkPerson()->getNationality(),
-                        //    'fk_sex_id' => $event->getFkPerson()->getFkSex() ? [
-                        //        'id' => $event->getFkPerson()->getFkSex()->getId(),
-                        //        'gender' => $event->getFkPerson()->getFkSex()->getGender(),
-                        //    ] : null,
-                            //'fk_user_id' => [
-                            //    'id' => $event->getFkPerson()->getFkUser()->getId(),
-                            //    'email' => $event->getFkPerson()->getFkUser()->getEmail(),
-                            //  'roles' => $event->getFkPerson()->getFkUser()->getRoles(),
-                            //    'password' => $event->getFkPerson()->getFkUser()->getPassword(),
-                            //    'username' => $event->getFkPerson()->getFkUser()->getUsername(),
-                            //    'name_and_lastname' => $event->getFkPerson()->getFkUser()->getNameAndLastname(),
-                            //    'phone' => $event->getFkPerson()->getFkUser()->getPhone(),
-                            //],
                             'fk_teamcolor_id' => $event->getFkTeamColor() ? [
                                 'id' => $event->getFkTeamColor()->getId(),
                                 'team_a' => $event->getFkTeamColor()->getTeamA(),
@@ -663,7 +648,7 @@ class EventsController extends AbstractFOSRestController
 
                             $timeEnd = new \DateTime($participatingEvent->getFkEvent()->getTime()->format('H:i'));
                             $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
-                            $dataCreatedEvents = [
+                            $data['created_events'][] = [
                                 'id' => $event->getId(),
                         'name' => $event->getName(),
                         'is_private' => $event->isIsPrivate(),
@@ -703,25 +688,7 @@ class EventsController extends AbstractFOSRestController
                         ] : null,
                         'fk_person_id' => $event->getFkPerson() ? [
                             'id' => $event->getFkPerson()->getId(),
-                        //    'image_profile' => $event->getFkPerson()->getImageProfile(),
                            'name_and_lastname' => $event->getFkPerson()->getNameAndLastname(),
-                        //    'birthday' => $event->getFkPerson()->getBirthday(),
-                        //    'weight' => $event->getFkPerson()->getWeight(),
-                        //    'height' => $event->getFkPerson()->getHeight(),
-                        //    'nationality' => $event->getFkPerson()->getNationality(),
-                        //    'fk_sex_id' => $event->getFkPerson()->getFkSex() ? [
-                        //        'id' => $event->getFkPerson()->getFkSex()->getId(),
-                        //        'gender' => $event->getFkPerson()->getFkSex()->getGender(),
-                        //    ] : null,
-                            //'fk_user_id' => [
-                            //    'id' => $event->getFkPerson()->getFkUser()->getId(),
-                            //    'email' => $event->getFkPerson()->getFkUser()->getEmail(),
-                            //  'roles' => $event->getFkPerson()->getFkUser()->getRoles(),
-                            //    'password' => $event->getFkPerson()->getFkUser()->getPassword(),
-                            //    'username' => $event->getFkPerson()->getFkUser()->getUsername(),
-                            //    'name_and_lastname' => $event->getFkPerson()->getFkUser()->getNameAndLastname(),
-                            //    'phone' => $event->getFkPerson()->getFkUser()->getPhone(),
-                            //],
                             'fk_teamcolor_id' => $event->getFkTeamColor() ? [
                                 'id' => $event->getFkTeamColor()->getId(),
                                 'team_a' => $event->getFkTeamColor()->getTeamA(),
@@ -739,12 +706,11 @@ class EventsController extends AbstractFOSRestController
                             ];
                         }
             }             
-            $data = [
-                'created_events' => $dataCreatedEvents,
-                'participating_events' => $dataParticipatingEvents,
-            ];
+            
             
         }
+        
+        
         return new JsonResponse($data, Response::HTTP_OK);
 
         
