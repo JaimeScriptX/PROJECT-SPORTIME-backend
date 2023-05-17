@@ -241,9 +241,9 @@ class PersonController extends AbstractFOSRestController
         $person->setHeight($data['height']);
         $person->setNationality($data['nationality']);
         $person->setCity($data['city']);
-        $person->setGamesPlayed($data['games_played']);
-        $person->setVictories($data['victories']);
-        $person->setDefeat($data['defeat']);
+        // $person->setGamesPlayed($data['games_played']);
+        // $person->setVictories($data['victories']);
+        // $person->setDefeat($data['defeat']);
         $person->setImageBanner($data['image_banner']);
         
         // Agregar campo foráneo "sex"
@@ -288,19 +288,25 @@ class PersonController extends AbstractFOSRestController
         $person->setHeight($data['height']);
         $person->setNationality($data['nationality']);
         $person->setCity($data['city']);
-        $person->setGamesPlayed($data['games_played']);
-        $person->setVictories($data['victories']);
-        $person->setDefeat($data['defeat']);
+        // $person->setGamesPlayed($data['games_played']);
+        // $person->setVictories($data['victories']);
+        // $person->setDefeat($data['defeat']);
         $person->setImageBanner($data['image_banner']);
 
         //FK
         $sex = $em->getRepository(Sex::class)->findOneBy(['gender' => $data['fk_sex']]);
         $person->setFkSex($sex);
 
-        $user = $em->getRepository(User::class)->findOneBy(['id' => $data['fk_user']]);
-        $person->setFkUser($user);
+        // $user = $em->getRepository(User::class)->findOneBy(['id' => $data['fk_user']]);
+        // $person->setFkUser($user);
+       
+        // $user = $person->getFkUser();
+        
+        // // Establecer la relación
+        // $person->setFkUser($user);
+        
 
-
+        $em->persist($person);
         $em->flush();
 
 
