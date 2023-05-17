@@ -26,12 +26,12 @@ class AddUserFieldsToTokenSubscriber implements EventSubscriberInterface
             // Agregar la propiedad 'image_profile' al payload del token
             $payload['image_profile'] = $person->getImageProfile();
             $payload['name_and_lastname'] = $person->getNameAndLastname();
-
+            $payload['id'] = $person->getId();
        
         }
         // Add the `username` and `id` fields to the token payload
 
-        $payload['id'] = $user->getId();
+        // $payload['id'] = $user->getId();
         $payload['username'] = $user->getUsername();
         $payload['email'] = $user->getEmail();
 
