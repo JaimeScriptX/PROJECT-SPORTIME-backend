@@ -156,18 +156,17 @@ class PersonController extends AbstractFOSRestController
 
 
     /**
-     * @Rest\Get(path="/personsByName/{name_and_lastname}")
+     * @Rest\Get(path="/personsByName/{username}")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
      */
-    public function getPersonByName(
-        string $name_and_lastname,
+    public function getPersonByUsername(
+        string $username,
         PersonRepository $personRepository,
         EntityManagerInterface $em
     ){
-        //$person= $personRepository->find($id);
+        $personUser = $em->getRepository(User::class)->findOneBy(['username' => $username]);
 
-        $person = $em->getRepository(Person::class)->findOneBy(['name_and_lastname' => $name_and_lastname]);
-
+        $person = $em->getRepository(Person::class)->findOneBy(['fk_user' => $personUser]);
 
 
         if (!$person){

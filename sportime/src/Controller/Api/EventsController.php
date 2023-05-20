@@ -513,19 +513,25 @@ class EventsController extends AbstractFOSRestController
     ){
         $createdEvents = $eventsRepository->findBy(['fk_person' => $id]);
         $participatingEvents = $eventPlayersRepository->findBy(['fk_person' => $id]);
+        $data = [
+            'created_events' => [],
+            'participating_events' => [],
+        ];
 
         if (!$participatingEvents) {
+            return new JsonResponse($data, Response::HTTP_OK);
+        }
+        elseif ($eventPlayersRepository->findBy(['fk_person' => $id]) == null){
+            //return error 204
             return new JsonResponse(
                 ['code' => 204, 'message' => 'No events found for this query.'],
                 Response::HTTP_NO_CONTENT
             );
-        } else {
+        } 
+        else {
            // $dataCreatedEvents = [];
            // $dataParticipatingEvents = [];
-            $data = [
-                'created_events' => [],
-                'participating_events' => [],
-            ];
+            
 
             foreach ($participatingEvents as $participatingEvent){
                 if ($participatingEvent->getFkPerson()!=$participatingEvent->getFkEvent()->getFkPerson()){
@@ -704,14 +710,15 @@ class EventsController extends AbstractFOSRestController
                         'missing_players' => $event->getNumberPlayers() *2 - $numParticipantes,
                             
                             ];
+                            
                         }
             }             
             
-            
+            return new JsonResponse($data, Response::HTTP_OK);
         }
         
         
-        return new JsonResponse($data, Response::HTTP_OK);
+        
 
         
     }
