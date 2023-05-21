@@ -43,6 +43,7 @@ class SearchController extends AbstractFOSRestController
         $eventRepository = $entityManager->getRepository(Events::class);
         $sportCenterRepository = $entityManager->getRepository(SportCenter::class);
         $sportRepository = $entityManager->getRepository(Sport::class);
+        $eventPlayersRepository = $entityManager->getRepository(EventPlayers::class);
 
         $resultsSearch = [];
         $resultsDate = [];
@@ -173,7 +174,120 @@ class SearchController extends AbstractFOSRestController
             }
         }
 
-        return $results;
+        foreach($results as $result){
+            $id = $result->getId();
+            $eventPlayers = $eventPlayersRepository->findBy(['fk_event' => $id]);
+
+            $eventPlayersA=[];
+            $eventPlayersB=[];
+
+            
+            $numParticipantes=0;
+            foreach ($eventPlayers as $eventPlayer) {
+                $numParticipantes++;
+                
+                if ($eventPlayer->getEquipo() == 1){
+                    $eventPlayersA[] = [
+                        'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
+                        'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                    ];
+
+                }else{
+                    $eventPlayersB[] = [
+                        'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
+                        'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                    ];
+                }
+            }
+            
+            $duration = $result->getDuration();
+            $hours = $duration->format('H');
+            $minutes = $duration->format('i');
+
+            $timeEnd = new \DateTime($result->getTime()->format('H:i'));
+            $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
+
+            $data=[];
+            $data[] =[
+                'id' => $result->getId(),
+                'name' => $result->getName(),
+                'is_private' => $result->isIsPrivate(),
+                'details' => $result->getDetails(),
+                'price' => $result->getPrice(),
+                'date' => $result->getDate()->format('d/m/Y'),
+                'time' => $result->getTime()->format('H:i'),                
+                'time_end' => $timeEnd->format('H:i'), // 'H:i:s
+                'duration' => $result->getDuration()->format('H:i'),
+                'number_players' => $result->getNumberPlayers(),
+                'sport_center_custom' => $result->getSportCenterCustom(),
+                'fk_sports_id' => $result->getFkSport() ?[
+                    'id' => $result->getFkSport()->getId(),
+                    'name' => $result->getFkSport()->getName(),
+                    'need_team' => $result->getFkSport()->isNeedTeam(),
+                    'image' => $result->getFkSport()->getImage()
+                ] : null,
+                'fk_sportcenter_id' => $result->getFkSportcenter() ? [
+                    'id' => $result->getFkSportcenter()->getId(),
+                    'fk_services_id' => $result->getFkSportcenter()->getFkServices() ? [
+                        'id' => $result->getFkSportcenter()->getFkServices()->getId(),
+                        'type' => $result->getFkSportcenter()->getFkServices()->getType()
+                    ] : null,
+                    'name' => $result->getFkSportcenter()->getName(),
+                    'municipality' => $result->getFkSportcenter()->getMunicipality(),
+                    'address' => $result->getFkSportcenter()->getAddress(),
+                    'image' => $result->getFkSportcenter()->getImage(),
+                    'phone' => $result->getFkSportcenter()->getPhone()
+                ] : null,
+                'fk_difficulty_id' => $result->getFkDifficulty() ?[
+                    'id' => $result->getFkDifficulty()->getId(),
+                    'type' => $result->getFkDifficulty()->getType(),
+                ] : null,
+                'fk_sex_id' => $result->getFkSex() ? [
+                    'id' => $result->getFkSex()->getId(),
+                    'gender' => $result->getFkSex()->getGender(),
+                ] : null,
+                'fk_person_id' => $result->getFkPerson() ? [
+                    'id' => $result->getFkPerson()->getId(),
+                //    'image_profile' => $result->getFkPerson()->getImageProfile(),
+                   'name_and_lastname' => $result->getFkPerson()->getNameAndLastname(),
+                //    'birthday' => $result->getFkPerson()->getBirthday(),
+                //    'weight' => $result->getFkPerson()->getWeight(),
+                //    'height' => $result->getFkPerson()->getHeight(),
+                //    'nationality' => $result->getFkPerson()->getNationality(),
+                //    'fk_sex_id' => $result->getFkPerson()->getFkSex() ? [
+                //        'id' => $result->getFkPerson()->getFkSex()->getId(),
+                //        'gender' => $result->getFkPerson()->getFkSex()->getGender(),
+                //    ] : null,
+                    //'fk_user_id' => [
+                    //    'id' => $result->getFkPerson()->getFkUser()->getId(),
+                    //    'email' => $result->getFkPerson()->getFkUser()->getEmail(),
+                    //  'roles' => $result->getFkPerson()->getFkUser()->getRoles(),
+                    //    'password' => $result->getFkPerson()->getFkUser()->getPassword(),
+                    //    'username' => $result->getFkPerson()->getFkUser()->getUsername(),
+                    //    'name_and_lastname' => $result->getFkPerson()->getFkUser()->getNameAndLastname(),
+                    //    'phone' => $result->getFkPerson()->getFkUser()->getPhone(),
+                    //],
+                    'fk_teamcolor_id' => $result->getFkTeamColor() ? [
+                        'id' => $result->getFkTeamColor()->getId(),
+                        'team_a' => $result->getFkTeamColor()->getTeamA(),
+                        'team_b' => $result->getFkTeamColor()->getTeamB(),
+                    ] : null,
+                ] : null,
+                'event_players' => [
+                    'event_players_A' => $eventPlayersA,
+                    'event_players_B' => $eventPlayersB,
+                ],
+
+                'players_registered' => $numParticipantes,
+                'missing_players' => $result->getNumberPlayers() *2 - $numParticipantes,
+                
+
+                
+            ];
+        }
+        return new JsonResponse($data, Response::HTTP_OK);
+        
+
     }
 
 }
