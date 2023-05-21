@@ -16,6 +16,8 @@ use App\Form\Type\PersonFormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Sex;
 use App\Entity\User;
+use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\Env\Env;
 
 
 class PersonController extends AbstractFOSRestController
@@ -31,16 +33,17 @@ class PersonController extends AbstractFOSRestController
         $personRepository = $entityManager->getRepository(Person::class);
         $persons = $personRepository->findAll();
 
-        
+         
         if (!$persons) {
             return new JsonResponse(
                 ['code' => 204, 'message' => 'No persons found for this query.'],
                 Response::HTTP_NO_CONTENT
             );
         } else {
-            
+
+
             $data = [];
-        foreach ($persons as $person) {
+            foreach ($persons as $person) {
 
             $victorias = $person->getVictories();
             $partidosJugados = $person->getGamesPlayed();
@@ -49,12 +52,19 @@ class PersonController extends AbstractFOSRestController
             if($partidosJugados > 0 && $victorias > 0) {
             $ratio = $victorias / $partidosJugados;
              }
+
+            //get de las fotos de perfil con la url
+            $getPhotoProfile = $person->getImageProfile();
+            $photoProfile = $this->getParameter('url') . $getPhotoProfile;
             
+            //get de las fotos de banner con la url
+            $getPhotoBanner = $person->getImageBanner();
+            $photoBanner = $this->getParameter('url') . $getPhotoBanner;
 
             $sex = $person->getFkSex();
             $data[] = [
                 'id' => $person->getId(),
-                'image_profile' => $person->getImageProfile(),
+                'image_profile' =>  $photoProfile,
                 'name_and_lastname' => $person->getNameAndLastname(),
                 'birthday' => $person->getBirthday(),
                 'weight' => $person->getWeight(),
@@ -65,7 +75,7 @@ class PersonController extends AbstractFOSRestController
                 'victories' => $person->getVictories(),
                 'defeat' => $person->getDefeat(),
                 'ratio' => $ratio,
-                'image_banner' => $person->getImageBanner(),
+                'image_banner' => $photoBanner,
             
                 'fk_sex_id' => [
                     'id' => $sex->getId(),
@@ -111,8 +121,7 @@ class PersonController extends AbstractFOSRestController
             );
         }
 
-        
-       
+
         $victorias = $person->getVictories();
         $partidosJugados = $person->getGamesPlayed();
         $ratio = 0;
@@ -121,11 +130,18 @@ class PersonController extends AbstractFOSRestController
         $ratio = $victorias / $partidosJugados;
          }
         
+         //get de las fotos de perfil con la url
+         $getPhotoProfile = $person->getImageProfile();
+         $photoProfile = $this->getParameter('url') . $getPhotoProfile;
+        
+         //get de las fotos de banner con la url
+         $getPhotoBanner = $person->getImageBanner();
+         $photoBanner = $this->getParameter('url') . $getPhotoBanner;
         
 
         $data = [
             'id' => $person->getId(),
-            'image_profile' => $person->getImageProfile(),
+            'image_profile' => $photoProfile,
             'name_and_lastname' => $person->getNameAndLastname(),
             'birthday' => $person->getBirthday(),
             'weight' => $person->getWeight(),
@@ -136,7 +152,7 @@ class PersonController extends AbstractFOSRestController
             'victories' => $person->getVictories(),
             'defeat' => $person->getDefeat(),
             'ratio' => $ratio,
-            'image_banner' => $person->getImageBanner(),
+            'image_banner' => $photoBanner,
             'fk_sex_id' => $person-> getFkSex() ? [
                 'id' => $person->getFkSex()->getId(),
                 'gender' => $person->getFkSex()->getGender()

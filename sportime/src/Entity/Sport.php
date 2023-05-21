@@ -25,11 +25,6 @@ class Sport
     private $name;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $need_team;
-
-    /**
      * @ORM\Column(type="string", length=512, nullable=true)
      */
     private $image;
@@ -43,6 +38,11 @@ class Sport
      * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_sport")
      */
     private $events;
+
+    /**
+     * @ORM\Column(type="string", length=512, nullable=true)
+     */
+    private $logo;
 
     public function __construct()
     {
@@ -63,18 +63,6 @@ class Sport
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function isNeedTeam(): ?bool
-    {
-        return $this->need_team;
-    }
-
-    public function setNeedTeam(?bool $need_team): self
-    {
-        $this->need_team = $need_team;
 
         return $this;
     }
@@ -144,6 +132,18 @@ class Sport
                 $event->setFkSport(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLogo(): ?string
+    {
+        return $this->logo;
+    }
+
+    public function setLogo(?string $logo): self
+    {
+        $this->logo = $logo;
 
         return $this;
     }

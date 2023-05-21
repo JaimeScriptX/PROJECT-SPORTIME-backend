@@ -1,0 +1,8 @@
+App\Entity\Sport:
+    attributes:
+        id:
+            groups: ['sport']
+        name:
+            groups: ['sport']
+        image:
+            groups: ['sport']
