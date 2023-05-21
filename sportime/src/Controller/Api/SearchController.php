@@ -63,8 +63,9 @@ class SearchController extends AbstractFOSRestController
         // Búsqueda por nombre de centro deportivo
         if (isset($data['search'])) {
             $sportCentersName = $sportCenterRepository->findBy(['name' => $data['search']]);
-            $resultsSearch = array_merge($resultsSearch, $sportCentersName);
-            $results = array_merge($results, $sportCentersName);
+            $sportCentersName2 = $eventRepository->findBy(['fk_sportcenter' => $sportCentersName]);
+            $resultsSearch = array_merge($resultsSearch, $sportCentersName2);
+            $results = array_merge($results, $sportCentersName2);
         }
 
         // Búsqueda por nombre personalizado de centro deportivo
@@ -89,14 +90,19 @@ class SearchController extends AbstractFOSRestController
        // Búsqueda por deporte
         if (isset($data['sport'])) {
             $sport = $sportRepository->findOneBy(['name' => $data['sport']]);
+            
 
+            
     
             if ($sport) {
-                $eventsSport = $eventRepository->findBy(['fk_sport' => $sport->getId()]);
+                $eventsSport = $eventRepository->findBy(['fk_sport' => $sport]);
 
                 if ($resultsSearch == null) {
-                    $resultsSport = array_merge($resultsSport, $eventsSport);
-                    $results = array_merge($results, $eventsSport);
+                    foreach ($eventsSport as $eventSport) {
+                        $resultsSport[] = $eventSport;
+                        $results[] = $eventSport;
+                    }
+                    
                 } else {
                     foreach ($resultsSearch as $resultSearch) {
                         foreach ($eventsSport as $eventSport) {
@@ -123,10 +129,28 @@ class SearchController extends AbstractFOSRestController
             $date = new DateTime($data['date']);
             $eventsDate = $eventRepository->findBy(['date' => $date]);
             
-            if ($resultsSport == null) {
+            if ($resultsSport == null && $resultsSearch == null) {
                 $resultsDate = array_merge($resultsDate, $eventsDate);
                 $results = array_merge($results, $eventsDate);
-            } else {
+            } elseif ($resultsSport == null && $resultsSearch != null){
+                foreach ($resultsSearch as $resultSearch) {
+                    foreach ($eventsDate as $eventDate) {
+                        if ($resultSearch->getId() == $eventDate->getId()) {
+                            $resultsDate[] = $eventDate;
+                            $results[] = $eventDate;
+                        }
+                    }
+                }
+                $tempArray = [];
+                foreach ($resultsDate as $eventDate) {
+                    $tempArray[$eventDate->getId()] = $eventDate;
+                }
+
+                // Obtener los elementos únicos sin duplicados
+                $resultsDate = array_values($tempArray);
+                $results = array_values($tempArray);
+
+            }else {
                 foreach ($resultsSport as $resultSport) {
                     foreach ($eventsDate as $eventDate) {
                         if ($resultSport->getId() == $eventDate->getId()) {
@@ -151,10 +175,61 @@ class SearchController extends AbstractFOSRestController
             $time = DateTime::createFromFormat('H:i:s', $data['time']);
             $eventsTime = $eventRepository->findBy(['time' => $time]);
             
-            if ($resultsDate == null) {
+            if ($resultsDate == null && $resultsSport == null && $resultsSearch == null) {
                 $resultsTime = array_merge($resultsTime, $eventsTime);
                 $results = array_merge($results, $eventsTime);
-            } else {
+            } elseif ($resultsDate == null && $resultsSport == null && $resultsSearch != null){
+                foreach ($resultsSearch as $resultSearch) {
+                    foreach ($eventsTime as $eventTime) {
+                        if ($resultSearch->getId() == $eventTime->getId()) {
+                            $resultsTime[] = $eventTime;
+                            $results[] = $eventTime;
+                        }
+                    }
+                }
+                $tempArray = [];
+                foreach ($resultsTime as $eventTime) {
+                    $tempArray[$eventTime->getId()] = $eventTime;
+                }
+
+                // Obtener los elementos únicos sin duplicados
+                $resultsTime = array_values($tempArray);
+                $results = array_values($tempArray);
+            } elseif ($resultsDate == null && $resultsSport != null && $resultsSearch == null){
+                foreach ($resultsSport as $resultSport) {
+                    foreach ($eventsTime as $eventTime) {
+                        if ($resultSport->getId() == $eventTime->getId()) {
+                            $resultsTime[] = $eventTime;
+                            $results[] = $eventTime;
+                        }
+                    }
+                }
+                $tempArray = [];
+                foreach ($resultsTime as $eventTime) {
+                    $tempArray[$eventTime->getId()] = $eventTime;
+                }
+
+                // Obtener los elementos únicos sin duplicados
+                $resultsTime = array_values($tempArray);
+                $results = array_values($tempArray);
+            } elseif ($resultsDate != null && $resultsSport == null && $resultsSearch == null){
+                foreach ($resultsDate as $resultDate) {
+                    foreach ($eventsTime as $eventTime) {
+                        if ($resultDate->getId() == $eventTime->getId()) {
+                            $resultsTime[] = $eventTime;
+                            $results[] = $eventTime;
+                        }
+                    }
+                }
+                $tempArray = [];
+                foreach ($resultsTime as $eventTime) {
+                    $tempArray[$eventTime->getId()] = $eventTime;
+                }
+
+                // Obtener los elementos únicos sin duplicados
+                $resultsTime = array_values($tempArray);
+                $results = array_values($tempArray);
+            } elseif ($resultsDate != null && $resultsSport == null && $resultsSearch != null){
                 foreach ($resultsDate as $resultDate) {
                     foreach ($eventsTime as $eventTime) {
                         if ($resultDate->getId() == $eventTime->getId()) {
@@ -172,9 +247,37 @@ class SearchController extends AbstractFOSRestController
                 $resultsTime = array_values($tempArray);
                 $results = array_values($tempArray);
             }
+            else {
+                foreach ($resultsDate as $resultDate) {
+                    foreach ($eventsTime as $eventTime) {
+                        if ($resultDate->getId() == $eventTime->getId()) {
+                            $resultsTime[] = $eventTime;
+                            $results[] = $eventTime;
+                        }
+                    }
+                }
+                $tempArray = [];
+                foreach ($resultsTime as $eventTime) {
+                    $tempArray[$eventTime->getId()] = $eventTime;
+                }
+
+                // Obtener los elementos únicos sin duplicados
+                $resultsTime = array_values($tempArray);
+                $results = array_values($tempArray);
+            }
+            
         }
 
-        foreach($results as $result){
+        if (!$results) {
+            return new JsonResponse(
+                ['code' => 204, 'message' => 'No search found for this query.']                
+            );
+        } else {
+            $datos=[
+                'events' => [],
+                'sport_centers' => []
+            ];
+            foreach($results as $result){
             $id = $result->getId();
             $eventPlayers = $eventPlayersRepository->findBy(['fk_event' => $id]);
 
@@ -207,8 +310,8 @@ class SearchController extends AbstractFOSRestController
             $timeEnd = new \DateTime($result->getTime()->format('H:i'));
             $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
 
-            $data=[];
-            $data[] =[
+            
+            $datos['events' ][] = [
                 'id' => $result->getId(),
                 'name' => $result->getName(),
                 'is_private' => $result->isIsPrivate(),
@@ -219,25 +322,25 @@ class SearchController extends AbstractFOSRestController
                 'time_end' => $timeEnd->format('H:i'), // 'H:i:s
                 'duration' => $result->getDuration()->format('H:i'),
                 'number_players' => $result->getNumberPlayers(),
-                'sport_center_custom' => $result->getSportCenterCustom(),
+                
                 'fk_sports_id' => $result->getFkSport() ?[
                     'id' => $result->getFkSport()->getId(),
                     'name' => $result->getFkSport()->getName(),
                     'need_team' => $result->getFkSport()->isNeedTeam(),
                     'image' => $result->getFkSport()->getImage()
                 ] : null,
-                'fk_sportcenter_id' => $result->getFkSportcenter() ? [
-                    'id' => $result->getFkSportcenter()->getId(),
-                    'fk_services_id' => $result->getFkSportcenter()->getFkServices() ? [
-                        'id' => $result->getFkSportcenter()->getFkServices()->getId(),
-                        'type' => $result->getFkSportcenter()->getFkServices()->getType()
-                    ] : null,
-                    'name' => $result->getFkSportcenter()->getName(),
-                    'municipality' => $result->getFkSportcenter()->getMunicipality(),
-                    'address' => $result->getFkSportcenter()->getAddress(),
-                    'image' => $result->getFkSportcenter()->getImage(),
-                    'phone' => $result->getFkSportcenter()->getPhone()
-                ] : null,
+               // 'fk_sportcenter_id' => $result->getFkSportcenter() ? [
+               //     'id' => $result->getFkSportcenter()->getId(),
+               //     'fk_services_id' => $result->getFkSportcenter()->getFkServices() ? [
+               //         'id' => $result->getFkSportcenter()->getFkServices()->getId(),
+               //         'type' => $result->getFkSportcenter()->getFkServices()->getType()
+               //     ] : null,
+               //     'name' => $result->getFkSportcenter()->getName(),
+               //     'municipality' => $result->getFkSportcenter()->getMunicipality(),
+               //     'address' => $result->getFkSportcenter()->getAddress(),
+               //     'image' => $result->getFkSportcenter()->getImage(),
+               //     'phone' => $result->getFkSportcenter()->getPhone()
+               // ] : null,
                 'fk_difficulty_id' => $result->getFkDifficulty() ?[
                     'id' => $result->getFkDifficulty()->getId(),
                     'type' => $result->getFkDifficulty()->getType(),
@@ -250,23 +353,7 @@ class SearchController extends AbstractFOSRestController
                     'id' => $result->getFkPerson()->getId(),
                 //    'image_profile' => $result->getFkPerson()->getImageProfile(),
                    'name_and_lastname' => $result->getFkPerson()->getNameAndLastname(),
-                //    'birthday' => $result->getFkPerson()->getBirthday(),
-                //    'weight' => $result->getFkPerson()->getWeight(),
-                //    'height' => $result->getFkPerson()->getHeight(),
-                //    'nationality' => $result->getFkPerson()->getNationality(),
-                //    'fk_sex_id' => $result->getFkPerson()->getFkSex() ? [
-                //        'id' => $result->getFkPerson()->getFkSex()->getId(),
-                //        'gender' => $result->getFkPerson()->getFkSex()->getGender(),
-                //    ] : null,
-                    //'fk_user_id' => [
-                    //    'id' => $result->getFkPerson()->getFkUser()->getId(),
-                    //    'email' => $result->getFkPerson()->getFkUser()->getEmail(),
-                    //  'roles' => $result->getFkPerson()->getFkUser()->getRoles(),
-                    //    'password' => $result->getFkPerson()->getFkUser()->getPassword(),
-                    //    'username' => $result->getFkPerson()->getFkUser()->getUsername(),
-                    //    'name_and_lastname' => $result->getFkPerson()->getFkUser()->getNameAndLastname(),
-                    //    'phone' => $result->getFkPerson()->getFkUser()->getPhone(),
-                    //],
+                
                     'fk_teamcolor_id' => $result->getFkTeamColor() ? [
                         'id' => $result->getFkTeamColor()->getId(),
                         'team_a' => $result->getFkTeamColor()->getTeamA(),
@@ -280,12 +367,25 @@ class SearchController extends AbstractFOSRestController
 
                 'players_registered' => $numParticipantes,
                 'missing_players' => $result->getNumberPlayers() *2 - $numParticipantes,
-                
-
-                
             ];
+
+            $datos['sport_centers'][]=[
+                'sport_center_custom' => $result->getSportCenterCustom() ? $result->getSportCenterCustom() : null,
+                'name' => $result->getFkSportcenter()->getName() ? $result->getFkSportcenter()->getName() : null,
+                'municipality' => $result->getFkSportcenter()->getMunicipality() ? $result->getFkSportcenter()->getMunicipality() : null,
+                'address' => $result->getFkSportcenter()->getAddress() ? $result->getFkSportcenter()->getAddress() : null,
+                'image' => $result->getFkSportcenter()->getImage() ? $result->getFkSportcenter()->getImage() : null,
+                'phone' => $result->getFkSportcenter()->getPhone() ? $result->getFkSportcenter()->getPhone() : null,
+                'fk_services_id' => $result->getFkSportcenter()->getFkServices() ? [
+                        'id' => $result->getFkSportcenter()->getFkServices()->getId(),
+                        'type' => $result->getFkSportcenter()->getFkServices()->getType()
+                    ] : null,
+            ];
+            }
+            return new JsonResponse($datos, Response::HTTP_OK);
+          // return $results;
         }
-        return new JsonResponse($data, Response::HTTP_OK);
+        
         
 
     }
