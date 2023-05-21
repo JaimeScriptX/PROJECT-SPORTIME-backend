@@ -230,15 +230,10 @@ class EventsController extends AbstractFOSRestController
                 'fk_sports_id' => $event->getFkSport() ? [
                     'id' => $event->getFkSport()->getId(),
                     'name' => $event->getFkSport()->getName(),
-                    'need_team' => $event->getFkSport()->isNeedTeam(),
                     'image' => $event->getFkSport()->getImage()
                 ] : null,
                 'fk_sportcenter_id' => $event->getFkSportcenter() ? [
                     'id' => $event->getFkSportcenter()->getId(),
-                    'fk_services_id' => $event->getFkSportcenter()->getFkServices() ? [
-                        'id' => $event->getFkSportcenter()->getFkServices()->getId(),
-                        'type' => $event->getFkSportcenter()->getFkServices()->getType()
-                    ] : null,
                     'name' => $event->getFkSportcenter()->getName(),
                     'municipality' => $event->getFkSportcenter()->getMunicipality(),
                     'address' => $event->getFkSportcenter()->getAddress(),
@@ -598,15 +593,10 @@ class EventsController extends AbstractFOSRestController
                         'fk_sports_id' => $event->getFkSport() ?[
                             'id' => $event->getFkSport()->getId(),
                             'name' => $event->getFkSport()->getName(),
-                            'need_team' => $event->getFkSport()->isNeedTeam(),
                             'image' => $event->getFkSport()->getImage()
                         ] : null,
                         'fk_sportcenter_id' => $event->getFkSportcenter() ? [
                             'id' => $event->getFkSportcenter()->getId(),
-                            'fk_services_id' => $event->getFkSportcenter()->getFkServices() ? [
-                                'id' => $event->getFkSportcenter()->getFkServices()->getId(),
-                                'type' => $event->getFkSportcenter()->getFkServices()->getType()
-                            ] : null,
                             'name' => $event->getFkSportcenter()->getName(),
                             'municipality' => $event->getFkSportcenter()->getMunicipality(),
                             'address' => $event->getFkSportcenter()->getAddress(),
@@ -686,15 +676,10 @@ class EventsController extends AbstractFOSRestController
                                 'fk_sports_id' => $event->getFkSport() ?[
                                     'id' => $event->getFkSport()->getId(),
                                     'name' => $event->getFkSport()->getName(),
-                                    'need_team' => $event->getFkSport()->isNeedTeam(),
                                     'image' => $event->getFkSport()->getImage()
                                 ] : null,
                                 'fk_sportcenter_id' => $event->getFkSportcenter() ? [
                             'id' => $event->getFkSportcenter()->getId(),
-                            'fk_services_id' => $event->getFkSportcenter()->getFkServices() ? [
-                                'id' => $event->getFkSportcenter()->getFkServices()->getId(),
-                                'type' => $event->getFkSportcenter()->getFkServices()->getType()
-                            ] : null,
                             'name' => $event->getFkSportcenter()->getName(),
                             'municipality' => $event->getFkSportcenter()->getMunicipality(),
                             'address' => $event->getFkSportcenter()->getAddress(),

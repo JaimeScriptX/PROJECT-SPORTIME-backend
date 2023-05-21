@@ -22,10 +22,10 @@ class Services
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $type;
+    private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=SportCenter::class, mappedBy="fk_services")
+     * @ORM\ManyToMany(targetEntity=SportCenter::class, mappedBy="fk_services")
      */
     private $sportCenters;
 
@@ -39,14 +39,14 @@ class Services
         return $this->id;
     }
 
-    public function getType(): ?string
+    public function getName(): ?string
     {
-        return $this->type;
+        return $this->name;
     }
 
-    public function setType(string $type): self
+    public function setName(string $name): self
     {
-        $this->type = $type;
+        $this->name = $name;
 
         return $this;
     }
@@ -63,7 +63,7 @@ class Services
     {
         if (!$this->sportCenters->contains($sportCenter)) {
             $this->sportCenters[] = $sportCenter;
-            $sportCenter->setFkServices($this);
+            $sportCenter->addFkService($this);
         }
 
         return $this;
@@ -72,10 +72,7 @@ class Services
     public function removeSportCenter(SportCenter $sportCenter): self
     {
         if ($this->sportCenters->removeElement($sportCenter)) {
-            // set the owning side to null (unless already changed)
-            if ($sportCenter->getFkServices() === $this) {
-                $sportCenter->setFkServices(null);
-            }
+            $sportCenter->removeFkService($this);
         }
 
         return $this;

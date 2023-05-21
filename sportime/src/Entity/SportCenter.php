@@ -55,11 +55,6 @@ class SportCenter
     private $locationSportCenters;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Services::class, inversedBy="sportCenters")
-     */
-    private $fk_services;
-
-    /**
      * @ORM\OneToMany(targetEntity=Timetable::class, mappedBy="fk_sportcenter")
      */
     private $timetables;
@@ -69,12 +64,18 @@ class SportCenter
      */
     private $events;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Services::class, inversedBy="sportCenters")
+     */
+    private $fk_services;
+
     public function __construct()
     {
         $this->fk_sport = new ArrayCollection();
         $this->locationSportCenters = new ArrayCollection();
         $this->timetables = new ArrayCollection();
         $this->events = new ArrayCollection();
+        $this->fk_services = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -196,18 +197,7 @@ class SportCenter
         return $this;
     }
 
-    public function getFkServices(): ?Services
-    {
-        return $this->fk_services;
-    }
-
-    public function setFkServices(?Services $fk_services): self
-    {
-        $this->fk_services = $fk_services;
-
-        return $this;
-    }
-
+        
     /**
      * @return Collection<int, Timetable>
      */
@@ -264,6 +254,30 @@ class SportCenter
                 $event->setFkSportcenter(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Services>
+     */
+    public function getFkServices(): Collection
+    {
+        return $this->fk_services;
+    }
+
+    public function addFkService(Services $fkService): self
+    {
+        if (!$this->fk_services->contains($fkService)) {
+            $this->fk_services[] = $fkService;
+        }
+
+        return $this;
+    }
+
+    public function removeFkService(Services $fkService): self
+    {
+        $this->fk_services->removeElement($fkService);
 
         return $this;
     }
