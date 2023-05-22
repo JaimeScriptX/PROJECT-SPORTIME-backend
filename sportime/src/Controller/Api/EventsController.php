@@ -98,7 +98,8 @@ class EventsController extends AbstractFOSRestController
                     'id' => $event->getFkSport()->getId(),
                     'name' => $event->getFkSport()->getName(),
                     'image' => $event->getFkSport()->getImage(),
-                    'logo' => $event->getFkSport()->getLogo()
+                    'logo_event' => $event->getFkSport()->getLogoEvent(),
+                    'logo_sportcenter' => $event->getFkSport()->getLogoSportcenter()
                 ] : null,
                 'fk_sportcenter_id' => $event->getFkSportcenter() ? [
                     'id' => $event->getFkSportcenter()->getId(),
@@ -106,7 +107,14 @@ class EventsController extends AbstractFOSRestController
                     'municipality' => $event->getFkSportcenter()->getMunicipality(),
                     'address' => $event->getFkSportcenter()->getAddress(),
                     'image' => $event->getFkSportcenter()->getImage(),
-                    'phone' => $event->getFkSportcenter()->getPhone()
+                    'phone' => $event->getFkSportcenter()->getPhone(),
+                    'image_gallery1' => $event->getFkSportcenter()->getImageGallery1(),
+                    'image_gallery2' => $event->getFkSportcenter()->getImageGallery2(),
+                    'image_gallery3' => $event->getFkSportcenter()->getImageGallery3(),
+                    'image_gallery4' => $event->getFkSportcenter()->getImageGallery4(),
+                    'latitude' => $event->getFkSportcenter()->getLatitude(),
+                    'longitude' => $event->getFkSportcenter()->getLongitude(),
+                    'destination' => $event->getFkSportcenter()->getDestination(),
                 ] : null,
                 'fk_difficulty_id' => $event->getFkDifficulty() ?[
                     'id' => $event->getFkDifficulty()->getId(),
@@ -227,7 +235,8 @@ class EventsController extends AbstractFOSRestController
                     'id' => $event->getFkSport()->getId(),
                     'name' => $event->getFkSport()->getName(),
                     'image' => $event->getFkSport()->getImage(),
-                    'logo' => $event->getFkSport()->getLogo()
+                    'logo_event' => $event->getFkSport()->getLogoEvent(),
+                    'logo_sportcenter' => $event->getFkSport()->getLogoSportcenter(),
                 ] : null,
                 'fk_sportcenter_id' => $event->getFkSportcenter() ? [
                     'id' => $event->getFkSportcenter()->getId(),
@@ -235,7 +244,14 @@ class EventsController extends AbstractFOSRestController
                     'municipality' => $event->getFkSportcenter()->getMunicipality(),
                     'address' => $event->getFkSportcenter()->getAddress(),
                     'image' => $event->getFkSportcenter()->getImage(),
-                    'phone' => $event->getFkSportcenter()->getPhone()
+                    'phone' => $event->getFkSportcenter()->getPhone(),
+                    'image_gallery1' => $event->getFkSportcenter()->getImageGallery1(),
+                    'image_gallery2' => $event->getFkSportcenter()->getImageGallery2(),
+                    'image_gallery3' => $event->getFkSportcenter()->getImageGallery3(),
+                    'image_gallery4' => $event->getFkSportcenter()->getImageGallery4(),
+                    'latitude' => $event->getFkSportcenter()->getLatitude(),
+                    'longitude' => $event->getFkSportcenter()->getLongitude(),
+                    'destination' => $event->getFkSportcenter()->getDestination(),
                 ] : null,
                 'fk_difficulty_id' => $event->getFkDifficulty() ? [
                     'id' => $event->getFkDifficulty()->getId(),
@@ -591,7 +607,8 @@ class EventsController extends AbstractFOSRestController
                             'id' => $event->getFkSport()->getId(),
                             'name' => $event->getFkSport()->getName(),
                             'image' => $event->getFkSport()->getImage(),
-                            'logo' => $event->getFkSport()->getLogo()
+                            'logo_event' => $event->getFkSport()->getLogoEvent(),
+                            'logo_sportcenter' => $event->getFkSport()->getLogoSportcenter(),
                         ] : null,
                         'fk_sportcenter_id' => $event->getFkSportcenter() ? [
                             'id' => $event->getFkSportcenter()->getId(),
@@ -599,7 +616,14 @@ class EventsController extends AbstractFOSRestController
                             'municipality' => $event->getFkSportcenter()->getMunicipality(),
                             'address' => $event->getFkSportcenter()->getAddress(),
                             'image' => $event->getFkSportcenter()->getImage(),
-                            'phone' => $event->getFkSportcenter()->getPhone()
+                            'phone' => $event->getFkSportcenter()->getPhone(),
+                            'image_gallery1' => $event->getFkSportcenter()->getImageGallery1(),
+                            'image_gallery2' => $event->getFkSportcenter()->getImageGallery2(),
+                            'image_gallery3' => $event->getFkSportcenter()->getImageGallery3(),
+                            'image_gallery4' => $event->getFkSportcenter()->getImageGallery4(),
+                            'latitude' => $event->getFkSportcenter()->getLatitude(),
+                            'longitude' => $event->getFkSportcenter()->getLongitude(),
+                            'destination' => $event->getFkSportcenter()->getDestination(),
                         ] : null,
                         'fk_difficulty_id' => $event->getFkDifficulty() ?[
                             'id' => $event->getFkDifficulty()->getId(),
@@ -675,7 +699,8 @@ class EventsController extends AbstractFOSRestController
                                     'id' => $event->getFkSport()->getId(),
                                     'name' => $event->getFkSport()->getName(),
                                     'image' => $event->getFkSport()->getImage(),
-                                    'logo' => $event->getFkSport()->getLogo()
+                                    'logo_event' => $event->getFkSport()->getLogoEvent(),
+                                    'logo_sportcenter' => $event->getFkSport()->getLogoSportcenter(),
                                 ] : null,
                                 'fk_sportcenter_id' => $event->getFkSportcenter() ? [
                             'id' => $event->getFkSportcenter()->getId(),
@@ -683,7 +708,14 @@ class EventsController extends AbstractFOSRestController
                             'municipality' => $event->getFkSportcenter()->getMunicipality(),
                             'address' => $event->getFkSportcenter()->getAddress(),
                             'image' => $event->getFkSportcenter()->getImage(),
-                            'phone' => $event->getFkSportcenter()->getPhone()
+                            'phone' => $event->getFkSportcenter()->getPhone(),
+                            'image_gallery1' => $event->getFkSportcenter()->getImageGallery1(),
+                            'image_gallery2' => $event->getFkSportcenter()->getImageGallery2(),
+                            'image_gallery3' => $event->getFkSportcenter()->getImageGallery3(),
+                            'image_gallery4' => $event->getFkSportcenter()->getImageGallery4(),
+                            'latitude' => $event->getFkSportcenter()->getLatitude(),
+                            'longitude' => $event->getFkSportcenter()->getLongitude(),
+                            'destination' => $event->getFkSportcenter()->getDestination(),
                             ] : null,
                             'fk_difficulty_id' => $event->getFkDifficulty() ?[
                                 'id' => $event->getFkDifficulty()->getId(),
