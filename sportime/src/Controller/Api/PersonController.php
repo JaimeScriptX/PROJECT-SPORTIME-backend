@@ -18,6 +18,8 @@ use App\Entity\Sex;
 use App\Entity\User;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Env\Env;
+use DateTime;
+
 
 
 class PersonController extends AbstractFOSRestController
@@ -61,12 +63,19 @@ class PersonController extends AbstractFOSRestController
             $getPhotoBanner = $person->getImageBanner();
             $photoBanner = $this->getParameter('url') . $getPhotoBanner;
 
+             //Calcular la edad
+            $fechaNacimiento = $person->getBirthday();
+            $fechaNacimiento = new DateTime($fechaNacimiento->format('Y-m-d'));
+            $fechaActual = new DateTime();
+            $diferencia = $fechaNacimiento->diff($fechaActual);
+            $edad = $diferencia->y;
+
             $sex = $person->getFkSex();
             $data[] = [
                 'id' => $person->getId(),
                 'image_profile' =>  $photoProfile,
                 'name_and_lastname' => $person->getNameAndLastname(),
-                'birthday' => $person->getBirthday(),
+                'birthday' => $edad,
                 'weight' => $person->getWeight(),
                 'height' => $person->getHeight(),
                 'nationality' => $person->getNationality(),
@@ -137,13 +146,20 @@ class PersonController extends AbstractFOSRestController
          //get de las fotos de banner con la url
          $getPhotoBanner = $person->getImageBanner();
          $photoBanner = $this->getParameter('url') . $getPhotoBanner;
+
+          //Calcular la edad
+          $fechaNacimiento = $person->getBirthday();
+          $fechaNacimiento = new DateTime($fechaNacimiento->format('Y-m-d'));
+          $fechaActual = new DateTime();
+          $diferencia = $fechaNacimiento->diff($fechaActual);
+          $edad = $diferencia->y;
         
 
         $data = [
             'id' => $person->getId(),
             'image_profile' => $photoProfile,
             'name_and_lastname' => $person->getNameAndLastname(),
-            'birthday' => $person->getBirthday(),
+            'birthday' => $edad,
             'weight' => $person->getWeight(),
             'height' => $person->getHeight(),
             'nationality' => $person->getNationality(),

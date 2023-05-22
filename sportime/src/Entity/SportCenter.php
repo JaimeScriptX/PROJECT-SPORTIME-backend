@@ -49,10 +49,6 @@ class SportCenter
      */
     private $fk_sport;
 
-    /**
-     * @ORM\OneToMany(targetEntity=LocationSportCenter::class, mappedBy="fk_sport_center")
-     */
-    private $locationSportCenters;
 
     /**
      * @ORM\OneToMany(targetEntity=Timetable::class, mappedBy="fk_sportcenter")
@@ -69,10 +65,44 @@ class SportCenter
      */
     private $fk_services;
 
+    /**
+     * @ORM\Column(type="string", length=512, nullable=true)
+     */
+    private $image_gallery1;
+
+    /**
+     * @ORM\Column(type="string", length=512, nullable=true)
+     */
+    private $image_gallery2;
+
+    /**
+     * @ORM\Column(type="string", length=512, nullable=true)
+     */
+    private $image_gallery3;
+
+    /**
+     * @ORM\Column(type="string", length=512, nullable=true)
+     */
+    private $image_gallery4;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $latitude;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $longitude;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $destination;
+
     public function __construct()
     {
         $this->fk_sport = new ArrayCollection();
-        $this->locationSportCenters = new ArrayCollection();
         $this->timetables = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->fk_services = new ArrayCollection();
@@ -168,37 +198,6 @@ class SportCenter
     }
 
     /**
-     * @return Collection<int, LocationSportCenter>
-     */
-    public function getLocationSportCenters(): Collection
-    {
-        return $this->locationSportCenters;
-    }
-
-    public function addLocationSportCenter(LocationSportCenter $locationSportCenter): self
-    {
-        if (!$this->locationSportCenters->contains($locationSportCenter)) {
-            $this->locationSportCenters[] = $locationSportCenter;
-            $locationSportCenter->setFkSportCenter($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLocationSportCenter(LocationSportCenter $locationSportCenter): self
-    {
-        if ($this->locationSportCenters->removeElement($locationSportCenter)) {
-            // set the owning side to null (unless already changed)
-            if ($locationSportCenter->getFkSportCenter() === $this) {
-                $locationSportCenter->setFkSportCenter(null);
-            }
-        }
-
-        return $this;
-    }
-
-        
-    /**
      * @return Collection<int, Timetable>
      */
     public function getTimetables(): Collection
@@ -278,6 +277,90 @@ class SportCenter
     public function removeFkService(Services $fkService): self
     {
         $this->fk_services->removeElement($fkService);
+
+        return $this;
+    }
+
+    public function getImageGallery1(): ?string
+    {
+        return $this->image_gallery1;
+    }
+
+    public function setImageGallery1(?string $image_gallery1): self
+    {
+        $this->image_gallery1 = $image_gallery1;
+
+        return $this;
+    }
+
+    public function getImageGallery2(): ?string
+    {
+        return $this->image_gallery2;
+    }
+
+    public function setImageGallery2(?string $image_gallery2): self
+    {
+        $this->image_gallery2 = $image_gallery2;
+
+        return $this;
+    }
+
+    public function getImageGallery3(): ?string
+    {
+        return $this->image_gallery3;
+    }
+
+    public function setImageGallery3(?string $image_gallery3): self
+    {
+        $this->image_gallery3 = $image_gallery3;
+
+        return $this;
+    }
+
+    public function getImageGallery4(): ?string
+    {
+        return $this->image_gallery4;
+    }
+
+    public function setImageGallery4(?string $image_gallery4): self
+    {
+        $this->image_gallery4 = $image_gallery4;
+
+        return $this;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?float $latitude): self
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?float $longitude): self
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getDestination(): ?string
+    {
+        return $this->destination;
+    }
+
+    public function setDestination(?string $destination): self
+    {
+        $this->destination = $destination;
 
         return $this;
     }

@@ -42,7 +42,12 @@ class Sport
     /**
      * @ORM\Column(type="string", length=512, nullable=true)
      */
-    private $logo;
+    private $logo_event;
+
+    /**
+     * @ORM\Column(type="string", length=512, nullable=true)
+     */
+    private $logo_sportcenter;
 
     public function __construct()
     {
@@ -136,14 +141,26 @@ class Sport
         return $this;
     }
 
-    public function getLogo(): ?string
+    public function getLogoEvent(): ?string
     {
-        return $this->logo;
+        return $this->logo_event;
     }
 
-    public function setLogo(?string $logo): self
+    public function setLogoEvent(?string $logo_event): self
     {
-        $this->logo = $logo;
+        $this->logo_event = $logo_event;
+
+        return $this;
+    }
+
+    public function getLogoSportcenter(): ?string
+    {
+        return $this->logo_sportcenter;
+    }
+
+    public function setLogoSportcenter(?string $logo_sportcenter): self
+    {
+        $this->logo_sportcenter = $logo_sportcenter;
 
         return $this;
     }

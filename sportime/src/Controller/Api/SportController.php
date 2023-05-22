@@ -31,18 +31,24 @@ class SportController extends AbstractFOSRestController
             $data = [];
             foreach($sports as $sport){
 
-                //get de las fotos de perfil con la url
+                //get imagesport
                 $getPhotoSport = $sport->getImage();
                 $photoSport = $this->getParameter('url') . $getPhotoSport;
 
-                $getLogo = $sport->getLogo();
-                $Logo = $this->getParameter('url') . $getLogo;
+                //get logo event
+                $getLogoEvent = $sport->getLogoEvent();
+                $LogoEvent = $this->getParameter('url') . $getLogoEvent;
+
+                //get logo sportcenter
+                $getLogoSportCenter = $sport->getLogoSportCenter();
+                $LogoSportCenter = $this->getParameter('url') . $getLogoSportCenter;
 
                 $data[] = [
                     'id' => $sport->getId(),
                     'name' => $sport->getName(),
                     'image' => $photoSport,
-                    'logo' => $Logo,
+                    'logo_event' => $LogoEvent,
+                    'logo_sportcenter' => $LogoSportCenter,
                 ];
 
             }
@@ -67,18 +73,25 @@ class SportController extends AbstractFOSRestController
             );
         }
 
-                //get de las fotos de perfil con la url
+                //get imagesport
                 $getPhotoSport = $sport->getImage();
                 $photoSport = $this->getParameter('url') . $getPhotoSport;
 
-                $getLogo = $sport->getLogo();
-                $Logo = $this->getParameter('url') . $getLogo;
+                //get logo event
+                $getLogoEvent = $sport->getLogoEvent();
+                $LogoEvent = $this->getParameter('url') . $getLogoEvent;
+
+                //get logo sportcenter
+                $getLogoSportCenter = $sport->getLogoSportCenter();
+                $LogoSportCenter = $this->getParameter('url') . $getLogoSportCenter;
+
 
                 $data = [
                     'id' => $sport->getId(),
                     'name' => $sport->getName(),
                     'image' => $photoSport,
-                    'logo' => $Logo,
+                    'logo_event' => $LogoEvent,
+                    'logo_sportcenter' => $LogoSportCenter,
                 ];
 
         return new JsonResponse($data, Response::HTTP_OK);
