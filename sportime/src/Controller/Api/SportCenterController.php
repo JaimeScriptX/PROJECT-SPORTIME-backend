@@ -17,71 +17,180 @@ class SportCenterController extends AbstractFOSRestController
      * @Rest\Get(path="/sportcenter")
      * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
      */
-    public function getSportCenter(SportCenterRepository $sportCenterRepository)
+    public function getSportCenter(SportCenterRepository $sportCenterRepository): Response
     {
-        $sportCenters = $sportCenterRepository->findAll();
+        $entityManager = $this->getDoctrine()->getManager();
+        $sportCenters = $entityManager->getRepository(SportCenter::class)->findAll();
 
-        if(!$sportCenters){
-            return new JsonResponse(
-                ['code' => 204, 'message' => 'No persons found for this query.'],
-                Response::HTTP_NO_CONTENT
-            );
-        }else{
+        //devuelve servicios
+        $sportCenterData = [];
 
-            $data = [];
-            foreach($sportCenters as $sportCenter){
+        foreach ($sportCenters as $sportCenter) {
+            $services = $sportCenter->getFkServices();
+            $servicesData = [];
 
-                //get image
-                $getImage = $sportCenter->getImage();
-                $image = $this->getParameter('url') . $getImage;
-
-                $data[] = [
-                    'id' => $sportCenter->getId(),
-                    'name' => $sportCenter->getName(),
-                    'municipality' => $sportCenter->getMunicipality(),
-                    'address' => $sportCenter->getAddress(),
-                    'image' => $image,
-                    'phone' => $sportCenter->getPhone(),
+            foreach ($services as $service) {
+                $servicesData[] = [
+                    'id' => $service->getId(),
+                    'name' => $service->getName(),
                 ];
-
             }
-            return new JsonResponse($data, Response::HTTP_OK);
 
-        }
-        
-    }
-
-    /**
-     * @Rest\Get(path="/sportcenter/{id}")
-     * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
-     */
-    public function getSportCenterById(SportCenterRepository $sportCenterRepository, $id)
-    {
-        $sportCenter = $sportCenterRepository->find($id);
-
-        if(!$sportCenter){
-            return new JsonResponse(
-                ['code' => 204, 'message' => 'No persons found for this query.'],
-                Response::HTTP_NO_CONTENT
-            );
-        }else{
+            $sport = $sportCenter->getFkSport();
+            $sportData = [];
+    
+            foreach ($sport as $sport) {
+    
+                //get imagesport
+                $getPhotoSport = $sport->getImage();
+                $photoSport = $this->getParameter('url') . $getPhotoSport;
+    
+                //get logo sportcenter
+                $getLogoSportCenter = $sport->getLogoSportCenter();
+                $LogoSportCenter = $this->getParameter('url') . $getLogoSportCenter;
+    
+                $sportData[] = [
+                    'id' => $sport->getId(),
+                    'name' => $sport->getName(),
+                    'image' => $photoSport,
+                    'logo_sportcenter' =>  $LogoSportCenter,
+                ];
+            }
 
             //get image
             $getImage = $sportCenter->getImage();
             $image = $this->getParameter('url') . $getImage;
 
-            $data = [
+            //get gallery1
+            $getGallery1 = $sportCenter->getImage();
+            $gallery1 = $this->getParameter('url') . $getGallery1;
+
+            //get gallery2
+            $getGallery2 = $sportCenter->getImage();
+            $Gallery2 = $this->getParameter('url') . $getGallery2;
+
+            //get gallery3
+            $getGallery3 = $sportCenter->getImage();
+            $Gallery3 = $this->getParameter('url') . $getGallery3;
+
+            //get gallery4
+            $getGallery4 = $sportCenter->getImage();
+            $Gallery4 = $this->getParameter('url') . $getGallery4;
+
+
+            $sportCenterData[] = [
                 'id' => $sportCenter->getId(),
                 'name' => $sportCenter->getName(),
                 'municipality' => $sportCenter->getMunicipality(),
                 'address' => $sportCenter->getAddress(),
                 'image' => $image,
                 'phone' => $sportCenter->getPhone(),
+                'image_gallery1' => $gallery1,
+                'image_gallery2' => $Gallery2,
+                'image_gallery3' => $Gallery3,
+                'image_gallery4' => $Gallery4,
+                'latitude' => $sportCenter->getLatitude(),
+                'longitude' => $sportCenter->getLongitude(),
+                'destination' => $sportCenter->getDestination(),
+                'services' => $servicesData,
+                'sport' => $sportData,
             ];
-
-            return new JsonResponse($data, Response::HTTP_OK);
-
         }
+
+        return $this->json($sportCenterData);
+    }
+        
+    
+
+    /**
+     * @Rest\Get(path="/sportcenter/{id}")
+     * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function getSportCenterById($id)
+    {
+        
+        $entityManager = $this->getDoctrine()->getManager();
+        $sportCenter = $entityManager->getRepository(SportCenter::class)->find($id);
+
+        if (!$sportCenter) {
+            throw $this->createNotFoundException('SportCenter not found');
+        }
+
+        //Devuelve los servicios
+        $services = $sportCenter->getFkServices();
+        $servicesData = [];
+
+        foreach ($services as $service) {
+            $servicesData[] = [
+                'id' => $service->getId(),
+                'name' => $service->getName(),
+              
+            ];
+        }
+
+        //Devuelve los deportes
+        $sport = $sportCenter->getFkSport();
+        $sportData = [];
+
+        foreach ($sport as $sport) {
+
+            //get imagesport
+            $getPhotoSport = $sport->getImage();
+            $photoSport = $this->getParameter('url') . $getPhotoSport;
+
+            //get logo sportcenter
+            $getLogoSportCenter = $sport->getLogoSportCenter();
+            $LogoSportCenter = $this->getParameter('url') . $getLogoSportCenter;
+
+            $sportData[] = [
+                'id' => $sport->getId(),
+                'name' => $sport->getName(),
+                'image' => $photoSport,
+                'logo_sportcenter' =>  $LogoSportCenter,
+            ];
+        }
+
+        //get image
+        $getImage = $sportCenter->getImage();
+        $image = $this->getParameter('url') . $getImage;
+
+        //get gallery1
+        $getGallery1 = $sportCenter->getImage();
+        $gallery1 = $this->getParameter('url') . $getGallery1;
+
+        //get gallery2
+        $getGallery2 = $sportCenter->getImage();
+        $Gallery2 = $this->getParameter('url') . $getGallery2;
+
+        //get gallery3
+        $getGallery3 = $sportCenter->getImage();
+        $Gallery3 = $this->getParameter('url') . $getGallery3;
+
+        //get gallery4
+        $getGallery4 = $sportCenter->getImage();
+        $Gallery4 = $this->getParameter('url') . $getGallery4;
+
+
+        $response = [
+            'id' => $sportCenter->getId(),
+            'name' => $sportCenter->getName(),
+            'municipality' => $sportCenter->getMunicipality(),
+            'address' => $sportCenter->getAddress(),
+            'image' => $image,
+            'phone' => $sportCenter->getPhone(),
+            'image_gallery1' => $gallery1,
+            'image_gallery2' => $Gallery2,
+            'image_gallery3' => $Gallery3,
+            'image_gallery4' => $Gallery4,
+            'latitude' => $sportCenter->getLatitude(),
+            'longitude' => $sportCenter->getLongitude(),
+            'destination' => $sportCenter->getDestination(),
+            'services' => $servicesData,
+            'sport' => $sportData,
+        ];
+
+        return $this->json($response);
+       
         
     }
 
