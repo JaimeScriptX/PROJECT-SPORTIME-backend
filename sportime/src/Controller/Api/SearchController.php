@@ -39,6 +39,9 @@ class SearchController extends AbstractFOSRestController
         EntityManagerInterface $entityManager
     ){
         $data = json_decode($request->getContent(), true);
+        
+        $sportQ = $request->query->get('sport');
+        $dateQ = $request->query->get('date');
 
         $eventRepository = $entityManager->getRepository(Events::class);
         $sportCenterRepository = $entityManager->getRepository(SportCenter::class);
@@ -53,7 +56,11 @@ class SearchController extends AbstractFOSRestController
 
         // Búsqueda de eventos
         if (isset($data['search'])) {
-            $events = $eventRepository->findBy(['name' => $data['search']]);
+            $events = $eventRepository->createQueryBuilder('e')
+            ->where('e.name LIKE :search')
+            ->setParameter('search', '%' . $data['search'] . '%')
+            ->getQuery()
+            ->getResult();						
             $resultsSearch = array_merge($resultsSearch, $events);
             $results = array_merge($results, $events);
         }
@@ -62,23 +69,34 @@ class SearchController extends AbstractFOSRestController
 
         // Búsqueda por nombre de centro deportivo
         if (isset($data['search'])) {
-            $sportCentersName = $sportCenterRepository->findBy(['name' => $data['search']]);
-            $sportCentersName2 = $eventRepository->findBy(['fk_sportcenter' => $sportCentersName]);
+			$sportCentersName = $sportCenterRepository->createQueryBuilder('sc')
+            ->where('sc.name LIKE :search')
+            ->setParameter('search', '%' . $data['search'] . '%')
+            ->getQuery()
+            ->getResult();
+			$sportCentersName2 = $eventRepository->findBy(['fk_sportcenter' => $sportCentersName]);
             $resultsSearch = array_merge($resultsSearch, $sportCentersName2);
             $results = array_merge($results, $sportCentersName2);
         }
 
         // Búsqueda por nombre personalizado de centro deportivo
         if (isset($data['search'])) {
-            $sportCenterCustomName = $eventRepository->findBy(['sport_center_custom' => $data['search']]);
+            $sportCenterCustomName = $eventRepository->createQueryBuilder('e')
+            ->where('e.sport_center_custom LIKE :search')
+            ->setParameter('search', '%' . $data['search'] . '%')
+            ->getQuery()
+            ->getResult();
             $resultsSearch = array_merge($resultsSearch, $sportCenterCustomName);
             $results = array_merge($results, $sportCenterCustomName);
         }
 
         // Búsqueda por dirección de centro deportivo
         if (isset($data['search'])) {
-            $eventsAddress = $sportCenterRepository->findBy(['address' => $data['search']]);
-    
+            $eventsAddress = $sportCenterRepository->createQueryBuilder('sc')
+            ->where('sc.address LIKE :search')
+            ->setParameter('search', '%' . $data['search'] . '%')
+            ->getQuery()
+            ->getResult();
             if (!empty($eventsAddress)) {
                 $firstEventAddress = reset($eventsAddress);
                 $eventsAddress2 = $eventRepository->findBy(['fk_sportcenter' => $firstEventAddress->getId()]);
@@ -88,8 +106,8 @@ class SearchController extends AbstractFOSRestController
         }
 
        // Búsqueda por deporte
-        if (isset($data['sport'])) {
-            $sport = $sportRepository->findOneBy(['name' => $data['sport']]);
+        if (isset($sportQ)) {
+            $sport = $sportRepository->findOneBy(['name' => $sportQ]);
             
 
             
@@ -125,8 +143,8 @@ class SearchController extends AbstractFOSRestController
         }
 
          // Búsqueda por fecha y hora dentro de los eventos con el formato de la fecha "2023-04-28"
-         if (isset($data['date'])) {
-            $date = new DateTime($data['date']);
+         if (isset($dateQ)) {
+            $date = new DateTime($dateQ);
             $eventsDate = $eventRepository->findBy(['date' => $date]);
             
             if ($resultsSport == null && $resultsSearch == null) {
@@ -269,9 +287,10 @@ class SearchController extends AbstractFOSRestController
         }
 
         if (!$results) {
-            return new JsonResponse(
-                ['code' => 204, 'message' => 'No search found for this query.']                
-            );
+    return new JsonResponse([
+        'events' => [],
+        'sport_centers' => []
+    ]);
         } else {
             $datos=[
                 'events' => [],
@@ -326,7 +345,6 @@ class SearchController extends AbstractFOSRestController
                 'fk_sports_id' => $result->getFkSport() ?[
                     'id' => $result->getFkSport()->getId(),
                     'name' => $result->getFkSport()->getName(),
-                    'need_team' => $result->getFkSport()->isNeedTeam(),
                     'image' => $result->getFkSport()->getImage()
                 ] : null,
                // 'fk_sportcenter_id' => $result->getFkSportcenter() ? [
