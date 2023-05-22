@@ -394,10 +394,10 @@ class SearchController extends AbstractFOSRestController
                 'address' => $result->getFkSportcenter()->getAddress() ? $result->getFkSportcenter()->getAddress() : null,
                 'image' => $result->getFkSportcenter()->getImage() ? $result->getFkSportcenter()->getImage() : null,
                 'phone' => $result->getFkSportcenter()->getPhone() ? $result->getFkSportcenter()->getPhone() : null,
-                'fk_services_id' => $result->getFkSportcenter()->getFkServices() ? [
-                        'id' => $result->getFkSportcenter()->getFkServices()->getId(),
-                        'type' => $result->getFkSportcenter()->getFkServices()->getType()
-                    ] : null,
+              // 'fk_services_id' => $result->getFkSportcenter()->getFkServices() ? [
+              //         'id' => $result->getFkSportcenter()->getFkServices()->getId(),
+              //         'type' => $result->getFkSportcenter()->getFkServices()->getType()
+              //     ] : null,
             ];
             }
             return new JsonResponse($datos, Response::HTTP_OK);
