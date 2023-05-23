@@ -142,7 +142,7 @@ class EventPlayersController extends AbstractFOSRestController
             $person = $entityManager->getRepository(Person::class)->find(['id' => $data['fk_person_id']]);
             $eventPlayer->setFkPerson($person);
 
-            $eventPlayer->setEquipo($data['equipo']);
+            $eventPlayer->setEquipo($data['team']);
 
             $entityManager->persist($eventPlayer);
             $entityManager->flush();
