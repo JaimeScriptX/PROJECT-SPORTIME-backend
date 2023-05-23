@@ -42,6 +42,8 @@ class SearchController extends AbstractFOSRestController
         
         $sportQ = $request->query->get('sport');
         $dateQ = $request->query->get('date');
+        $timeQ = $request->query->get('time');
+        $searchQ = $request->query->get('search');
 
         $eventRepository = $entityManager->getRepository(Events::class);
         $sportCenterRepository = $entityManager->getRepository(SportCenter::class);
@@ -55,10 +57,10 @@ class SearchController extends AbstractFOSRestController
         $results= [];
 
         // Búsqueda de eventos
-        if (isset($data['search'])) {
+        if (isset($searchQ)) {
             $events = $eventRepository->createQueryBuilder('e')
             ->where('e.name LIKE :search')
-            ->setParameter('search', '%' . $data['search'] . '%')
+            ->setParameter('search', '%' . $searchQ . '%')
             ->getQuery()
             ->getResult();						
             $resultsSearch = array_merge($resultsSearch, $events);
@@ -68,33 +70,40 @@ class SearchController extends AbstractFOSRestController
         
 
         // Búsqueda por nombre de centro deportivo
-        if (isset($data['search'])) {
+        if (isset($searchQ)) {
 			$sportCentersName = $sportCenterRepository->createQueryBuilder('sc')
             ->where('sc.name LIKE :search')
-            ->setParameter('search', '%' . $data['search'] . '%')
+            ->setParameter('search', '%' . $searchQ . '%')
             ->getQuery()
             ->getResult();
+            
+
 			$sportCentersName2 = $eventRepository->findBy(['fk_sportcenter' => $sportCentersName]);
             $resultsSearch = array_merge($resultsSearch, $sportCentersName2);
             $results = array_merge($results, $sportCentersName2);
         }
 
         // Búsqueda por nombre personalizado de centro deportivo
-        if (isset($data['search'])) {
+        if (isset($searchQ)) {
             $sportCenterCustomName = $eventRepository->createQueryBuilder('e')
             ->where('e.sport_center_custom LIKE :search')
-            ->setParameter('search', '%' . $data['search'] . '%')
+            ->setParameter('search', '%' . $searchQ . '%')
             ->getQuery()
             ->getResult();
-            $resultsSearch = array_merge($resultsSearch, $sportCenterCustomName);
-            $results = array_merge($results, $sportCenterCustomName);
+
+
+                $sportCenterCustomName2 = $eventRepository->findBy(['fk_sportcenter' => $sportCenterCustomName]);
+                $resultsSearch = array_merge($resultsSearch, $sportCenterCustomName2);
+            $results = array_merge($results, $sportCenterCustomName2);
+
+            
         }
 
         // Búsqueda por dirección de centro deportivo
-        if (isset($data['search'])) {
+        if (isset($searchQ)) {
             $eventsAddress = $sportCenterRepository->createQueryBuilder('sc')
             ->where('sc.address LIKE :search')
-            ->setParameter('search', '%' . $data['search'] . '%')
+            ->setParameter('search', '%' . $searchQ . '%')
             ->getQuery()
             ->getResult();
             if (!empty($eventsAddress)) {
@@ -189,8 +198,8 @@ class SearchController extends AbstractFOSRestController
             
         }
         
-        if (isset($data['time'])) {
-            $time = DateTime::createFromFormat('H:i:s', $data['time']);
+        if (isset($timeQ)) {
+            $time = DateTime::createFromFormat('H:i:s', $timeQ);
             $eventsTime = $eventRepository->findBy(['time' => $time]);
             
             if ($resultsDate == null && $resultsSport == null && $resultsSearch == null) {
@@ -394,10 +403,13 @@ class SearchController extends AbstractFOSRestController
                 'address' => $result->getFkSportcenter()->getAddress() ? $result->getFkSportcenter()->getAddress() : null,
                 'image' => $result->getFkSportcenter()->getImage() ? $result->getFkSportcenter()->getImage() : null,
                 'phone' => $result->getFkSportcenter()->getPhone() ? $result->getFkSportcenter()->getPhone() : null,
-              // 'fk_services_id' => $result->getFkSportcenter()->getFkServices() ? [
-              //         'id' => $result->getFkSportcenter()->getFkServices()->getId(),
-              //         'type' => $result->getFkSportcenter()->getFkServices()->getType()
-              //     ] : null,
+                'image_gallery1' => $result->getFkSportcenter()->getImageGallery1(),
+                    'image_gallery2' => $result->getFkSportcenter()->getImageGallery2(),
+                    'image_gallery3' => $result->getFkSportcenter()->getImageGallery3(),
+                    'image_gallery4' => $result->getFkSportcenter()->getImageGallery4(),
+                    'latitude' => $result->getFkSportcenter()->getLatitude(),
+                    'longitude' => $result->getFkSportcenter()->getLongitude(),
+                    'destination' => $result->getFkSportcenter()->getDestination(),
             ];
             }
             return new JsonResponse($datos, Response::HTTP_OK);
