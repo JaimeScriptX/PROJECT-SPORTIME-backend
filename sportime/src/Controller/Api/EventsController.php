@@ -90,8 +90,13 @@ class EventsController extends AbstractFOSRestController
               $LogoEvent = $this->getParameter('url') . $getLogoEvent;
 
                //get image
-            $getImageSportCenter = $event->getFkSportcenter()->getImage();
-            $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
+$fkSportCenter = $event->getFkSportcenter();
+$imageSportCenter = null;
+
+if ($fkSportCenter) {
+    $getImageSportCenter = $fkSportCenter->getImage();
+    $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
+}
 
 
             $data[] =[
@@ -111,16 +116,16 @@ class EventsController extends AbstractFOSRestController
                     'name' => $event->getFkSport()->getName(),
                     'logo_event' => $LogoEvent,
                 ] : null,
-                'fk_sportcenter_id' => $event->getFkSportcenter() ? [
-                    'id' => $event->getFkSportcenter()->getId(),
-                    'name' => $event->getFkSportcenter()->getName(),
-                    'municipality' => $event->getFkSportcenter()->getMunicipality(),
-                    'address' => $event->getFkSportcenter()->getAddress(),
+                'fk_sportcenter_id' => $fkSportCenter ? [
+                    'id' => $fkSportCenter->getId(),
+                    'name' => $fkSportCenter->getName(),
+                    'municipality' => $fkSportCenter->getMunicipality(),
+                    'address' => $fkSportCenter->getAddress(),
                     'image' => $imageSportCenter,
-                    'phone' => $event->getFkSportcenter()->getPhone(),
-                    'latitude' => $event->getFkSportcenter()->getLatitude(),
-                    'longitude' => $event->getFkSportcenter()->getLongitude(),
-                    'destination' => $event->getFkSportcenter()->getDestination(),
+                    'phone' => $fkSportCenter->getPhone(),
+                    'latitude' => $fkSportCenter->getLatitude(),
+                    'longitude' => $fkSportCenter->getLongitude(),
+                    'destination' => $fkSportCenter->getDestination(),
                 ] : null,
                 'fk_difficulty_id' => $event->getFkDifficulty() ?[
                     'id' => $event->getFkDifficulty()->getId(),
@@ -235,8 +240,13 @@ class EventsController extends AbstractFOSRestController
               $LogoEvent = $this->getParameter('url') . $getLogoEvent;
 
                //get image
-            $getImageSportCenter = $event->getFkSportcenter()->getImage();
-            $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
+                $fkSportCenter = $event->getFkSportcenter();
+                $imageSportCenter = null;
+
+                if ($fkSportCenter) {
+                    $getImageSportCenter = $fkSportCenter->getImage();
+                    $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
+                }
 
             $data = [
                 'id' => $event->getId(),
@@ -255,16 +265,16 @@ class EventsController extends AbstractFOSRestController
                     'name' => $event->getFkSport()->getName(),
                     'logo_event' => $LogoEvent,
                 ] : null,
-                'fk_sportcenter_id' => $event->getFkSportcenter() ? [
-                    'id' => $event->getFkSportcenter()->getId(),
-                    'name' => $event->getFkSportcenter()->getName(),
-                    'municipality' => $event->getFkSportcenter()->getMunicipality(),
-                    'address' => $event->getFkSportcenter()->getAddress(),
+                'fk_sportcenter_id' => $fkSportCenter ? [
+                    'id' => $fkSportCenter->getId(),
+                    'name' => $fkSportCenter->getName(),
+                    'municipality' => $fkSportCenter->getMunicipality(),
+                    'address' => $fkSportCenter->getAddress(),
                     'image' => $imageSportCenter,
-                    'phone' => $event->getFkSportcenter()->getPhone(),
-                    'latitude' => $event->getFkSportcenter()->getLatitude(),
-                    'longitude' => $event->getFkSportcenter()->getLongitude(),
-                    'destination' => $event->getFkSportcenter()->getDestination(),
+                    'phone' => $fkSportCenter->getPhone(),
+                    'latitude' => $fkSportCenter->getLatitude(),
+                    'longitude' => $fkSportCenter->getLongitude(),
+                    'destination' => $fkSportCenter->getDestination(),
                 ] : null,
                 'fk_difficulty_id' => $event->getFkDifficulty() ?[
                     'id' => $event->getFkDifficulty()->getId(),
@@ -608,8 +618,8 @@ class EventsController extends AbstractFOSRestController
                     $LogoEvent = $this->getParameter('url') . $getLogoEvent;
 
                     //get image
-                    $getImageSportCenter = $event->getFkSportcenter()->getImage();
-                    $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
+                    // $getImageSportCenter = $event->getFkSportcenter()->getImage();
+                    // $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
 
                     $timeEnd = new \DateTime($participatingEvent->getFkEvent()->getTime()->format('H:i'));
                     $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
@@ -628,7 +638,7 @@ class EventsController extends AbstractFOSRestController
                         'fk_sports_id' => $event->getFkSport() ?[
                             'id' => $event->getFkSport()->getId(),
                             'name' => $event->getFkSport()->getName(),
-                            'image' => $event->getFkSport()->getImage(),
+                            // 'image' => $event->getFkSport()->getImage(),
                             'logo_event' => $LogoEvent,
                         ] : null,
                         'fk_sportcenter_id' => $event->getFkSportcenter() ? [
@@ -636,7 +646,7 @@ class EventsController extends AbstractFOSRestController
                             'name' => $event->getFkSportcenter()->getName(),
                             'municipality' => $event->getFkSportcenter()->getMunicipality(),
                             'address' => $event->getFkSportcenter()->getAddress(),
-                            'image' => $imageSportCenter,
+                            // 'image' => $imageSportCenter,
                             'phone' => $event->getFkSportcenter()->getPhone(),
                             'latitude' => $event->getFkSportcenter()->getLatitude(),
                             'longitude' => $event->getFkSportcenter()->getLongitude(),
@@ -780,10 +790,6 @@ class EventsController extends AbstractFOSRestController
             
             return new JsonResponse($data, Response::HTTP_OK);
         }
-        
-        
-        
-
         
     }
         
