@@ -90,13 +90,13 @@ class EventsController extends AbstractFOSRestController
               $LogoEvent = $this->getParameter('url') . $getLogoEvent;
 
                //get image
-$fkSportCenter = $event->getFkSportcenter();
-$imageSportCenter = null;
+                $fkSportCenter = $event->getFkSportcenter();
+                $imageSportCenter = null;
 
-if ($fkSportCenter) {
-    $getImageSportCenter = $fkSportCenter->getImage();
-    $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
-}
+                if ($fkSportCenter) {
+                    $getImageSportCenter = $fkSportCenter->getImage();
+                    $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
+                }
 
 
             $data[] =[

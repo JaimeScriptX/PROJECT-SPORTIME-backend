@@ -45,13 +45,20 @@ class EventPlayersController extends AbstractFOSRestController
                 Response::HTTP_NO_CONTENT
             );
         } else {
+         
             $data = [];
             foreach ($eventPlayers as $eventPlayer) {
+
+                    //get de las fotos de perfil con la url
+                    $getPhotoProfile = $eventPlayer->getFkPerson()->getImageProfile();
+                    $photoProfile = $this->getParameter('url') . $getPhotoProfile;
+
                 $data[] = [
                     'id' => $eventPlayer->getId(),
                     'fk_event_id' => $eventPlayer->getFkEvent()->getId(),
                     'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
                     'equipo' => $eventPlayer->getEquipo(),
+                    'image_profile' => $photoProfile ?? null,
                 ];
             }
             return new JsonResponse($data, Response::HTTP_OK);
@@ -76,11 +83,15 @@ class EventPlayersController extends AbstractFOSRestController
                 Response::HTTP_NO_CONTENT
             );
         } else {
+            $getPhotoProfile = $eventPlayer->getFkPerson()->getImageProfile();
+            $photoProfile = $this->getParameter('url') . $getPhotoProfile;
+
             $data = [
                 'id' => $eventPlayer->getId(),
                 'fk_event_id' => $eventPlayer->getFkEvent()->getId(),
                 'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
                 'equipo' => $eventPlayer->getEquipo(),
+                'image_profile' => $photoProfile ?? null,
             ];
             return new JsonResponse($data, Response::HTTP_OK);
         }
