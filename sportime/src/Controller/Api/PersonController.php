@@ -19,6 +19,10 @@ use App\Entity\User;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Env\Env;
 use DateTime;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 
 
 
@@ -51,9 +55,20 @@ class PersonController extends AbstractFOSRestController
             $partidosJugados = $person->getGamesPlayed();
             $ratio = 0;
 
-            if($partidosJugados > 0 && $victorias > 0) {
-            $ratio = $victorias / $partidosJugados;
-             }
+             // Calcular el ratio de victorias y derrotas
+            $gamesPlayed = $person->getGamesPlayed();
+            $victories = $person->getVictories();
+            $defeats = $person->getDefeat();
+
+            if ($gamesPlayed === 0) {
+                $winLossRatio = 0;
+            } else {
+                $winLossRatio = ($victories / ($victories + $defeats)) * 100;
+            }
+        
+            // Redondear el resultado al número entero más cercano
+            $winLossRatio = round($winLossRatio);
+        
 
             //get de las fotos de perfil con la url
             $getPhotoProfile = $person->getImageProfile();
@@ -83,7 +98,7 @@ class PersonController extends AbstractFOSRestController
                 'games_played' => $person->getGamesPlayed(),
                 'victories' => $person->getVictories(),
                 'defeat' => $person->getDefeat(),
-                'ratio' => $ratio,
+                'ratio' => $winLossRatio,
                 'image_banner' => $photoBanner,
             
                 'fk_sex_id' => [
@@ -103,9 +118,6 @@ class PersonController extends AbstractFOSRestController
         return new JsonResponse($data, Response::HTTP_OK);
         }
 
-        
-        
-
     }
 
     /**
@@ -121,8 +133,6 @@ class PersonController extends AbstractFOSRestController
 
         $person = $em->getRepository(Person::class)->findOneBy(['id' => $id]);
 
-
-
         if (!$person){
             return new JsonResponse(
                 ['code' => 204, 'message' => 'No person found for this query.'],
@@ -130,14 +140,19 @@ class PersonController extends AbstractFOSRestController
             );
         }
 
+        // Calcular el ratio de victorias y derrotas
+        $gamesPlayed = $person->getGamesPlayed();
+        $victories = $person->getVictories();
+        $defeats = $person->getDefeat();
 
-        $victorias = $person->getVictories();
-        $partidosJugados = $person->getGamesPlayed();
-        $ratio = 0;
-
-        if($partidosJugados > 0 && $victorias > 0) {
-        $ratio = $victorias / $partidosJugados;
-         }
+        if ($gamesPlayed === 0) {
+            $winLossRatio = 0;
+        } else {
+            $winLossRatio = ($victories / ($victories + $defeats)) * 100;
+        }
+    
+        // Redondear el resultado al número entero más cercano
+        $winLossRatio = round($winLossRatio);
         
          //get de las fotos de perfil con la url
          $getPhotoProfile = $person->getImageProfile();
@@ -167,7 +182,7 @@ class PersonController extends AbstractFOSRestController
             'games_played' => $person->getGamesPlayed(),
             'victories' => $person->getVictories(),
             'defeat' => $person->getDefeat(),
-            'ratio' => $ratio,
+            'ratio' => $winLossRatio,
             'image_banner' => $photoBanner,
             'fk_sex_id' => $person-> getFkSex() ? [
                 'id' => $person->getFkSex()->getId(),
@@ -209,30 +224,47 @@ class PersonController extends AbstractFOSRestController
         }
 
 
-       
-        $victorias = $person->getVictories();
-        $partidosJugados = $person->getGamesPlayed();
-        $ratio = 0;
+        // Calcular el ratio de victorias y derrotas
+        $gamesPlayed = $person->getGamesPlayed();
+        $victories = $person->getVictories();
+        $defeats = $person->getDefeat();
 
-        if($partidosJugados > 0 && $victorias > 0) {
-        $ratio = $victorias / $partidosJugados;
+        if ($gamesPlayed === 0) {
+            $winLossRatio = 0;
+        } else {
+            $winLossRatio = ($victories / ($victories + $defeats)) * 100;
+        }
+
+         //get de las fotos de perfil con la url
+         $getPhotoProfile = $person->getImageProfile();
+         $photoProfile = $this->getParameter('url') . $getPhotoProfile;
         
-         }
+         //get de las fotos de banner con la url
+         $getPhotoBanner = $person->getImageBanner();
+         $photoBanner = $this->getParameter('url') . $getPhotoBanner;
+
+          //Calcular la edad
+          $fechaNacimiento = $person->getBirthday();
+          $fechaNacimiento = new DateTime($fechaNacimiento->format('Y-m-d'));
+          $fechaActual = new DateTime();
+          $diferencia = $fechaNacimiento->diff($fechaActual);
+          $edad = $diferencia->y;
+
         
         $data = [
             'id' => $person->getId(),
-            'image_profile' => $person->getImageProfile(),
+            'image_profile' => $photoProfile,
             'name_and_lastname' => $person->getNameAndLastname(),
-            'birthday' => $person->getBirthday(),
+            'birthday' => $edad,
             'weight' => $person->getWeight(),
             'height' => $person->getHeight(),
             'nationality' => $person->getNationality(),
             'city' => $person->getCity(),
             'games_played' => $person->getGamesPlayed(),
             'victories' => $person->getVictories(),
-            'ratio' => $ratio,
+            'ratio' =>  $winLossRatio,
             'defeat' => $person->getDefeat(),
-            'image_banner' => $person->getImageBanner(),
+            'image_banner' => $photoBanner,
             'fk_sex_id' => $person-> getFkSex() ? [
                 'id' => $person->getFkSex()->getId(),
                 'gender' => $person->getFkSex()->getGender()
@@ -258,14 +290,15 @@ class PersonController extends AbstractFOSRestController
      */
     public function postPerson(
         Request $request,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        SluggerInterface $slugger
     ) {
         $entityManager = $this->getDoctrine()->getManager();
         
         $data = json_decode($request->getContent(), true);
         
         $person = new Person();
-        $person->setImageProfile($data['image_profile']);
+        // $person->setImageProfile($data['image_profile']);
         $person->setNameAndLastname($data['name_and_lastname']);
         $person->setBirthday(new \DateTime($data['birthday']));
         $person->setWeight($data['weight']);
@@ -275,8 +308,45 @@ class PersonController extends AbstractFOSRestController
         // $person->setGamesPlayed($data['games_played']);
         // $person->setVictories($data['victories']);
         // $person->setDefeat($data['defeat']);
-        $person->setImageBanner($data['image_banner']);
-        
+        // $person->setImageBanner($data['image_banner']);
+        // Manejar la carga de imagen del perfil
+         // Manejar la carga de imagen del perfil
+
+    if ($request->files->has('image_profile')) {
+        /** @var UploadedFile $imageProfileFile */
+        $imageProfileFile = $request->files->get('image_profile');
+
+        $profileFilename = md5(uniqid()).'.'.$imageProfileFile->guessExtension();
+
+        try {
+            $imageProfileFile->move(
+                $this->getParameter('app.upload_directory.profile'),
+                $profileFilename
+            );
+            $person->setImageProfile('/images/profile/' . $profileFilename);
+        } catch (FileException $e) {
+            // Manejar la excepción en caso de error al mover el archivo
+        }
+    }
+    // Manejar la carga de imagen del banner
+    if ($request->files->has('image_banner')) {
+        /** @var UploadedFile $imageBannerFile */
+        $imageBannerFile = $request->files->get('image_banner');
+
+        $bannerFilename = md5(uniqid()).'.'.$imageBannerFile->guessExtension();
+
+        try {
+            $imageBannerFile->move(
+                $this->getParameter('app.upload_directory.banner'),
+                $bannerFilename
+            );
+            $person->setImageBanner('/images/banner/' . $bannerFilename);
+        } catch (FileException $e) {
+            // Manejar la excepción en caso de error al mover el archivo
+        }
+    }
+
+    
         // Agregar campo foráneo "sex"
         $sex = $entityManager->getRepository(Sex::class)->findOneBy(['gender' => $data['fk_sex']]);
         $person->setFkSex($sex);
@@ -308,11 +378,10 @@ class PersonController extends AbstractFOSRestController
         }
         
             
-            
 
         $data = json_decode($request->getContent(), true);
 
-        $person->setImageProfile($data['image_profile']);
+        // $person->setImageProfile($data['image_profile']);
         $person->setNameAndLastname($data['name_and_lastname']);
         $person->setBirthday(new \DateTime($data['birthday']));
         $person->setWeight($data['weight']);
@@ -322,7 +391,7 @@ class PersonController extends AbstractFOSRestController
         // $person->setGamesPlayed($data['games_played']);
         // $person->setVictories($data['victories']);
         // $person->setDefeat($data['defeat']);
-        $person->setImageBanner($data['image_banner']);
+        // $person->setImageBanner($data['image_banner']);
 
         //FK
         $sex = $em->getRepository(Sex::class)->findOneBy(['gender' => $data['fk_sex']]);
@@ -335,6 +404,43 @@ class PersonController extends AbstractFOSRestController
         
         // // Establecer la relación
         // $person->setFkUser($user);
+
+         // Manejar la carga de imagen del perfil
+    if ($request->files->has('image_profile')) {
+        /** @var UploadedFile $imageProfileFile */
+        $imageProfileFile = $request->files->get('image_profile');
+
+        $profileFilename = md5(uniqid()).'.'.$imageProfileFile->guessExtension();
+
+        try {
+            $imageProfileFile->move(
+                $this->getParameter('app.upload_directory.profile'),
+                $profileFilename
+            );
+            $person->setImageProfile('/images/profile/' . $profileFilename);
+        } catch (FileException $e) {
+            // Manejar la excepción en caso de error al mover el archivo
+        }
+    }
+
+    // Manejar la carga de imagen del banner
+    if ($request->files->has('image_banner')) {
+        /** @var UploadedFile $imageBannerFile */
+        $imageBannerFile = $request->files->get('image_banner');
+
+        $bannerFilename = md5(uniqid()).'.'.$imageBannerFile->guessExtension();
+
+        try {
+            $imageBannerFile->move(
+                $this->getParameter('app.upload_directory.banner'),
+                $bannerFilename
+            );
+            $person->setImageBanner('/images/banner/' . $bannerFilename);
+        } catch (FileException $e) {
+            // Manejar la excepción en caso de error al mover el archivo
+        }
+    }
+
         
 
         $em->persist($person);

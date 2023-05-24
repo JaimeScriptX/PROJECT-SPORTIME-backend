@@ -5,6 +5,8 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     url: '%env(URL)%'
+    app.upload_directory.profile: '%kernel.project_dir%/public/images/profile'
+    app.upload_directory.banner: '%kernel.project_dir%/public/images/banner'
 
 services:
     App\EventSubscriber\AddUserFieldsToTokenSubscriber:
