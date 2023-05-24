@@ -21,10 +21,13 @@ class AddUserFieldsToTokenSubscriber implements EventSubscriberInterface
         // Obtener la instancia de Person asociada al objeto User
         $person = $user->getPerson();
 
-        $imageProfile = $person->getImageProfile();
-        $baseUrl = 'https://preapi.sportime.fun/public';
-        $imageProfileUrl = $baseUrl . $imageProfile;
-
+        // Obtener la URL de la imagen de perfil
+        if ($person instanceof Person) {
+            $imageProfile = $person->getImageProfile();
+            $baseUrl = 'https://preapi.sportime.fun/public';
+            $imageProfileUrl = $baseUrl . $imageProfile;
+        }
+ 
         // Verificar si la instancia de Person es válida
         if ($person instanceof Person) {
             // Agregar la propiedad 'image_profile' al payload del token
