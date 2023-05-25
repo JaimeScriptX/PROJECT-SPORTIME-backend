@@ -51,10 +51,7 @@ class PersonController extends AbstractFOSRestController
             $data = [];
             foreach ($persons as $person) {
 
-            $victorias = $person->getVictories();
-            $partidosJugados = $person->getGamesPlayed();
-            $ratio = 0;
-
+       
              // Calcular el ratio de victorias y derrotas
             $gamesPlayed = $person->getGamesPlayed();
             $victories = $person->getVictories();

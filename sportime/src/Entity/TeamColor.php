@@ -22,21 +22,27 @@ class TeamColor
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $team_a;
+    private $colour;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $team_b;
+    private $image_shirt;
 
     /**
      * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_teamcolor")
      */
     private $events;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_teamcolor_two")
+     */
+    private $events_two;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
+        $this->events_two = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -44,26 +50,26 @@ class TeamColor
         return $this->id;
     }
 
-    public function getTeamA(): ?string
+    public function getColour(): ?string
     {
-        return $this->team_a;
+        return $this->colour;
     }
 
-    public function setTeamA(string $team_a): self
+    public function setTeamA(string $colour): self
     {
-        $this->team_a = $team_a;
+        $this->colour = $colour;
 
         return $this;
     }
 
     public function getTeamB(): ?string
     {
-        return $this->team_b;
+        return $this->image_shirt;
     }
 
-    public function setTeamB(string $team_b): self
+    public function setTeamB(string $image_shirt): self
     {
-        $this->team_b = $team_b;
+        $this->image_shirt = $image_shirt;
 
         return $this;
     }
@@ -92,6 +98,36 @@ class TeamColor
             // set the owning side to null (unless already changed)
             if ($event->getFkTeamcolor() === $this) {
                 $event->setFkTeamcolor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Events>
+     */
+    public function getEventsTwo(): Collection
+    {
+        return $this->events_two;
+    }
+
+    public function addEventsTwo(Events $eventsTwo): self
+    {
+        if (!$this->events_two->contains($eventsTwo)) {
+            $this->events_two[] = $eventsTwo;
+            $eventsTwo->setFkTeamcolorTwo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventsTwo(Events $eventsTwo): self
+    {
+        if ($this->events_two->removeElement($eventsTwo)) {
+            // set the owning side to null (unless already changed)
+            if ($eventsTwo->getFkTeamcolorTwo() === $this) {
+                $eventsTwo->setFkTeamcolorTwo(null);
             }
         }
 

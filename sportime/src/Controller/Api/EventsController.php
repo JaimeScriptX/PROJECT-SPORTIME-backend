@@ -137,8 +137,8 @@ class EventsController extends AbstractFOSRestController
                 ] : null,
                 'fk_teamcolor_id' => $event->getFkTeamColor() ? [
                     'id' => $event->getFkTeamColor()->getId(),
-                    'team_a' => $event->getFkTeamColor()->getTeamA(),
-                    'team_b' => $event->getFkTeamColor()->getTeamB(),
+                    'colour' => $event->getFkTeamColor()->getColour(),
+                    //'team_b' => $event->getFkTeamColor()->getTeamB(),
                 ] : null,
                 'fk_person_id' => $event->getFkPerson() ? [
                     'id' => $event->getFkPerson()->getId(),
@@ -286,8 +286,8 @@ class EventsController extends AbstractFOSRestController
                 ] : null,
                 'fk_teamcolor_id' => $event->getFkTeamColor() ? [
                     'id' => $event->getFkTeamColor()->getId(),
-                    'team_a' => $event->getFkTeamColor()->getTeamA(),
-                    'team_b' => $event->getFkTeamColor()->getTeamB(),
+                    'colour' => $event->getFkTeamColor()->getColour(),
+                    //'team_b' => $event->getFkTeamColor()->getTeamB(),
                 ] : null,
                 'fk_person_id' => $event->getFkPerson() ? [
                     'id' => $event->getFkPerson()->getId(),
@@ -662,8 +662,8 @@ class EventsController extends AbstractFOSRestController
                         ] : null,
                         'fk_teamcolor_id' => $event->getFkTeamColor() ? [
                             'id' => $event->getFkTeamColor()->getId(),
-                            'team_a' => $event->getFkTeamColor()->getTeamA(),
-                            'team_b' => $event->getFkTeamColor()->getTeamB(),
+                            'colour' => $event->getFkTeamColor()->getColour(),
+                            //'team_b' => $event->getFkTeamColor()->getTeamB(),
                         ] : null,
                         'fk_person_id' => $event->getFkPerson() ? [
                             'id' => $event->getFkPerson()->getId(),
@@ -765,8 +765,8 @@ class EventsController extends AbstractFOSRestController
                             ] : null,
                             'fk_teamcolor_id' => $event->getFkTeamColor() ? [
                                 'id' => $event->getFkTeamColor()->getId(),
-                                'team_a' => $event->getFkTeamColor()->getTeamA(),
-                                'team_b' => $event->getFkTeamColor()->getTeamB(),
+                                'colour' => $event->getFkTeamColor()->getColour(),
+                                //'team_b' => $event->getFkTeamColor()->getTeamB(),
                             ] : null,
                             'fk_person_id' => $event->getFkPerson() ? [
                                 'id' => $event->getFkPerson()->getId(),

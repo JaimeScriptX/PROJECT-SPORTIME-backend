@@ -109,6 +109,11 @@ class Events
      */
     private $sport_center_custom;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=TeamColor::class, inversedBy="events_two")
+     */
+    private $fk_teamcolor_two;
+
 
     public function __construct()
     {
@@ -367,6 +372,18 @@ class Events
     public function setSportCenterCustom(?string $sport_center_custom): self
     {
         $this->sport_center_custom = $sport_center_custom;
+
+        return $this;
+    }
+
+    public function getFkTeamcolorTwo(): ?TeamColor
+    {
+        return $this->fk_teamcolor_two;
+    }
+
+    public function setFkTeamcolorTwo(?TeamColor $fk_teamcolor_two): self
+    {
+        $this->fk_teamcolor_two = $fk_teamcolor_two;
 
         return $this;
     }
