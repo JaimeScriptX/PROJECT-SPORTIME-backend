@@ -46,23 +46,34 @@ class SearchController extends AbstractFOSRestController
         $searchQ = $request->query->get('search');
 
         // si dateQ.length == 0, dateQ = null
-        if (strlen($dateQ) == 0) {
-            $dateQ = null;
+        if ($dateQ != null) {
+            if (strlen($dateQ) == 0) {
+                $dateQ = null;
+            }
         }
+        
 
         // si timeQ.length == 0, timeQ = null
-        if (strlen($timeQ) == 0) {
-            $timeQ = null;
+        if ($timeQ != null) {
+            if (strlen($timeQ) == 0) {
+                $timeQ = null;
+            }
         }
+        
 
         // si searchQ.length == 0, searchQ = null
-        if (strlen($searchQ) == 0) {
-            $searchQ = null;
+        if ($searchQ != null) {
+            if (strlen($searchQ) == 0) {
+                $searchQ = null;
+            }
         }
+        
 
         // si sportQ.length == 0, sportQ = null
-        if (strlen($sportQ) == 0) {
-            $sportQ = null;
+        if ($sportQ != null) {
+            if (strlen($sportQ) == 0) {
+                $sportQ = null;
+            }
         }
 
         $eventRepository = $entityManager->getRepository(Events::class);
