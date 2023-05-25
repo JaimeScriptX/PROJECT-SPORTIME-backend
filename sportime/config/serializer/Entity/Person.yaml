@@ -4,9 +4,9 @@ App\Entity\Person:
             groups: ['person']
         image_profile:
             groups: ['person']
-        name:
+        image_banner:
             groups: ['person']
-        last_name:
+        name_and_lastname:
             groups: ['person']
         birthday:
             groups: ['person']

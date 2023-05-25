@@ -69,18 +69,18 @@ class Person
      * @ORM\Column(type="integer", nullable=true)
      */
  
-    private $games_played;
+    private $games_played = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
 
-    private $victories;
+    private $victories = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $defeat;
+    private $defeat = 0;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)

@@ -79,18 +79,19 @@ class PersonController extends AbstractFOSRestController
             $photoBanner = $this->getParameter('url') . $getPhotoBanner;
 
              //Calcular la edad
-            $fechaNacimiento = $person->getBirthday();
-            $fechaNacimiento = new DateTime($fechaNacimiento->format('Y-m-d'));
-            $fechaActual = new DateTime();
-            $diferencia = $fechaNacimiento->diff($fechaActual);
-            $edad = $diferencia->y;
+            $dateBirth = $person->getBirthday();
+            $dateBirth = new DateTime($dateBirth->format('Y-m-d'));
+            $currentDate = new DateTime();
+            $diference = $dateBirth->diff($currentDate);
+            $age = $diference->y;
 
             $sex = $person->getFkSex();
             $data[] = [
                 'id' => $person->getId(),
                 'image_profile' =>  $photoProfile,
                 'name_and_lastname' => $person->getNameAndLastname(),
-                'birthday' => $edad,
+                'age' => $age,
+                'birthday' => $person->getBirthday()->format('d-m-Y'),
                 'weight' => $person->getWeight(),
                 'height' => $person->getHeight(),
                 'nationality' => $person->getNationality(),
@@ -163,18 +164,18 @@ class PersonController extends AbstractFOSRestController
          $photoBanner = $this->getParameter('url') . $getPhotoBanner;
 
           //Calcular la edad
-          $fechaNacimiento = $person->getBirthday();
-          $fechaNacimiento = new DateTime($fechaNacimiento->format('Y-m-d'));
-          $fechaActual = new DateTime();
-          $diferencia = $fechaNacimiento->diff($fechaActual);
-          $edad = $diferencia->y;
+           $dateBirth = $person->getBirthday();
+           $dateBirth = new DateTime($dateBirth->format('Y-m-d'));
+           $currentDate = new DateTime();
+           $diference = $dateBirth->diff($currentDate);
+           $age = $diference->y;
         
-
         $data = [
             'id' => $person->getId(),
             'image_profile' => $photoProfile,
             'name_and_lastname' => $person->getNameAndLastname(),
-            'birthday' => $edad,
+            'age' => $age,
+            'birthday' => $person->getBirthday()->format('d-m-Y'),
             'weight' => $person->getWeight(),
             'height' => $person->getHeight(),
             'nationality' => $person->getNationality(),
@@ -244,18 +245,19 @@ class PersonController extends AbstractFOSRestController
          $photoBanner = $this->getParameter('url') . $getPhotoBanner;
 
           //Calcular la edad
-          $fechaNacimiento = $person->getBirthday();
-          $fechaNacimiento = new DateTime($fechaNacimiento->format('Y-m-d'));
-          $fechaActual = new DateTime();
-          $diferencia = $fechaNacimiento->diff($fechaActual);
-          $edad = $diferencia->y;
+          $dateBirth = $person->getBirthday();
+          $dateBirth = new DateTime($dateBirth->format('Y-m-d'));
+          $currentDate = new DateTime();
+          $diference = $dateBirth->diff($currentDate);
+          $age = $diference->y;
 
         
         $data = [
             'id' => $person->getId(),
             'image_profile' => $photoProfile,
             'name_and_lastname' => $person->getNameAndLastname(),
-            'birthday' => $edad,
+            'age' => $age,
+            'birthday' => $person->getBirthday()->format('d-m-Y'),
             'weight' => $person->getWeight(),
             'height' => $person->getHeight(),
             'nationality' => $person->getNationality(),
@@ -305,13 +307,14 @@ class PersonController extends AbstractFOSRestController
         $person->setHeight($data['height']);
         $person->setNationality($data['nationality']);
         $person->setCity($data['city']);
+        
         // $person->setGamesPlayed($data['games_played']);
         // $person->setVictories($data['victories']);
         // $person->setDefeat($data['defeat']);
         // $person->setImageBanner($data['image_banner']);
         // Manejar la carga de imagen del perfil
-         // Manejar la carga de imagen del perfil
 
+         // Manejar la carga de imagen del perfil
     if ($request->files->has('image_profile')) {
         /** @var UploadedFile $imageProfileFile */
         $imageProfileFile = $request->files->get('image_profile');
