@@ -505,9 +505,16 @@ class SearchController extends AbstractFOSRestController
                     
                         'fk_teamcolor_id' => $result->getFkTeamColor() ? [
                             'id' => $result->getFkTeamColor()->getId(),
-                            'team_a' => $result->getFkTeamColor()->getTeamA(),
-                            'team_b' => $result->getFkTeamColor()->getTeamB(),
+                            'colour' => $result->getFkTeamColor()->getColour(),
+                            'image_shirt' => $result->getFkTeamColor()->getImageShirt(),
                         ] : null,
+
+                        'fk_teamcolor_two_id' => $result->getFkTeamcolorTwo() ? [
+                            'id' => $result->getFkTeamcolorTwo()->getId(),
+                            'colour' => $result->getFkTeamcolorTwo()->getColour(),
+                            'image_shirt' => $result->getFkTeamcolorTwo()->getImageShirt(),
+                        ] : null,
+
                     ] : null,
                     'event_players' => [
                         'event_players_A' => $eventPlayersA,
@@ -582,9 +589,16 @@ class SearchController extends AbstractFOSRestController
                     
                         'fk_teamcolor_id' => $result->getFkTeamColor() ? [
                             'id' => $result->getFkTeamColor()->getId(),
-                            'team_a' => $result->getFkTeamColor()->getTeamA(),
-                            'team_b' => $result->getFkTeamColor()->getTeamB(),
+                            'colour' => $result->getFkTeamColor()->getColour(),
+                            'image_shirt' => $result->getFkTeamColor()->getImageShirt(),
                         ] : null,
+
+                        'fk_teamcolor_two_id' => $result->getFkTeamcolorTwo() ? [
+                            'id' => $result->getFkTeamcolorTwo()->getId(),
+                            'colour' => $result->getFkTeamcolorTwo()->getColour(),
+                            'image_shirt' => $result->getFkTeamcolorTwo()->getImageShirt(),
+                        ] : null,
+
                     ] : null,
                     'event_players' => [
                         'event_players_A' => $eventPlayersA,

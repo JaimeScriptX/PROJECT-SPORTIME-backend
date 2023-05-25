@@ -55,19 +55,19 @@ class TeamColor
         return $this->colour;
     }
 
-    public function setTeamA(string $colour): self
+    public function setColour(string $colour): self
     {
         $this->colour = $colour;
 
         return $this;
     }
 
-    public function getTeamB(): ?string
+    public function getImageShirt(): ?string
     {
         return $this->image_shirt;
     }
 
-    public function setTeamB(string $image_shirt): self
+    public function setImageShirt(string $image_shirt): self
     {
         $this->image_shirt = $image_shirt;
 
