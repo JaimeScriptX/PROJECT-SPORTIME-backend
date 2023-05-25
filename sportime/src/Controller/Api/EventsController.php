@@ -61,15 +61,24 @@ class EventsController extends AbstractFOSRestController
                 $numParticipantes++;
                 
                 if ($eventPlayer->getEquipo() == 1){
+
+                     //get de las fotos de perfil con la url
+                     $getPhotoProfile = $eventPlayer->getFkPerson()->getImageProfile();
+                     $photoProfile = $this->getParameter('url') . $getPhotoProfile;
+
                     $eventPlayersA[] = [
                         'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
-                        'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                        'image_profile' => $photoProfile,
                     ];
 
                 }else{
+                    //get de las fotos de perfil con la url
+                    $getPhotoProfile = $eventPlayer->getFkPerson()->getImageProfile();
+                    $photoProfile = $this->getParameter('url') . $getPhotoProfile;
+
                     $eventPlayersB[] = [
                         'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
-                        'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                        'image_profile' => $photoProfile,
                     ];
                 }
             }
@@ -89,7 +98,11 @@ class EventsController extends AbstractFOSRestController
               $getLogoEvent = $event->getFkSport()->getLogoEvent();
               $LogoEvent = $this->getParameter('url') . $getLogoEvent;
 
-               //get image
+              //get shirt
+                $getShirt = $event->getFkTeamColor()->getImageShirt();
+                $shirt = $this->getParameter('url') . $getShirt;
+
+               //get imagesportcenter
                 $fkSportCenter = $event->getFkSportcenter();
                 $imageSportCenter = null;
 
@@ -138,13 +151,13 @@ class EventsController extends AbstractFOSRestController
                 'fk_teamcolor_id' => $event->getFkTeamColor() ? [
                     'id' => $event->getFkTeamColor()->getId(),
                     'colour' => $event->getFkTeamColor()->getColour(),
-                    'image_shirt' => $event->getFkTeamColor()->getImageShirt(),
+                    'image_shirt' => $shirt,
                 ] : null,
 
                 'fk_teamcolor_two_id' => $event->getFkTeamcolorTwo() ? [
                     'id' => $event->getFkTeamcolorTwo()->getId(),
                     'colour' => $event->getFkTeamcolorTwo()->getColour(),
-                    'image_shirt' => $event->getFkTeamcolorTwo()->getImageShirt(),
+                    'image_shirt' => $shirt,
                 ] : null,
                 'fk_person_id' => $event->getFkPerson() ? [
                     'id' => $event->getFkPerson()->getId(),
@@ -183,9 +196,7 @@ class EventsController extends AbstractFOSRestController
         }
         return new JsonResponse($data, Response::HTTP_OK);
 
-        
         }
-        
         
     }
 
@@ -217,15 +228,25 @@ class EventsController extends AbstractFOSRestController
                 $numParticipantes++;
                 
                 if ($eventPlayer->getEquipo() == 1){
+
+                     //get de las fotos de perfil con la url
+                     $getPhotoProfile = $eventPlayer->getFkPerson()->getImageProfile();
+                     $photoProfile = $this->getParameter('url') . $getPhotoProfile;
+
                     $eventPlayersA[] = [
                         'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
-                        'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                        'image_profile' => $photoProfile,
                     ];
 
                 }else{
+
+                    //get de las fotos de perfil con la url
+                    $getPhotoProfile = $eventPlayer->getFkPerson()->getImageProfile();
+                    $photoProfile = $this->getParameter('url') . $getPhotoProfile;
+
                     $eventPlayersB[] = [
                         'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
-                        'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                        'image_profile' => $photoProfile,
                     ];
                 }
             }
@@ -337,10 +358,6 @@ class EventsController extends AbstractFOSRestController
         
     }
 
-
-    
-
-    
 
     /**
      * @Rest\Post(path="/eventsSportime")
@@ -603,15 +620,25 @@ class EventsController extends AbstractFOSRestController
                         $numParticipantes++;
                         
                         if ($eventPlayer->getEquipo() == 1){
+
+                            //get de las fotos de perfil con la url
+                            $getPhotoProfile = $eventPlayer->getFkPerson()->getImageProfile();
+                            $photoProfile = $this->getParameter('url') . $getPhotoProfile;
+
                             $eventPlayersA[] = [
                                 'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
-                                'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                                'image_profile' => $photoProfile,
                             ];
         
                         }else{
+
+                            //get de las fotos de perfil con la url
+                            $getPhotoProfile = $eventPlayer->getFkPerson()->getImageProfile();
+                            $photoProfile = $this->getParameter('url') . $getPhotoProfile;
+
                             $eventPlayersB[] = [
                                 'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
-                                'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                                'image_profile' => $photoProfile,
                             ];
                         }
                     }
@@ -629,9 +656,18 @@ class EventsController extends AbstractFOSRestController
                     $getLogoEvent = $event->getFkSport()->getLogoEvent();
                     $LogoEvent = $this->getParameter('url') . $getLogoEvent;
 
+                    //get shirt
+                    $getShirt = $event->getFkTeamColor()->getImageShirt();
+                    $shirt = $this->getParameter('url') . $getShirt;
+
                     //get image
-                    // $getImageSportCenter = $event->getFkSportcenter()->getImage();
-                    // $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
+                    $fkSportCenter = $event->getFkSportcenter();
+                    $imageSportCenter = null;
+
+                if ($fkSportCenter) {
+                    $getImageSportCenter = $fkSportCenter->getImage();
+                    $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
+                }
 
                     $timeEnd = new \DateTime($participatingEvent->getFkEvent()->getTime()->format('H:i'));
                     $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
@@ -658,7 +694,7 @@ class EventsController extends AbstractFOSRestController
                             'name' => $event->getFkSportcenter()->getName(),
                             'municipality' => $event->getFkSportcenter()->getMunicipality(),
                             'address' => $event->getFkSportcenter()->getAddress(),
-                            // 'image' => $imageSportCenter,
+                            'image' => $imageSportCenter,
                             'phone' => $event->getFkSportcenter()->getPhone(),
                             'latitude' => $event->getFkSportcenter()->getLatitude(),
                             'longitude' => $event->getFkSportcenter()->getLongitude(),
@@ -675,13 +711,13 @@ class EventsController extends AbstractFOSRestController
                         'fk_teamcolor_id' => $event->getFkTeamColor() ? [
                             'id' => $event->getFkTeamColor()->getId(),
                             'colour' => $event->getFkTeamColor()->getColour(),
-                            'image_shirt' => $event->getFkTeamColor()->getImageShirt(),
+                            'image_shirt' => $shirt,
                         ] : null,
 
                         'fk_teamcolor_two_id' => $event->getFkTeamcolorTwo() ? [
                             'id' => $event->getFkTeamcolorTwo()->getId(),
                             'colour' => $event->getFkTeamcolorTwo()->getColour(),
-                            'image_shirt' => $event->getFkTeamcolorTwo()->getImageShirt(),
+                            'image_shirt' => $shirt,
                         ] : null,
                         'fk_person_id' => $event->getFkPerson() ? [
                             'id' => $event->getFkPerson()->getId(),
@@ -709,18 +745,30 @@ class EventsController extends AbstractFOSRestController
         
                             $numParticipantes=0;
                             foreach ($eventPlayers as $eventPlayer) {
+
+                                
                                 $numParticipantes++;
                         
                             if ($eventPlayer->getEquipo() == 1){
+
+                            //get de las fotos de perfil con la url
+                            $getPhotoProfile = $eventPlayer->getFkPerson()->getImageProfile();
+                            $photoProfile = $this->getParameter('url') . $getPhotoProfile;
+
                                 $eventPlayersA[] = [
                                     'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
-                                    'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                                    'image_profile' =>  $photoProfile,
                                 ];
                             
                             }else{
+
+                                //get de las fotos de perfil con la url
+                                $getPhotoProfile = $eventPlayer->getFkPerson()->getImageProfile();
+                                $photoProfile = $this->getParameter('url') . $getPhotoProfile;
+
                                 $eventPlayersB[] = [
                                     'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
-                                    'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                                    'image_profile' => $photoProfile,
                                 ];
                             }
                             }   
@@ -738,10 +786,19 @@ class EventsController extends AbstractFOSRestController
                             $getLogoEvent = $event->getFkSport()->getLogoEvent();
                             $LogoEvent2 = $this->getParameter('url') . $getLogoEvent;
 
-                            //get image
-                            $getImageSportCenter = $event->getFkSportcenter()->getImage();
-                            $imageSportCenter2 = $this->getParameter('url') . $getImageSportCenter;
+                            //get shirt
+                            $getShirt = $event->getFkTeamColor()->getImageShirt();
+                            $shirt = $this->getParameter('url') . $getShirt;
 
+                             //get image
+                            $fkSportCenter2 = $event->getFkSportcenter();
+                            $imageSportCenter2 = null;
+
+                        if ($fkSportCenter2) {
+                            $getImageSportCenter = $fkSportCenter2->getImage();
+                            $imageSportCenter2 = $this->getParameter('url') . $getImageSportCenter;
+                            }
+                            
                             $timeEnd = new \DateTime($participatingEvent->getFkEvent()->getTime()->format('H:i'));
                             $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
                             $data['created_events'][] = [
@@ -784,13 +841,13 @@ class EventsController extends AbstractFOSRestController
                             'fk_teamcolor_id' => $event->getFkTeamColor() ? [
                                 'id' => $event->getFkTeamColor()->getId(),
                                 'colour' => $event->getFkTeamColor()->getColour(),
-                                'image_shirt' => $event->getFkTeamColor()->getImageShirt(),
+                                'image_shirt' => $shirt,
                             ] : null,
     
                             'fk_teamcolor_two_id' => $event->getFkTeamcolorTwo() ? [
                                 'id' => $event->getFkTeamcolorTwo()->getId(),
                                 'colour' => $event->getFkTeamcolorTwo()->getColour(),
-                                'image_shirt' => $event->getFkTeamcolorTwo()->getImageShirt(),
+                                'image_shirt' => $shirt,
                             ] : null,
                             'fk_person_id' => $event->getFkPerson() ? [
                                 'id' => $event->getFkPerson()->getId(),
