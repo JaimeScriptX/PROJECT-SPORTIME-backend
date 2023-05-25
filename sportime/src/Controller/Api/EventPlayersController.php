@@ -106,25 +106,41 @@ class EventPlayersController extends AbstractFOSRestController
         EntityManagerInterface $entityManager
     ){
         $entityManager = $this->getDoctrine()->getManager();
+        $eventPlayersRepository = $entityManager->getRepository(EventPlayers::class);
 
         $data = json_decode($request->getContent(), true);
 
-        $eventPlayer = new EventPlayers();
-        $event = $entityManager->getRepository(Events::class)->find(['id' => $data['fk_event_id']]);
-        $eventPlayer->setFkEvent($event);
+        $checkEventPlayer = $eventPlayersRepository->findOneBy([
+            'fk_event' => $data['fk_event_id'],
+            'fk_person' => $data['fk_person_id'],
+        ]);
 
-        $person = $entityManager->getRepository(Person::class)->find(['id' => $data['fk_person_id']]);
-        $eventPlayer->setFkPerson($person);
+        if ($checkEventPlayer) {
+            return new JsonResponse(
+                ['code' => 409, 'message' => 'Event player already exists.'],
+                Response::HTTP_CONFLICT
+            );
+        }
+        else{
+            $eventPlayer = new EventPlayers();
+            $event = $entityManager->getRepository(Events::class)->find(['id' => $data['fk_event_id']]);
+            $eventPlayer->setFkEvent($event);
 
-        $eventPlayer->setEquipo($data['equipo']);
+            $person = $entityManager->getRepository(Person::class)->find(['id' => $data['fk_person_id']]);
+            $eventPlayer->setFkPerson($person);
 
-        $entityManager->persist($eventPlayer);
-        $entityManager->flush();
+            $eventPlayer->setEquipo($data['team']);
 
-        return new JsonResponse(
-            ['code' => 201, 'message' => 'Event player created successfully.'],
-            Response::HTTP_CREATED
-        );
+            $entityManager->persist($eventPlayer);
+            $entityManager->flush();
+
+            return new JsonResponse(
+                ['code' => 201, 'message' => 'Event player created successfully.'],
+                Response::HTTP_CREATED
+            );
+        }
+
+        
     }
 
     /**
