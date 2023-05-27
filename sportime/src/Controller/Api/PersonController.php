@@ -370,6 +370,7 @@ class PersonController extends AbstractFOSRestController
         PersonRepository $personRepository,
         EntityManagerInterface $em
     ){
+
         $person = $em->getRepository(Person::class)->find($id);
 
 
@@ -377,24 +378,23 @@ class PersonController extends AbstractFOSRestController
             throw $this->createNotFoundException('Person not found');
         }
         
-            
-
         $data = json_decode($request->getContent(), true);
 
+        $birthday = (isset($data['birthday']))? new \DateTime($data['birthday']): $person->getBirthday();
         // $person->setImageProfile($data['image_profile']);
-        $person->setNameAndLastname($data['name_and_lastname']);
-        $person->setBirthday(new \DateTime($data['birthday']));
-        $person->setWeight($data['weight']);
-        $person->setHeight($data['height']);
-        $person->setNationality($data['nationality']);
-        $person->setCity($data['city']);
+        $person->setNameAndLastname($data['name_and_lastname'] ?? $person->getNameAndLastname());
+        $person->setBirthday($birthday);
+        $person->setWeight($data['weight'] ?? $person->getWeight());
+        $person->setHeight($data['height'] ?? $person->getHeight());
+        $person->setNationality($data['nationality'] ?? $person->getNationality());
+        $person->setCity($data['city'] ?? $person->getCity());
         // $person->setGamesPlayed($data['games_played']);
         // $person->setVictories($data['victories']);
         // $person->setDefeat($data['defeat']);
         // $person->setImageBanner($data['image_banner']);
 
         //FK
-        $sex = $em->getRepository(Sex::class)->findOneBy(['gender' => $data['fk_sex']]);
+        $sex = (isset($data['fk_sex']))? $em->getRepository(Sex::class)->findOneBy(['gender' => $data['fk_sex']]): $person->getFkSex();
         $person->setFkSex($sex);
 
         // $user = $em->getRepository(User::class)->findOneBy(['id' => $data['fk_user']]);
@@ -406,6 +406,18 @@ class PersonController extends AbstractFOSRestController
         // $person->setFkUser($user);
 
          // Manejar la carga de imagen del perfil
+         if (isset($data['image_data'])) {
+            $imageData = $data['image_data'];
+            $imageData = str_replace('data:image/png;base64,', '', $imageData);
+            $imageData = str_replace(' ', '+', $imageData);
+            $imageData = base64_decode($imageData);
+            $imageData = imagecreatefromstring($imageData);
+            $profileFilename = md5(uniqid()).'.png';
+            $profilePath = $this->getParameter('app.upload_directory.profile') . '/' . $profileFilename;
+            imagepng($imageData, $profilePath);
+            $person->setImageProfile('/images/profile/' . $profileFilename);
+         }
+         
     if ($request->files->has('image_profile')) {
         /** @var UploadedFile $imageProfileFile */
         $imageProfileFile = $request->files->get('image_profile');

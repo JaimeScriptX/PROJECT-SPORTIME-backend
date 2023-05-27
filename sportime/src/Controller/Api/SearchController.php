@@ -432,7 +432,10 @@ class SearchController extends AbstractFOSRestController
             $numParticipantes=0;
             foreach ($eventPlayers as $eventPlayer) {
                 $numParticipantes++;
-                
+                $allEventPlayers[] = [
+                    'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
+
+                ];
                 if ($eventPlayer->getEquipo() == 1){
                     $eventPlayersA[] = [
                         'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
@@ -520,7 +523,7 @@ class SearchController extends AbstractFOSRestController
                         'event_players_A' => $eventPlayersA,
                         'event_players_B' => $eventPlayersB,
                     ],
-    
+                    'event_players_list' => $allEventPlayers,
                     'players_registered' => $numParticipantes,
                     'missing_players' => $result->getNumberPlayers() *2 - $numParticipantes,
                 ];
@@ -604,7 +607,7 @@ class SearchController extends AbstractFOSRestController
                         'event_players_A' => $eventPlayersA,
                         'event_players_B' => $eventPlayersB,
                     ],
-    
+                    'event_players_list' => $allEventPlayers,
                     'players_registered' => $numParticipantes,
                     'missing_players' => $result->getNumberPlayers() *2 - $numParticipantes,
                 ];

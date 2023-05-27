@@ -57,7 +57,7 @@ class EventPlayersController extends AbstractFOSRestController
                     'id' => $eventPlayer->getId(),
                     'fk_event_id' => $eventPlayer->getFkEvent()->getId(),
                     'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
-                    'equipo' => $eventPlayer->getEquipo(),
+                    'team' => $eventPlayer->getEquipo(),
                     'image_profile' => $photoProfile ?? null,
                 ];
             }
@@ -90,7 +90,7 @@ class EventPlayersController extends AbstractFOSRestController
                 'id' => $eventPlayer->getId(),
                 'fk_event_id' => $eventPlayer->getFkEvent()->getId(),
                 'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
-                'equipo' => $eventPlayer->getEquipo(),
+                'team' => $eventPlayer->getEquipo(),
                 'image_profile' => $photoProfile ?? null,
             ];
             return new JsonResponse($data, Response::HTTP_OK);

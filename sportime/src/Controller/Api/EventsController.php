@@ -54,12 +54,19 @@ class EventsController extends AbstractFOSRestController
 
             $eventPlayersA=[];
             $eventPlayersB=[];
-
+            $allEventPlayers=[];
             
             $numParticipantes=0;
             foreach ($eventPlayers as $eventPlayer) {
                 $numParticipantes++;
                 
+                
+
+                $allEventPlayers[] = [
+                    'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
+
+                ];
+
                 if ($eventPlayer->getEquipo() == 1){
 
                      //get de las fotos de perfil con la url
@@ -187,6 +194,10 @@ class EventsController extends AbstractFOSRestController
                     'event_players_B' => $eventPlayersB,
                 ],
 
+                
+                    'event_players_list' => $allEventPlayers,
+                
+
                 'players_registered' => $numParticipantes,
                 'missing_players' => $event->getNumberPlayers() *2 - $numParticipantes,
                 
@@ -226,7 +237,10 @@ class EventsController extends AbstractFOSRestController
             $numParticipantes=0;
             foreach ($eventPlayers as $eventPlayer) {
                 $numParticipantes++;
-                
+                $allEventPlayers[] = [
+                    'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
+
+                ];
                 if ($eventPlayer->getEquipo() == 1){
 
                      //get de las fotos de perfil con la url
@@ -349,7 +363,7 @@ class EventsController extends AbstractFOSRestController
                     'event_players_A' => $eventPlayersA,
                     'event_players_B' => $eventPlayersB,
                 ],
-
+                'event_players_list' => $allEventPlayers,
                 'players_registered' => $numParticipantes,
                 'missing_players' => $event->getNumberPlayers() *2 - $numParticipantes,
             ];
@@ -397,8 +411,13 @@ class EventsController extends AbstractFOSRestController
         $person = $entityManager->getRepository(Person::class)->find(['id' => $data['fk_person']]);
         $events->setFkPerson($person);
 
-        $teamColor = $entityManager->getRepository(TeamColor::class)->find(['id' => $data['fk_teamcolor']]);
+        $teamColor = $entityManager->getRepository(TeamColor::class)->findOneBy(['colour' => $data['fk_teamcolor']]);
         $events->setFkTeamcolor($teamColor);
+
+        $teamColorTwo = $entityManager->getRepository(TeamColor::class)->findOneBy(['colour' => $data['fk_teamcolor_two']]);
+        $events->setFkTeamcolorTwo($teamColorTwo);
+
+        
 
         $entityManager->persist($events);
         $entityManager->flush();
@@ -443,8 +462,11 @@ class EventsController extends AbstractFOSRestController
         $person = $entityManager->getRepository(Person::class)->find(['id' => $data['fk_person']]);
         $events->setFkPerson($person);
 
-        $teamColor = $entityManager->getRepository(TeamColor::class)->find(['id' => $data['fk_teamcolor']]);
+        $teamColor = $entityManager->getRepository(TeamColor::class)->findOneBy(['colour' => $data['fk_teamcolor']]);
         $events->setFkTeamcolor($teamColor);
+
+        $teamColorTwo = $entityManager->getRepository(TeamColor::class)->findOneBy(['colour' => $data['fk_teamcolor_two']]);
+        $events->setFkTeamcolorTwo($teamColorTwo);
 
         $entityManager->persist($events);
         $entityManager->flush();
@@ -498,6 +520,7 @@ class EventsController extends AbstractFOSRestController
         empty($data['fk_sex']) ? true : $events->setFkSex($data['fk_sex']);
         empty($data['fk_person']) ? true : $events->setFkPerson($data['fk_person']);
         empty($data['fk_teamcolor']) ? true : $events->setFkTeamcolor($data['fk_teamcolor']);
+        empty($data['fk_teamcolor_two']) ? true : $events->setFkTeamcolorTwo($data['fk_teamcolor_two']);
 
         $updatedEvents = $eventsRepository->updateEvents($events);
 
@@ -538,6 +561,9 @@ class EventsController extends AbstractFOSRestController
         empty($data['fk_sex']) ? true : $events->setFkSex($data['fk_sex']);
         empty($data['fk_person']) ? true : $events->setFkPerson($data['fk_person']);
         empty($data['fk_teamcolor']) ? true : $events->setFkTeamcolor($data['fk_teamcolor']);
+        empty($data['fk_teamcolor_two']) ? true : $events->setFkTeamcolorTwo($data['fk_teamcolor_two']);
+        
+        
 
         $updatedEvents = $eventsRepository->updateEvents($events);
 
@@ -618,7 +644,10 @@ class EventsController extends AbstractFOSRestController
                     $numParticipantes=0;
                     foreach ($eventPlayers as $eventPlayer) {
                         $numParticipantes++;
-                        
+                        $allEventPlayers[] = [
+                            'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
+        
+                        ];
                         if ($eventPlayer->getEquipo() == 1){
 
                             //get de las fotos de perfil con la url
@@ -731,10 +760,17 @@ class EventsController extends AbstractFOSRestController
                             'event_players_A' => $eventPlayersA,
                             'event_players_B' => $eventPlayersB,
                         ],
-                     
+                        'event_players_list' => $allEventPlayers,
                         'players_registered' => $numParticipantes,
                         'missing_players' => $event->getNumberPlayers() *2 - $numParticipantes,
                             ];
+
+                            // ordenar por date y time de menor a mayor
+                            usort($data['participating_events'], function ($a, $b) {
+                                $dateA = new \DateTime($a['date'] . ' ' . $a['time']);
+                                $dateB = new \DateTime($b['date'] . ' ' . $b['time']);
+                                return $dateA <=> $dateB;
+                            });
                         }
                         else{
                             $ids = $participatingEvent->getFkEvent()->getId();
@@ -748,7 +784,10 @@ class EventsController extends AbstractFOSRestController
 
                                 
                                 $numParticipantes++;
-                        
+                                $allEventPlayers[] = [
+                                    'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
+                
+                                ];
                             if ($eventPlayer->getEquipo() == 1){
 
                             //get de las fotos de perfil con la url
@@ -861,11 +900,16 @@ class EventsController extends AbstractFOSRestController
                                 'event_players_A' => $eventPlayersA,
                                 'event_players_B' => $eventPlayersB,
                             ],
+                            'event_players_list' => $allEventPlayers,
                             'players_registered' => $numParticipantes,
                             'missing_players' => $event->getNumberPlayers() *2 - $numParticipantes,
                                 
                             ];
                             
+                            //ordenar por id de primero a ultimo
+                            usort($data['created_events'], function ($a, $b) {
+                                return $a['id'] <=> $b['id'];
+                            });
                         }
             }             
             
