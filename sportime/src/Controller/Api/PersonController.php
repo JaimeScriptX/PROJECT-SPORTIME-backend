@@ -406,8 +406,8 @@ class PersonController extends AbstractFOSRestController
         // $person->setFkUser($user);
 
          // Manejar la carga de imagen del perfil
-         if (isset($data['image_data'])) {
-            $imageData = $data['image_data'];
+         if (isset($data['image_profile'])) {
+            $imageData = $data['image_profile'];
             $imageData = str_replace('data:image/png;base64,', '', $imageData);
             $imageData = str_replace(' ', '+', $imageData);
             $imageData = base64_decode($imageData);
@@ -417,6 +417,19 @@ class PersonController extends AbstractFOSRestController
             imagepng($imageData, $profilePath);
             $person->setImageProfile('/images/profile/' . $profileFilename);
          }
+
+        // Manejar la carga de imagen del banner
+        if (isset($data['image_banner'])) {
+            $imageDataBanner = $data['image_banner'];
+            $imageDataBanner = str_replace('data:image/png;base64,', '', $imageDataBanner);
+            $imageDataBanner = str_replace(' ', '+', $imageDataBanner);
+            $imageDataBanner = base64_decode($imageDataBanner);
+            $imageDataBanner = imagecreatefromstring($imageDataBanner);
+            $bannerFilename = md5(uniqid()).'.png';
+            $bannerPath = $this->getParameter('app.upload_directory.banner') . '/' . $bannerFilename;
+            imagepng($imageDataBanner, $bannerPath);
+            $person->setImageBanner('/images/banner/' . $bannerFilename);
+        }
          
     if ($request->files->has('image_profile')) {
         /** @var UploadedFile $imageProfileFile */
