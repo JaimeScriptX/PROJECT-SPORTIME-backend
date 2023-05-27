@@ -408,15 +408,63 @@ class PersonController extends AbstractFOSRestController
          // Manejar la carga de imagen del perfil
          if (isset($data['image_profile'])) {
             $imageData = $data['image_profile'];
-            $imageData = str_replace('data:image/png;base64,', '', $imageData);
+            $imageData = preg_replace('#^data:image/[^;]+;base64,#', '', $imageData);
             $imageData = str_replace(' ', '+', $imageData);
             $imageData = base64_decode($imageData);
             $imageData = imagecreatefromstring($imageData);
-            $profileFilename = md5(uniqid()).'.png';
-            $profilePath = $this->getParameter('app.upload_directory.profile') . '/' . $profileFilename;
-            imagepng($imageData, $profilePath);
-            $person->setImageProfile('/images/profile/' . $profileFilename);
-         }
+        
+            $tmpImagePath = sys_get_temp_dir() . '/' . uniqid() . '.tmp';
+            imagejpeg($imageData, $tmpImagePath);
+        
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $tmpImagePath);
+            finfo_close($finfo);
+        
+            unlink($tmpImagePath);
+        
+            $extension = '';
+            switch ($mimeType) {
+                case 'image/jpeg':
+                    $extension = 'jpg';
+                    break;
+                case 'image/png':
+                    $extension = 'png';
+                    break;
+                case 'image/gif':
+                    $extension = 'gif';
+                    break;
+                // Agrega más casos según los formatos de imagen que quieras soportar
+                // case 'image/bmp':
+                //     $extension = 'bmp';
+                //     break;
+            }
+        
+            if (!empty($extension)) {
+                $profileFilename = uniqid() . '.' . $extension;
+                $profilePath = $this->getParameter('app.upload_directory.profile') . '/' . $profileFilename;
+        
+                switch ($extension) {
+                    case 'jpg':
+                        imagejpeg($imageData, $profilePath);
+                        break;
+                    case 'png':
+                        imagepng($imageData, $profilePath);
+                        break;
+                    case 'gif':
+                        imagegif($imageData, $profilePath);
+                        break;
+                    // Agrega más casos según los formatos de imagen que quieras soportar
+                    // case 'bmp':
+                    //     imagebmp($imageData, $profilePath);
+                    //     break;
+                }
+        
+                $person->setImageProfile('/images/profile/' . $profileFilename);
+            }
+        }
+        
+
+         
 
         // Manejar la carga de imagen del banner
         if (isset($data['image_banner'])) {
@@ -425,11 +473,51 @@ class PersonController extends AbstractFOSRestController
             $imageDataBanner = str_replace(' ', '+', $imageDataBanner);
             $imageDataBanner = base64_decode($imageDataBanner);
             $imageDataBanner = imagecreatefromstring($imageDataBanner);
-            $bannerFilename = md5(uniqid()).'.png';
-            $bannerPath = $this->getParameter('app.upload_directory.banner') . '/' . $bannerFilename;
-            imagepng($imageDataBanner, $bannerPath);
-            $person->setImageBanner('/images/banner/' . $bannerFilename);
+        
+            $tmpImagePath = sys_get_temp_dir() . '/' . uniqid() . '.tmp';
+            imagepng($imageDataBanner, $tmpImagePath);
+        
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $tmpImagePath);
+            finfo_close($finfo);
+        
+            unlink($tmpImagePath);
+        
+            $extension = '';
+            switch ($mimeType) {
+                case 'image/png':
+                    $extension = 'png';
+                    break;
+                case 'image/jpeg':
+                    $extension = 'jpg';
+                    break;
+                case 'image/gif':
+                    $extension = 'gif';
+                    break;
+                // Agrega más casos según los formatos de imagen que quieras soportar
+            }
+        
+            if (!empty($extension)) {
+                $bannerFilename = uniqid() . '.' . $extension;
+                $bannerPath = $this->getParameter('app.upload_directory.banner') . '/' . $bannerFilename;
+        
+                switch ($extension) {
+                    case 'png':
+                        imagepng($imageDataBanner, $bannerPath);
+                        break;
+                    case 'jpg':
+                        imagejpeg($imageDataBanner, $bannerPath);
+                        break;
+                    case 'gif':
+                        imagegif($imageDataBanner, $bannerPath);
+                        break;
+                    // Agrega más casos según los formatos de imagen que quieras soportar
+                }
+        
+                $person->setImageBanner('/images/banner/' . $bannerFilename);
+            }
         }
+        
          
     if ($request->files->has('image_profile')) {
         /** @var UploadedFile $imageProfileFile */
