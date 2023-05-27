@@ -62,19 +62,19 @@ class SportCenterController extends AbstractFOSRestController
             $image = $this->getParameter('url') . $getImage;
 
             //get gallery1
-            $getGallery1 = $sportCenter->getImage();
+            $getGallery1 = $sportCenter->getImageGallery1();
             $gallery1 = $this->getParameter('url') . $getGallery1;
 
             //get gallery2
-            $getGallery2 = $sportCenter->getImage();
+            $getGallery2 = $sportCenter->getImageGallery2();
             $Gallery2 = $this->getParameter('url') . $getGallery2;
 
             //get gallery3
-            $getGallery3 = $sportCenter->getImage();
+            $getGallery3 = $sportCenter->getImageGallery3();
             $Gallery3 = $this->getParameter('url') . $getGallery3;
 
             //get gallery4
-            $getGallery4 = $sportCenter->getImage();
+            $getGallery4 = $sportCenter->getImageGallery4();
             $Gallery4 = $this->getParameter('url') . $getGallery4;
 
 
@@ -85,10 +85,12 @@ class SportCenterController extends AbstractFOSRestController
                 'address' => $sportCenter->getAddress(),
                 'image' => $image,
                 'phone' => $sportCenter->getPhone(),
-                'image_gallery1' => $gallery1,
-                'image_gallery2' => $Gallery2,
-                'image_gallery3' => $Gallery3,
-                'image_gallery4' => $Gallery4,
+                "gallery" => [
+                    (object) ['image_gallery1' => $gallery1],
+                    (object) ['image_gallery2' => $Gallery2],
+                    (object) ['image_gallery3' => $Gallery3],
+                    (object) ['image_gallery4' => $Gallery4],
+                ],
                 'latitude' => $sportCenter->getLatitude(),
                 'longitude' => $sportCenter->getLongitude(),
                 'destination' => $sportCenter->getDestination(),
@@ -155,19 +157,19 @@ class SportCenterController extends AbstractFOSRestController
         $image = $this->getParameter('url') . $getImage;
 
         //get gallery1
-        $getGallery1 = $sportCenter->getImage();
+        $getGallery1 = $sportCenter->getImageGallery1();
         $gallery1 = $this->getParameter('url') . $getGallery1;
 
         //get gallery2
-        $getGallery2 = $sportCenter->getImage();
+        $getGallery2 = $sportCenter->getImageGallery2();
         $Gallery2 = $this->getParameter('url') . $getGallery2;
 
         //get gallery3
-        $getGallery3 = $sportCenter->getImage();
+        $getGallery3 = $sportCenter->getImageGallery3();
         $Gallery3 = $this->getParameter('url') . $getGallery3;
 
         //get gallery4
-        $getGallery4 = $sportCenter->getImage();
+        $getGallery4 = $sportCenter->getImageGallery4();
         $Gallery4 = $this->getParameter('url') . $getGallery4;
 
 
@@ -178,10 +180,12 @@ class SportCenterController extends AbstractFOSRestController
             'address' => $sportCenter->getAddress(),
             'image' => $image,
             'phone' => $sportCenter->getPhone(),
-            'image_gallery1' => $gallery1,
-            'image_gallery2' => $Gallery2,
-            'image_gallery3' => $Gallery3,
-            'image_gallery4' => $Gallery4,
+            "gallery" => [
+                (object) ['image_gallery1' => $gallery1],
+                (object) ['image_gallery2' => $Gallery2],
+                (object) ['image_gallery3' => $Gallery3],
+                (object) ['image_gallery4' => $Gallery4],
+            ],
             'latitude' => $sportCenter->getLatitude(),
             'longitude' => $sportCenter->getLongitude(),
             'destination' => $sportCenter->getDestination(),
