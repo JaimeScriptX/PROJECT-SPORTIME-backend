@@ -49,12 +49,6 @@ class SportCenter
      */
     private $fk_sport;
 
-
-    /**
-     * @ORM\OneToMany(targetEntity=Timetable::class, mappedBy="fk_sportcenter")
-     */
-    private $timetables;
-
     /**
      * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_sportcenter")
      */
@@ -105,12 +99,17 @@ class SportCenter
      */
     private $description;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ScheduleCenter::class, mappedBy="fk_sport_center_id")
+     */
+    private $scheduleCenters;
+
     public function __construct()
     {
         $this->fk_sport = new ArrayCollection();
-        $this->timetables = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->fk_services = new ArrayCollection();
+        $this->scheduleCenters = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -198,36 +197,6 @@ class SportCenter
     public function removeFkSport(Sport $fkSport): self
     {
         $this->fk_sport->removeElement($fkSport);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Timetable>
-     */
-    public function getTimetables(): Collection
-    {
-        return $this->timetables;
-    }
-
-    public function addTimetable(Timetable $timetable): self
-    {
-        if (!$this->timetables->contains($timetable)) {
-            $this->timetables[] = $timetable;
-            $timetable->setFkSportcenter($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTimetable(Timetable $timetable): self
-    {
-        if ($this->timetables->removeElement($timetable)) {
-            // set the owning side to null (unless already changed)
-            if ($timetable->getFkSportcenter() === $this) {
-                $timetable->setFkSportcenter(null);
-            }
-        }
 
         return $this;
     }
@@ -378,6 +347,36 @@ class SportCenter
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ScheduleCenter>
+     */
+    public function getScheduleCenters(): Collection
+    {
+        return $this->scheduleCenters;
+    }
+
+    public function addScheduleCenter(ScheduleCenter $scheduleCenter): self
+    {
+        if (!$this->scheduleCenters->contains($scheduleCenter)) {
+            $this->scheduleCenters[] = $scheduleCenter;
+            $scheduleCenter->setFkSportCenterId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeScheduleCenter(ScheduleCenter $scheduleCenter): self
+    {
+        if ($this->scheduleCenters->removeElement($scheduleCenter)) {
+            // set the owning side to null (unless already changed)
+            if ($scheduleCenter->getFkSportCenterId() === $this) {
+                $scheduleCenter->setFkSportCenterId(null);
+            }
+        }
 
         return $this;
     }

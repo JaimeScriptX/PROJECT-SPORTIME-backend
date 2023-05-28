@@ -38,9 +38,22 @@ class SportCenterController extends AbstractFOSRestController
 
             $sport = $sportCenter->getFkSport();
             $sportData = [];
-    
+            
+            //sportCenterSchedule
+            $sportCenterSchedule = $sportCenter->getScheduleCenters();
+            $sportCenterScheduleData = [];
+
+            foreach ($sportCenterSchedule as $sportCenterSchedule) {
+                $sportCenterScheduleData[] = [
+                    'id' => $sportCenterSchedule->getId(),
+                    'day' => $sportCenterSchedule->getDay(),
+                    'opening_time' => $sportCenterSchedule->getStart()->format('H:i'),
+                    'closing_time' => $sportCenterSchedule->getEnd()->format('H:i'),
+                ];
+            }
+
             foreach ($sport as $sport) {
-    
+
                 //get imagesport
                 $getPhotoSport = $sport->getImage();
                 $photoSport = $this->getParameter('url') . $getPhotoSport;
@@ -96,6 +109,8 @@ class SportCenterController extends AbstractFOSRestController
                 'destination' => $sportCenter->getDestination(),
                 'services' => $servicesData,
                 'sport' => $sportData,
+                'schedule' => $sportCenterScheduleData,
+                'description' => $sportCenter->getDescription() ? $sportCenter->getDescription() : null,
             ];
         }
 
@@ -127,6 +142,19 @@ class SportCenterController extends AbstractFOSRestController
                 'id' => $service->getId(),
                 'name' => $service->getName(),
               
+            ];
+        }
+
+        //sportCenterSchedule
+        $sportCenterSchedule = $sportCenter->getScheduleCenters();
+        $sportCenterScheduleData = [];
+
+        foreach ($sportCenterSchedule as $sportCenterSchedule) {
+            $sportCenterScheduleData[] = [
+                'id' => $sportCenterSchedule->getId(),
+                'day' => $sportCenterSchedule->getDay(),
+                'opening_time' => $sportCenterSchedule->getStart()->format('H:i'),
+                'closing_time' => $sportCenterSchedule->getEnd()->format('H:i'),
             ];
         }
 
@@ -191,6 +219,8 @@ class SportCenterController extends AbstractFOSRestController
             'destination' => $sportCenter->getDestination(),
             'services' => $servicesData,
             'sport' => $sportData,
+            'schedule' => $sportCenterScheduleData,
+            'description' => $sportCenter->getDescription() ? $sportCenter->getDescription() : null,
         ];
 
         return $this->json($response);
