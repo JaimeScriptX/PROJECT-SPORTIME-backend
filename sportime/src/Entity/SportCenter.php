@@ -104,12 +104,18 @@ class SportCenter
      */
     private $scheduleCenters;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ReservedTime::class, mappedBy="fk_sport_center_id")
+     */
+    private $reservedTimes;
+
     public function __construct()
     {
         $this->fk_sport = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->fk_services = new ArrayCollection();
         $this->scheduleCenters = new ArrayCollection();
+        $this->reservedTimes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -375,6 +381,36 @@ class SportCenter
             // set the owning side to null (unless already changed)
             if ($scheduleCenter->getFkSportCenterId() === $this) {
                 $scheduleCenter->setFkSportCenterId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ReservedTime>
+     */
+    public function getReservedTimes(): Collection
+    {
+        return $this->reservedTimes;
+    }
+
+    public function addReservedTime(ReservedTime $reservedTime): self
+    {
+        if (!$this->reservedTimes->contains($reservedTime)) {
+            $this->reservedTimes[] = $reservedTime;
+            $reservedTime->setFkSportCenterId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservedTime(ReservedTime $reservedTime): self
+    {
+        if ($this->reservedTimes->removeElement($reservedTime)) {
+            // set the owning side to null (unless already changed)
+            if ($reservedTime->getFkSportCenterId() === $this) {
+                $reservedTime->setFkSportCenterId(null);
             }
         }
 

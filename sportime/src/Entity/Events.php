@@ -114,12 +114,18 @@ class Events
      */
     private $fk_teamcolor_two;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ReservedTime::class, mappedBy="fk_event_id")
+     */
+    private $reservedTimes;
+
 
     public function __construct()
     {
         $this->eventsResults = new ArrayCollection();
         $this->eventPlayers = new ArrayCollection();
         $this->events = new ArrayCollection();
+        $this->reservedTimes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -384,6 +390,36 @@ class Events
     public function setFkTeamcolorTwo(?TeamColor $fk_teamcolor_two): self
     {
         $this->fk_teamcolor_two = $fk_teamcolor_two;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ReservedTime>
+     */
+    public function getReservedTimes(): Collection
+    {
+        return $this->reservedTimes;
+    }
+
+    public function addReservedTime(ReservedTime $reservedTime): self
+    {
+        if (!$this->reservedTimes->contains($reservedTime)) {
+            $this->reservedTimes[] = $reservedTime;
+            $reservedTime->setFkEventId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservedTime(ReservedTime $reservedTime): self
+    {
+        if ($this->reservedTimes->removeElement($reservedTime)) {
+            // set the owning side to null (unless already changed)
+            if ($reservedTime->getFkEventId() === $this) {
+                $reservedTime->setFkEventId(null);
+            }
+        }
 
         return $this;
     }
