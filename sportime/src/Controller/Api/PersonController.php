@@ -25,7 +25,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 
 
-
 class PersonController extends AbstractFOSRestController
 {
     /**
@@ -555,10 +554,8 @@ class PersonController extends AbstractFOSRestController
     }
 
         
-
         $em->persist($person);
         $em->flush();
-
 
         return new JsonResponse(
             ['code' => 200, 'message' => 'Person updated successfully.'],

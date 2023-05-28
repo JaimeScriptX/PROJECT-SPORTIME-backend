@@ -108,7 +108,9 @@ class EventsController extends AbstractFOSRestController
               //get shirt
                 $getShirt = $event->getFkTeamColor()->getImageShirt();
                 $shirt = $this->getParameter('url') . $getShirt;
-
+                
+                $getShirtTwo = $event->getFkTeamColorTwo()->getImageShirt();
+                $shirtTwo = $this->getParameter('url') . $getShirtTwo;
                //get imagesportcenter
                 $fkSportCenter = $event->getFkSportcenter();
                 $imageSportCenter = null;
@@ -164,7 +166,7 @@ class EventsController extends AbstractFOSRestController
                 'fk_teamcolor_two_id' => $event->getFkTeamcolorTwo() ? [
                     'id' => $event->getFkTeamcolorTwo()->getId(),
                     'colour' => $event->getFkTeamcolorTwo()->getColour(),
-                    'image_shirt' => $shirt,
+                    'image_shirt' => $shirtTwo,
                 ] : null,
                 'fk_person_id' => $event->getFkPerson() ? [
                     'id' => $event->getFkPerson()->getId(),
@@ -280,6 +282,13 @@ class EventsController extends AbstractFOSRestController
               $getLogoEvent = $event->getFkSport()->getLogoEvent();
               $LogoEvent = $this->getParameter('url') . $getLogoEvent;
 
+            //get shirt
+                $getShirt = $event->getFkTeamColor()->getImageShirt();
+                $shirt = $this->getParameter('url') . $getShirt;
+                
+                $getShirtTwo = $event->getFkTeamColorTwo()->getImageShirt();
+                $shirtTwo = $this->getParameter('url') . $getShirtTwo;
+
                //get image
                 $fkSportCenter = $event->getFkSportcenter();
                 $imageSportCenter = null;
@@ -328,13 +337,13 @@ class EventsController extends AbstractFOSRestController
                 'fk_teamcolor_id' => $event->getFkTeamColor() ? [
                     'id' => $event->getFkTeamColor()->getId(),
                     'colour' => $event->getFkTeamColor()->getColour(),
-                    'image_shirt' => $event->getFkTeamColor()->getImageShirt(),
+                    'image_shirt' => $shirt,
                 ] : null,
 
                 'fk_teamcolor_two_id' => $event->getFkTeamcolorTwo() ? [
                     'id' => $event->getFkTeamcolorTwo()->getId(),
                     'colour' => $event->getFkTeamcolorTwo()->getColour(),
-                    'image_shirt' => $event->getFkTeamcolorTwo()->getImageShirt(),
+                    'image_shirt' => $shirtTwo,
                 ] : null,
                 'fk_person_id' => $event->getFkPerson() ? [
                     'id' => $event->getFkPerson()->getId(),
@@ -919,4 +928,3 @@ class EventsController extends AbstractFOSRestController
     }
         
 }
-
