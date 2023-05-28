@@ -182,15 +182,20 @@ class EventPlayersController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Delete(path="/eventPlayers/{id}")
+     * @Rest\Delete(path="/eventPlayers")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
     public function deleteEventPlayer(
         EntityManagerInterface $entityManager,
-        int $id
+        Request $request
     ){
         $entityManager = $this->getDoctrine()->getManager();
-        $eventPlayer = $entityManager->getRepository(EventPlayers::class)->find($id);
+        $data = json_decode($request->getContent(), true);
+        //encontrar evento por fk_event_id y fk_person_id
+        $eventPlayer = $entityManager->getRepository(EventPlayers::class)->findOneBy([
+            'fk_event' => $data['fk_event_id'],
+            'fk_person' => $data['fk_person_id'],
+        ]);
 
         if (!$eventPlayer) {
             return new JsonResponse(
