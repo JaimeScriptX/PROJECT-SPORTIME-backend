@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class SportCenterController extends AbstractFOSRestController
 {
@@ -228,5 +229,48 @@ class SportCenterController extends AbstractFOSRestController
         
     }
 
+    /**
+     * @Rest\Get(path="/sportcenter/{id}/sport")
+     * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function getSportCenterSport(Request $request, int $id)
+    {
+        
+        $entityManager = $this->getDoctrine()->getManager();
+        $sportCenter = $entityManager->getRepository(SportCenter::class)->find($id);
+
+        
+            $sport = $sportCenter->getFkSport();
+            $sportData = [];
+
+            foreach ($sport as $sport) {
+
+                //get imagesport
+                $getPhotoSport = $sport->getImage();
+                $photoSport = $this->getParameter('url') . $getPhotoSport;
+
+                //get logo sportcenter
+                $getLogoSportCenter = $sport->getLogoSportCenter();
+                $LogoSportCenter = $this->getParameter('url') . $getLogoSportCenter;
+
+                $sportData[] = [
+                    'id' => $sport->getId(),
+                    'name' => $sport->getName(),
+                    'image' => $photoSport,
+                    'logo_sportcenter' =>  $LogoSportCenter,
+                ];
+            }
+
+            $response = [
+                'sport' => $sportData,
+            ];
+
+            return $this->json($response);
+        
+
+        
+       
+        
+    }
    
 }
