@@ -715,7 +715,7 @@ class EventsController extends AbstractFOSRestController
                         'is_private' => $event->isIsPrivate(),
                         'details' => $event->getDetails(),
                         'price' => $event->getPrice(),
-                        'date' => $event->getDate()->format('d/m/Y'),
+                        'date' => $event->getDate()->format('Y/m/d'),
                         'time' => $event->getTime()->format('H:i'),                
                         'time_end' => $timeEnd->format('H:i'), // 'H:i:s
                         'duration' => $event->getDuration()->format('H:i'),

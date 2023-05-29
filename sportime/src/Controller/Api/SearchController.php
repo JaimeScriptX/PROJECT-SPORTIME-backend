@@ -457,10 +457,16 @@ class SearchController extends AbstractFOSRestController
             $timeEnd = new \DateTime($result->getTime()->format('H:i'));
             $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
 
-            
+            //fecha actual
+            $dateNow = new \DateTime();
+
             
 
             if ($result->getFkSportcenter()){
+                if ($result->getDate() < $dateNow){
+                    continue;
+                }
+
                 $datos['events' ][] = [
                     'id' => $result->getId(),
                     'name' => $result->getName(),
@@ -548,6 +554,9 @@ class SearchController extends AbstractFOSRestController
                 ];
             }
             else{
+                if ($result->getDate() < $dateNow){
+                    continue;
+                }
                 $datos['events' ][] = [
                     'id' => $result->getId(),
                     'name' => $result->getName(),
@@ -612,8 +621,7 @@ class SearchController extends AbstractFOSRestController
                     'missing_players' => $result->getNumberPlayers() *2 - $numParticipantes,
                 ];
 
-                $datos['sport_centers'][] = [
-                ];
+            
             }
             
 
