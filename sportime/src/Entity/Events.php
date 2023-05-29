@@ -119,6 +119,11 @@ class Events
      */
     private $reservedTimes;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=State::class, inversedBy="events")
+     */
+    private $fk_state;
+
 
     public function __construct()
     {
@@ -420,6 +425,18 @@ class Events
                 $reservedTime->setFkEventId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getFkState(): ?State
+    {
+        return $this->fk_state;
+    }
+
+    public function setFkState(?State $fk_state): self
+    {
+        $this->fk_state = $fk_state;
 
         return $this;
     }
