@@ -22,6 +22,9 @@ use DateTime;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 
 
@@ -362,15 +365,20 @@ class PersonController extends AbstractFOSRestController
     /**
      * @Rest\Put(path="/persons/{id}")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
+     * @IsGranted("ROLE_USER")
      */
     public function putPerson(
         Request $request, 
         int $id,
         PersonRepository $personRepository,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        TokenStorageInterface $tokenStorage,
+        JWTTokenManagerInterface $jwtManager
     ){
 
         $person = $em->getRepository(Person::class)->find($id);
+        
+        $user = $tokenStorage->getToken()->getUser();
 
 
         if (!$person) {
@@ -553,12 +561,15 @@ class PersonController extends AbstractFOSRestController
         }
     }
 
-        
         $em->persist($person);
         $em->flush();
 
+        $tokenWithProfile = $jwtManager->createFromPayload($user, [
+            'image_profile' => $data['image_profile']
+        ]);
+
         return new JsonResponse(
-            ['code' => 200, 'message' => 'Person updated successfully.'],
+            ['code' => 200, 'message' => 'Person updated successfully.', 'token_with_profile' => $tokenWithProfile],
             Response::HTTP_OK
         );
 
