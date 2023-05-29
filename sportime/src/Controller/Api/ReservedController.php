@@ -241,17 +241,36 @@ class ReservedController extends AbstractFOSRestController
     {
         $entityManager = $this->getDoctrine()->getManager();
         $day = (new \DateTime($date))->format('N');
-        $reservedTimes = $entityManager->getRepository(ReservedTime::class)->findBy(['fk_sport_center_id' => $sportCenter, 'date' => new \DateTime($date)]);
+        
         $sportCenterSchedules = $entityManager->getRepository(ScheduleCenter::class)->findBy(['fk_sport_center_id' => $sportCenter, 'day' => $day]);
 
         $availableTime = [];
 
         foreach ($sportCenterSchedules as $sportCenterSchedule) {
+            $reser=0;
+            $reservedTimes = $entityManager->getRepository(ReservedTime::class)->findBy(['fk_sport_center_id' => $sportCenter, 'date' => new \DateTime($date)]);
             $startSchedule = $sportCenterSchedule->getStart()->format('H:i:s');
             $endSchedule = $sportCenterSchedule->getEnd()->format('H:i:s');
+            $startScheduleFin = $sportCenterSchedule->getStart()->format('H:i:s');
+            $endScheduleFin = $sportCenterSchedule->getEnd()->format('H:i:s');
+            
+            foreach ($reservedTimes as $reservedTime){
+                $startReservedTime = $reservedTime->getStart()->format('H:i:s');
+                $endReservedTime = $reservedTime->getEnd()->format('H:i:s'); 
+                $isCanceled = $reservedTime->isCanceled();
+                
+                if(!$isCanceled){
+                    if ($startSchedule <= $startReservedTime && $endSchedule >= $endReservedTime){
+                        $reser = 1;
+                    }
+                }
+                
+                
+                
+            }
 
             //si la longitud de reservedTime es 0
-            if ($reservedTimes == null) {
+            if ($reser==0) {
                 $availableTime[] = [
                     'start_free' => $startSchedule,
                     'end_free' => $endSchedule,
@@ -261,39 +280,100 @@ class ReservedController extends AbstractFOSRestController
                 usort($reservedTimes, function($a, $b) {
                     return $a->getStart() <=> $b->getStart();
                 });
-
+                
+                $startFree = 0;
                 for ($i=0; $i < count($reservedTimes); $i++) {
 
                     $startReservedTime = $reservedTimes[$i]->getStart()->format('H:i:s');
                     $endReservedTime = $reservedTimes[$i]->getEnd()->format('H:i:s'); 
                     $isCanceled = $reservedTimes[$i]->isCanceled();
-
-                    // Verificar si hay una hora libre antes del intervalo actual
-                    if ($startSchedule == $startReservedTime) {
-                        $startSchedule = $endReservedTime;
-
-                        if (isset($reservedTimes[$i + 1])) {
-                            $endSchedule = $reservedTimes[$i + 1]->getStart()->format('H:i:s');
-                        }else{
-                            $endSchedule = $sportCenterSchedule->getEnd()->format('H:i:s');
-                        }
-
-                    }
-
-                    if ($startSchedule != $sportCenterSchedule->getEnd()->format('H:i:s')) {
-                        $availableTime[] = [
-                            'start_free' => $startSchedule,
-                            'end_free' => $endSchedule,
-                        ];
+                    
+                    if ($startScheduleFin <= $startReservedTime && $endReservedTime >= $endReservedTime){
+                        if ($isCanceled){
+                        continue;
                     }
                     
+                    if ($startSchedule == $startReservedTime) {
+                        $startSchedule = $endReservedTime;
+                        if (isset($reservedTimes[$i + 1])) {
+                            $isCanceled = $reservedTimes[$i+1]->isCanceled();
+                            if ($isCanceled){
+                                $endSchedule = $sportCenterSchedule->getEnd()->format('H:i:s');
+                            }else{
+                                $endSchedule = $reservedTimes[$i + 1]->getStart()->format('H:i:s');
+                            }
+                            
 
-                    $startSchedule = $endSchedule;
+                        } else {
+                            $endSchedule = $sportCenterSchedule->getEnd()->format('H:i:s');
 
-                    if (isset($reservedTimes[$i + 1])) {
-                        $endSchedule = $reservedTimes[$i + 1]->getStart()->format('H:i:s');
+                        }
+                        
                     }else{
-                        $endSchedule = $sportCenterSchedule->getEnd()->format('H:i:s');
+                    
+                    
+                        $endSchedule = $startReservedTime;
+                    }
+                        
+                    //Paint 1
+                    if ($startSchedule != $sportCenterSchedule->getEnd()->format('H:i:s')) {
+                        if ($startFree != $startSchedule){
+                            if ($startSchedule != $endSchedule && $startSchedule < $endSchedule){
+                                $availableTime[] = [
+                                'start_free' => $startSchedule,
+                                'end_free' => $endSchedule,
+                            ];
+                            }
+                            else{
+                                $availableTime[] = [
+                                'start_free' => 0,
+                                'end_free' => 0,
+                            ];
+                            }
+                        }
+                            
+                    }
+                    $lastElement = end($availableTime);
+                    $startFree = $lastElement['start_free'];
+                    
+                    $startSchedule = $endReservedTime;
+                    
+                    if (isset($reservedTimes[$i + 1])) {
+                            $isCanceled = $reservedTimes[$i+1]->isCanceled();
+                            if ($isCanceled){
+                                $endSchedule = $sportCenterSchedule->getEnd()->format('H:i:s');
+                            }else{
+                                $endSchedule = $reservedTimes[$i + 1]->getStart()->format('H:i:s');
+                            }
+                            
+
+                        } else {
+                            $endSchedule = $sportCenterSchedule->getEnd()->format('H:i:s');
+
+                        }
+                    
+                    //Paint 2
+                    if ($startSchedule != $sportCenterSchedule->getEnd()->format('H:i:s')) {
+                        if ($startFree != $startSchedule){
+                            if ($startSchedule != $endSchedule && $startSchedule < $endSchedule){
+                                $availableTime[] = [
+                                'start_free' => $startSchedule,
+                                'end_free' => $endSchedule,
+                            ];
+                            }
+                            else{
+                                $availableTime[] = [
+                                'start_free' => 0,
+                                'end_free' => 0,
+                            ];
+                            }
+                        }
+                        
+                    }
+                    $lastElement = end($availableTime);
+                    $startFree = $lastElement['start_free'];
+                    
+                    
                     }
                     
                     
@@ -303,8 +383,14 @@ class ReservedController extends AbstractFOSRestController
             
         }
 
+        $temp=[];
         
-
+        foreach ($availableTime as $availableTim){
+            if ($availableTim['start_free']!=0){
+                $temp[]= $availableTim;
+            }
+        }
+        $availableTime = $temp;
 
         return new JsonResponse($availableTime, Response::HTTP_OK);
     }
