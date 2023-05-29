@@ -13,6 +13,8 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use DateTime;
+use DateInterval;
+use DatePeriod;
 
 class ReservedController extends AbstractFOSRestController
 {
@@ -268,6 +270,10 @@ class ReservedController extends AbstractFOSRestController
                 
                 
             }
+            $AllTimes[] = [
+                'start_free' => $startSchedule,
+                'end_free' => $endSchedule,
+            ];
 
             //si la longitud de reservedTime es 0
             if ($reser==0) {
@@ -391,6 +397,66 @@ class ReservedController extends AbstractFOSRestController
             }
         }
         $availableTime = $temp;
+
+        $availableTimes = [];
+
+        foreach ($AllTimes as $centerTime) {
+            $start = new DateTime($centerTime['start_free']);
+            $end = new DateTime($centerTime['end_free']);
+            $interval = new DateInterval('PT1H');
+            $period = new DatePeriod($start, $interval, $end);
+        
+            foreach ($period as $time) {
+                $formattedTime = $time->format('H:i:s');
+                $isAvailable = false;
+            
+                foreach ($availableTime as $available) {
+                    $startTime = new DateTime($available['start_free']);
+                    $endTime = new DateTime($available['end_free']);
+                
+                    if ($time >= $startTime && $time < $endTime) {
+                        $isAvailable = true;
+                        break; // Salir del bucle si encontramos una coincidencia
+                    }
+                }
+            
+                $availableTimes[] = [
+                    'start_free' => $formattedTime,
+                    //'end_free' => $time->add($interval)->format('H:i:s'),
+                    'isAvailable' => $isAvailable,
+                ];
+            }
+        }
+
+        //divideme $availableTimes en mañana y tarde
+        $morning = [];
+        $afternoon = [];
+
+        foreach ($availableTimes as $availableTime) {
+            $start = new DateTime($availableTime['start_free']);
+            $end = new DateTime($availableTime['start_free']);
+            $end->add(new DateInterval('PT1H'));
+
+            if ($start->format('H') < 12) {
+                $morning[] = [
+                    'start_free' => $start->format('H:i:s'),
+                    //'end_free' => $end->format('H:i:s'),
+                    'isAvailable' => $availableTime['isAvailable'],
+                ];
+            } else {
+                $afternoon[] = [
+                    'start_free' => $start->format('H:i:s'),
+                   // 'end_free' => $end->format('H:i:s'),
+                    'isAvailable' => $availableTime['isAvailable'],
+                ];
+            }
+        }
+
+        $availableTime = [
+            'morning' => $morning,
+            'afternoon' => $afternoon,
+        ];
+
 
         return new JsonResponse($availableTime, Response::HTTP_OK);
     }
