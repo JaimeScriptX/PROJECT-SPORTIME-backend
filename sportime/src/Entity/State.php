@@ -29,6 +29,11 @@ class State
      */
     private $events;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $colour;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -77,6 +82,18 @@ class State
                 $event->setFkState(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getColour(): ?string
+    {
+        return $this->colour;
+    }
+
+    public function setColour(?string $colour): self
+    {
+        $this->colour = $colour;
 
         return $this;
     }
