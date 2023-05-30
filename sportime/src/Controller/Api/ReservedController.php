@@ -13,8 +13,6 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use DateTime;
-use DateInterval;
-use DatePeriod;
 
 class ReservedController extends AbstractFOSRestController
 {
@@ -203,9 +201,66 @@ class ReservedController extends AbstractFOSRestController
                     return new JsonResponse(['status' => 'Sport center is reserved on this time'], Response::HTTP_BAD_REQUEST);
                 }
                 else{
-                    //Creación de la reserva
+                    //Creación del evento
+                    $events = new Events();
+                    
+                    $events->setName($request->get('name'));
+                    $events->setIsPrivate($request->get('is_private'));
+                    $events->setDetails($request->get('details'));
+                    $events->setPrice($request->get('price'));
+                    $events->setDate(new \DateTime($request->get('date')));
+                    $events->setTime(new \DateTime($request->get('time')));
+                    $events->setDuration(new \DateTime($request->get('duration')));
+                    $events->setNumberPlayers($request->get('number_players'));
                    
+                    // fk
+                    $sport = $entityManager->getRepository(Sport::class)->findOneBy(['name' => $request->get('fk_sport')]);
+                    $events->setFkSport($sport);
 
+                    $sportCenter = $entityManager->getRepository(SportCenter::class)->findOneBy(['name' => $request->get('fk_sportcenter')]);
+                    $events->setFkSport($sportCenter);
+
+                    $difficulty = $entityManager->getRepository(Difficulty::class)->findOneBy(['type' => $request->get('fk_difficulty')]);
+                    $events->setFkDifficulty($difficulty);
+
+                    $sex = $entityManager->getRepository(Sex::class)->findOneBy(['gender' => $request->get(['fk_sex'])]);
+                    $events->setFkSex($sex);
+
+                    $person = $entityManager->getRepository(Person::class)->find(['id' => $request->get(['fk_person'])]);
+                    $events->setFkPerson($person);
+
+                    $teamColor = $entityManager->getRepository(TeamColor::class)->findOneBy(['colour' => $request->get(['fk_teamcolor'])]);
+                    $events->setFkTeamcolor($teamColor);
+
+                    $teamColorTwo = $entityManager->getRepository(TeamColor::class)->findOneBy(['colour' => $request->get(['fk_teamcolor_two'])]);
+                    $events->setFkTeamcolorTwo($teamColorTwo);
+
+
+                    $entityManager->persist($events);
+                    $entityManager->flush();
+
+
+                    //Creación de la reserva
+                    $reser = new ReservedTime();
+                    $reser->setDay($day);
+                    $reser->setDate($request->get('date'));
+                    $reser->setStart($request->get('start'));
+                    $reser->setEnd($request->get('end'));
+                    $reser->setDateCreated($date);
+                    $reser->setCanceled(false);
+                    
+                    //fk
+                    $rsportCenter = $entityManager->getRepository(SportCenter::class)->findOneBy(['name' => $request->get('fk_sportcenter')]);
+                    $reser->setFkSportCenterId($rsportCenter);
+                    
+                    $revent = $entityManager->$entityManager->getRepository(Events::class)->findOneBy(['name' => $request->get('name')]);
+                    $reser->setFkEventId($revent);
+
+
+                    $entityManager->persist($reser);
+                    $entityManager->flush();
+
+                    
                     return new JsonResponse(['status' => 'Reserved time created!'], Response::HTTP_CREATED);
                 }
             }
@@ -270,10 +325,6 @@ class ReservedController extends AbstractFOSRestController
                 
                 
             }
-            $AllTimes[] = [
-                'start_free' => $startSchedule,
-                'end_free' => $endSchedule,
-            ];
 
             //si la longitud de reservedTime es 0
             if ($reser==0) {
@@ -397,66 +448,6 @@ class ReservedController extends AbstractFOSRestController
             }
         }
         $availableTime = $temp;
-
-        $availableTimes = [];
-
-        foreach ($AllTimes as $centerTime) {
-            $start = new DateTime($centerTime['start_free']);
-            $end = new DateTime($centerTime['end_free']);
-            $interval = new DateInterval('PT1H');
-            $period = new DatePeriod($start, $interval, $end);
-        
-            foreach ($period as $time) {
-                $formattedTime = $time->format('H:i:s');
-                $isAvailable = false;
-            
-                foreach ($availableTime as $available) {
-                    $startTime = new DateTime($available['start_free']);
-                    $endTime = new DateTime($available['end_free']);
-                
-                    if ($time >= $startTime && $time < $endTime) {
-                        $isAvailable = true;
-                        break; // Salir del bucle si encontramos una coincidencia
-                    }
-                }
-            
-                $availableTimes[] = [
-                    'start_free' => $formattedTime,
-                    //'end_free' => $time->add($interval)->format('H:i:s'),
-                    'isAvailable' => $isAvailable,
-                ];
-            }
-        }
-
-        //divideme $availableTimes en mañana y tarde
-        $morning = [];
-        $afternoon = [];
-
-        foreach ($availableTimes as $availableTime) {
-            $start = new DateTime($availableTime['start_free']);
-            $end = new DateTime($availableTime['start_free']);
-            $end->add(new DateInterval('PT1H'));
-
-            if ($start->format('H') < 12) {
-                $morning[] = [
-                    'start_free' => $start->format('H:i:s'),
-                    //'end_free' => $end->format('H:i:s'),
-                    'isAvailable' => $availableTime['isAvailable'],
-                ];
-            } else {
-                $afternoon[] = [
-                    'start_free' => $start->format('H:i:s'),
-                   // 'end_free' => $end->format('H:i:s'),
-                    'isAvailable' => $availableTime['isAvailable'],
-                ];
-            }
-        }
-
-        $availableTime = [
-            'morning' => $morning,
-            'afternoon' => $afternoon,
-        ];
-
 
         return new JsonResponse($availableTime, Response::HTTP_OK);
     }
