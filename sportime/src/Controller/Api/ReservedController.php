@@ -105,6 +105,9 @@ class ReservedController extends AbstractFOSRestController
                 'event' => [
                     'id' => $reservedTime->getFkEventId()->getId(),
                     'name' => $reservedTime->getFkEventId()->getName(),
+                    'sport' => [
+                        'name' => $reservedTime->getFkEventId()->getFkSport()->getName(),
+                    ],
                 ],
                 'isCanceled' => $reservedTime->isCanceled(),
                 'cancellationReason' => $reservedTime->getCancellationReason() ? $reservedTime->getCancellationReason() : null,
@@ -200,69 +203,69 @@ class ReservedController extends AbstractFOSRestController
                 if (!$isCorrectTime) {
                     return new JsonResponse(['status' => 'Sport center is reserved on this time'], Response::HTTP_BAD_REQUEST);
                 }
-                else{
-                    //Creación del evento
-                    $events = new Events();
-                    
-                    $events->setName($request->get('name'));
-                    $events->setIsPrivate($request->get('is_private'));
-                    $events->setDetails($request->get('details'));
-                    $events->setPrice($request->get('price'));
-                    $events->setDate(new \DateTime($request->get('date')));
-                    $events->setTime(new \DateTime($request->get('time')));
-                    $events->setDuration(new \DateTime($request->get('duration')));
-                    $events->setNumberPlayers($request->get('number_players'));
-                   
-                    // fk
-                    $sport = $entityManager->getRepository(Sport::class)->findOneBy(['name' => $request->get('fk_sport')]);
-                    $events->setFkSport($sport);
+             //  else{
+             //      //Creación del evento
+             //      $events = new Events();
+             //      
+             //      $events->setName($request->get('name'));
+             //      $events->setIsPrivate($request->get('is_private'));
+             //      $events->setDetails($request->get('details'));
+             //      $events->setPrice($request->get('price'));
+             //      $events->setDate(new \DateTime($request->get('date')));
+             //      $events->setTime(new \DateTime($request->get('time')));
+             //      $events->setDuration(new \DateTime($request->get('duration')));
+             //      $events->setNumberPlayers($request->get('number_players'));
+             //     
+             //      // fk
+             //      $sport = $entityManager->getRepository(Sport::class)->findOneBy(['name' => $request->get('fk_sport')]);
+             //      $events->setFkSport($sport);
 
-                    $sportCenter = $entityManager->getRepository(SportCenter::class)->findOneBy(['name' => $request->get('fk_sportcenter')]);
-                    $events->setFkSport($sportCenter);
+             //      $sportCenter = $entityManager->getRepository(SportCenter::class)->findOneBy(['name' => $request->get('fk_sportcenter')]);
+             //      $events->setFkSport($sportCenter);
 
-                    $difficulty = $entityManager->getRepository(Difficulty::class)->findOneBy(['type' => $request->get('fk_difficulty')]);
-                    $events->setFkDifficulty($difficulty);
+             //      $difficulty = $entityManager->getRepository(Difficulty::class)->findOneBy(['type' => $request->get('fk_difficulty')]);
+             //      $events->setFkDifficulty($difficulty);
 
-                    $sex = $entityManager->getRepository(Sex::class)->findOneBy(['gender' => $request->get(['fk_sex'])]);
-                    $events->setFkSex($sex);
+             //      $sex = $entityManager->getRepository(Sex::class)->findOneBy(['gender' => $request->get(['fk_sex'])]);
+             //      $events->setFkSex($sex);
 
-                    $person = $entityManager->getRepository(Person::class)->find(['id' => $request->get(['fk_person'])]);
-                    $events->setFkPerson($person);
+             //      $person = $entityManager->getRepository(Person::class)->find(['id' => $request->get(['fk_person'])]);
+             //      $events->setFkPerson($person);
 
-                    $teamColor = $entityManager->getRepository(TeamColor::class)->findOneBy(['colour' => $request->get(['fk_teamcolor'])]);
-                    $events->setFkTeamcolor($teamColor);
+             //      $teamColor = $entityManager->getRepository(TeamColor::class)->findOneBy(['colour' => $request->get(['fk_teamcolor'])]);
+             //      $events->setFkTeamcolor($teamColor);
 
-                    $teamColorTwo = $entityManager->getRepository(TeamColor::class)->findOneBy(['colour' => $request->get(['fk_teamcolor_two'])]);
-                    $events->setFkTeamcolorTwo($teamColorTwo);
-
-
-                    $entityManager->persist($events);
-                    $entityManager->flush();
+             //      $teamColorTwo = $entityManager->getRepository(TeamColor::class)->findOneBy(['colour' => $request->get(['fk_teamcolor_two'])]);
+             //      $events->setFkTeamcolorTwo($teamColorTwo);
 
 
-                    //Creación de la reserva
-                    $reser = new ReservedTime();
-                    $reser->setDay($day);
-                    $reser->setDate($request->get('date'));
-                    $reser->setStart($request->get('start'));
-                    $reser->setEnd($request->get('end'));
-                    $reser->setDateCreated($date);
-                    $reser->setCanceled(false);
-                    
-                    //fk
-                    $rsportCenter = $entityManager->getRepository(SportCenter::class)->findOneBy(['name' => $request->get('fk_sportcenter')]);
-                    $reser->setFkSportCenterId($rsportCenter);
-                    
-                    $revent = $entityManager->$entityManager->getRepository(Events::class)->findOneBy(['name' => $request->get('name')]);
-                    $reser->setFkEventId($revent);
+             //      $entityManager->persist($events);
+             //      $entityManager->flush();
 
 
-                    $entityManager->persist($reser);
-                    $entityManager->flush();
+             //      //Creación de la reserva
+             //      $reser = new ReservedTime();
+             //      $reser->setDay($day);
+             //      $reser->setDate($request->get('date'));
+             //      $reser->setStart($request->get('start'));
+             //      $reser->setEnd($request->get('end'));
+             //      $reser->setDateCreated($date);
+             //      $reser->setCanceled(false);
+             //      
+             //      //fk
+             //      $rsportCenter = $entityManager->getRepository(SportCenter::class)->findOneBy(['name' => $request->get('fk_sportcenter')]);
+             //      $reser->setFkSportCenterId($rsportCenter);
+             //      
+             //      $revent = $entityManager->$entityManager->getRepository(Events::class)->findOneBy(['name' => $request->get('name')]);
+             //      $reser->setFkEventId($revent);
 
-                    
-                    return new JsonResponse(['status' => 'Reserved time created!'], Response::HTTP_CREATED);
-                }
+
+             //      $entityManager->persist($reser);
+             //      $entityManager->flush();
+
+             //      
+             //      return new JsonResponse(['status' => 'Reserved time created!'], Response::HTTP_CREATED);
+             //  }
             }
         }
 
@@ -291,10 +294,10 @@ class ReservedController extends AbstractFOSRestController
 
 
     /**
-     * @Rest\Get(path="/reservedTime/{sportCenter}/{date}")
+     * @Rest\Get(path="/reservedTime/{sportCenter}/{date}/{sport}")
      * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
      */
-    public function getReservedTimeAvailableBySportCenterAndDate($sportCenter, $date): Response
+    public function getReservedTimeAvailableBySportCenterAndDate($sportCenter, $date, $sport): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
         $day = (new \DateTime($date))->format('N');
@@ -317,7 +320,7 @@ class ReservedController extends AbstractFOSRestController
                 $isCanceled = $reservedTime->isCanceled();
                 
                 if(!$isCanceled){
-                    if ($startSchedule <= $startReservedTime && $endSchedule >= $endReservedTime){
+                    if ($startSchedule <= $startReservedTime && $endSchedule >= $endReservedTime && $reservedTime->getFkEventId()->getFkSport()->getId() == $sport){
                         $reser = 1;
                     }
                 }
@@ -333,6 +336,12 @@ class ReservedController extends AbstractFOSRestController
                     'end_free' => $endSchedule,
                 ];
             }else{
+                //filtrar reservedTimes para que solo salgan las que tengan el sport id que se quiere en su evento
+                $reservedTimes = array_filter($reservedTimes, function($reservedTime) use ($sport) {
+                    return $reservedTime->getFkEventId()->getFkSport()->getId() == $sport;
+                });
+                
+
                 //ordenar reservedTimes por hora de start de menor a mayor
                 usort($reservedTimes, function($a, $b) {
                     return $a->getStart() <=> $b->getStart();

@@ -534,6 +534,11 @@ class SearchController extends AbstractFOSRestController
                     'missing_players' => $result->getNumberPlayers() *2 - $numParticipantes,
                 ];
 
+                //sport_centers tiene que ser unico por id
+
+                if (in_array($result->getFkSportcenter()->getId(), array_column($datos['sport_centers'], 'id'))){
+                    continue;
+                }
 
                 $datos['sport_centers'][] = [
                     'id' => $result->getFkSportcenter()->getId(),
