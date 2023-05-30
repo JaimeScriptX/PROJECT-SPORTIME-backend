@@ -190,11 +190,10 @@ class EventPlayersController extends AbstractFOSRestController
         Request $request
     ){
         $entityManager = $this->getDoctrine()->getManager();
-        $data = json_decode($request->getContent(), true);
         //encontrar evento por fk_event_id y fk_person_id
         $eventPlayer = $entityManager->getRepository(EventPlayers::class)->findOneBy([
-            'fk_event' => $data['fk_event_id'],
-            'fk_person' => $data['fk_person_id'],
+            'fk_event' => $request->query->get('event_id'),
+            'fk_person' => $request->query->get('person_id'),
         ]);
 
         if (!$eventPlayer) {
