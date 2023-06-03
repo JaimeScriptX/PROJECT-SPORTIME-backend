@@ -73,8 +73,8 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
     $person= new Person();
     $person->setFkUser($user);
     $person->setNameAndLastname($data['name_and_lastname']);
-    $person->setImageProfile('/image/profile/default.jpg');
-    $person->setImageBanner('/ruta/banner/default.jpg');
+    $person->setImageProfile('/images/profile/default.jpg');
+    $person->setImageBanner('/images/banner/default.jpg');
     $entityManager->persist($person);
     $entityManager->flush();
 
