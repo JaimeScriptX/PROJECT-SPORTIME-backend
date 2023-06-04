@@ -461,11 +461,19 @@ class SearchController extends AbstractFOSRestController
             $dateNow = new \DateTime();
 
             
-
+            
             if ($result->getFkSportcenter()){
-                if ($result->getDate() < $dateNow){
-                    continue;
-                }
+                if ($dateQ!=null){
+                    if ($result->getDate() < $dateNow){
+                        continue;
+                    }
+            }
+           
+
+            //if is_private 
+            if ($result->isIsPrivate()==true){
+                continue;
+            }
 
                 $datos['events' ][] = [
                     'id' => $result->getId(),
@@ -559,9 +567,14 @@ class SearchController extends AbstractFOSRestController
                 ];
             }
             else{
-                if ($result->getDate() < $dateNow){
-                    continue;
-                }
+                if ($dateQ!=null){
+
+                        if ($result->getDate() < $dateNow){
+                            continue;
+                        }
+                
+            }
+
                 $datos['events' ][] = [
                     'id' => $result->getId(),
                     'name' => $result->getName(),
