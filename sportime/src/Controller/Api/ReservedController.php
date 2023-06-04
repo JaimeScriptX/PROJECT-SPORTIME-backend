@@ -582,13 +582,16 @@ class ReservedController extends AbstractFOSRestController
      */
     public function cancelReservation($id, Request $request): Response
     {
-        $reservation = $this->getDoctrine()->getRepository(ReservedTime::class)->find($id);
+
+        $event = $this->getDoctrine()->getRepository(Events::class)->findOneBy(['id' => $id]);
+        $reservation = $this->getDoctrine()->getRepository(ReservedTime::class)->findOneBy(['fk_event_id' => $event->getId()]);
         $reservation->setCanceled(true);
         $event = $this->getDoctrine()->getRepository(Events::class)->findOneBy(['id' => $reservation->getFkEventId()]);
         $state= $this->getDoctrine()->getRepository(State::class)->findOneBy(['id' => 5]);
         $event->setFkState($state);
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($reservation);
+        $entityManager->persist($event);
         $entityManager->flush();
         return new JsonResponse(['status' => 'Reservation canceled'], Response::HTTP_OK);
     }
