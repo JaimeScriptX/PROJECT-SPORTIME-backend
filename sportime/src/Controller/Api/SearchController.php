@@ -550,12 +550,20 @@ class SearchController extends AbstractFOSRestController
                     continue;
                 }
 
+                $fkSportCenter = $result->getFkSportcenter();
+                $imageSportCenter = null;
+
+                if ($fkSportCenter) {
+                    $getImageSportCenter = $fkSportCenter->getImage();
+                    $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
+                }
+
                 $datos['sport_centers'][] = [
                     'id' => $result->getFkSportcenter()->getId(),
                         'name' => $result->getFkSportcenter()->getName() ? $result->getFkSportcenter()->getName() : null,
                         'municipality' => $result->getFkSportcenter()->getMunicipality() ? $result->getFkSportcenter()->getMunicipality() : null,
                         'address' => $result->getFkSportcenter()->getAddress() ? $result->getFkSportcenter()->getAddress() : null,
-                        'image' => $result->getFkSportcenter()->getImage() ? $result->getFkSportcenter()->getImage() : null,
+                        'image' => $imageSportCenter ? $imageSportCenter : null,
                         'phone' => $result->getFkSportcenter()->getPhone() ? $result->getFkSportcenter()->getPhone() : null,
                         'image_gallery1' => $result->getFkSportcenter()->getImageGallery1() ? $result->getFkSportcenter()->getImageGallery1() : null,
                         'image_gallery2' => $result->getFkSportcenter()->getImageGallery2() ? $result->getFkSportcenter()->getImageGallery2() : null,

@@ -10,6 +10,7 @@ use App\Entity\Sport;
 use App\Entity\Difficulty;
 use App\Entity\Sex;
 use App\Entity\Person;
+use App\Entity\State;
 use App\Entity\TeamColor;
 use App\Entity\EventPlayers as EntityEventPlayers;
 use App\Entity\EventPlayers;
@@ -583,6 +584,9 @@ class ReservedController extends AbstractFOSRestController
     {
         $reservation = $this->getDoctrine()->getRepository(ReservedTime::class)->find($id);
         $reservation->setCanceled(true);
+        $event = $this->getDoctrine()->getRepository(Events::class)->findOneBy(['id' => $reservation->getFkEventId()]);
+        $state= $this->getDoctrine()->getRepository(State::class)->findOneBy(['id' => 5]);
+        $event->setFkState($state);
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($reservation);
         $entityManager->flush();
