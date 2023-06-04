@@ -474,7 +474,7 @@ class SearchController extends AbstractFOSRestController
             if ($result->isIsPrivate()==true){
                 continue;
             }
-
+            if ($result->getDate() > $dateNow){
                 $datos['events' ][] = [
                     'id' => $result->getId(),
                     'name' => $result->getName(),
@@ -541,6 +541,8 @@ class SearchController extends AbstractFOSRestController
                     'players_registered' => $numParticipantes,
                     'missing_players' => $result->getNumberPlayers() *2 - $numParticipantes,
                 ];
+            }
+                
 
                 //sport_centers tiene que ser unico por id
 
