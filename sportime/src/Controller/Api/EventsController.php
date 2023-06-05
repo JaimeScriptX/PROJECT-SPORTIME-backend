@@ -97,6 +97,7 @@ class EventsController extends AbstractFOSRestController
             $timeEnd = new \DateTime($event->getTime()->format('H:i'));
             $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
 
+           
              //get de las fotos de perfil con la url
              $getPhotoProfile = $event->getFkPerson()->getImageProfile();
              $photoProfile = $this->getParameter('url') . $getPhotoProfile;
@@ -148,6 +149,7 @@ class EventsController extends AbstractFOSRestController
                     'latitude' => $fkSportCenter->getLatitude(),
                     'longitude' => $fkSportCenter->getLongitude(),
                     'destination' => $fkSportCenter->getDestination(),
+                    'price' => $fkSportCenter->getPrice(),
                 ] : null,
                 'fk_difficulty_id' => $event->getFkDifficulty() ?[
                     'id' => $event->getFkDifficulty()->getId(),
@@ -329,6 +331,7 @@ class EventsController extends AbstractFOSRestController
                     'latitude' => $fkSportCenter->getLatitude(),
                     'longitude' => $fkSportCenter->getLongitude(),
                     'destination' => $fkSportCenter->getDestination(),
+                    'price' => $fkSportCenter->getPrice(),
                 ] : null,
                 'fk_difficulty_id' => $event->getFkDifficulty() ?[
                     'id' => $event->getFkDifficulty()->getId(),
@@ -745,6 +748,7 @@ class EventsController extends AbstractFOSRestController
                             'latitude' => $event->getFkSportcenter()->getLatitude(),
                             'longitude' => $event->getFkSportcenter()->getLongitude(),
                             'destination' => $event->getFkSportcenter()->getDestination(),
+                            'price' => $event->getFkSportcenter()->getPrice(),
                         ] : null,
                         'fk_difficulty_id' => $event->getFkDifficulty() ?[
                             'id' => $event->getFkDifficulty()->getId(),
@@ -889,6 +893,7 @@ class EventsController extends AbstractFOSRestController
                             'latitude' => $event->getFkSportcenter()->getLatitude(),
                             'longitude' => $event->getFkSportcenter()->getLongitude(),
                             'destination' => $event->getFkSportcenter()->getDestination(),
+                            'price' => $event->getFkSportcenter()->getPrice(),
                             ] : null,
                             'fk_difficulty_id' => $event->getFkDifficulty() ?[
                                 'id' => $event->getFkDifficulty()->getId(),

@@ -112,6 +112,7 @@ class SportCenterController extends AbstractFOSRestController
                 'sport' => $sportData,
                 'schedule' => $sportCenterScheduleData,
                 'description' => $sportCenter->getDescription() ? $sportCenter->getDescription() : null,
+                'price' => $sportCenter->getPrice(),
             ];
         }
 
@@ -222,6 +223,7 @@ class SportCenterController extends AbstractFOSRestController
             'sport' => $sportData,
             'schedule' => $sportCenterScheduleData,
             'description' => $sportCenter->getDescription() ? $sportCenter->getDescription() : null,
+            'price' => $sportCenter->getPrice(),
         ];
 
         return $this->json($response);
