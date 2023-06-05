@@ -227,7 +227,9 @@ class ReservedController extends AbstractFOSRestController
                 $duration = new DateTime($durationSE);
 
                 if ($duration->format('H') > 1) {
-                    $end = date('H:i:s', strtotime($start. ' + 1 hour'));
+                    $end2 = date('H:i:s', strtotime($end. ' + 1 hour'));
+                    $end = new DateTime($end2);
+
                 }
 
                    //Creación del evento
@@ -539,7 +541,14 @@ class ReservedController extends AbstractFOSRestController
             $start = new DateTime($availableTime['start_free']);
             $end = new DateTime($availableTime['start_free']);
             $end->add(new DateInterval('PT1H'));
-        
+            $actualTime = new DateTime();
+
+            //solo pintar las horas que no hayan pasado
+            if ($start < $actualTime) {
+                continue;
+            }
+            
+
             if ($start->format('H') <= 12) {
                 $morning[] = [
                     'hour' => $start->format('H:i'),
