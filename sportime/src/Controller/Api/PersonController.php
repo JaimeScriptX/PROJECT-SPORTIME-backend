@@ -78,14 +78,15 @@ class PersonController extends AbstractFOSRestController
             $photoBanner = $this->getParameter('url') . $getPhotoBanner;
 
              //Calcular la edad
-             if ($person->getBirthday() != null) {
-                $age = null;
-                $dateBirth = $person->getBirthday();
-                $dateBirth = new DateTime($dateBirth->format('Y-m-d'));
-                $currentDate = new DateTime();
-                $diference = $dateBirth->diff($currentDate);
-                $age = $diference->y;
-                } 
+             $age = null;
+             $birthday = $person->getBirthday();
+     
+             if ($birthday !== null) {
+                 $currentDate = new DateTime();
+                 $dateBirth = new DateTime($birthday->format('Y-m-d'));
+                 $difference = $dateBirth->diff($currentDate);
+                 $age = $difference->y;
+             }
 
             $sex = $person->getFkSex();
             $data[] = [
@@ -93,7 +94,7 @@ class PersonController extends AbstractFOSRestController
                 'image_profile' =>  $photoProfile,
                 'name_and_lastname' => $person->getNameAndLastname(),
                 'age' => $age,
-                'birthday' => $person->getBirthday()->format('d-m-Y'),
+                'birthday' => $birthday !== null ? $birthday->format('d-m-Y') : null,
                 'weight' => $person->getWeight(),
                 'height' => $person->getHeight(),
                 'nationality' => $person->getNationality(),
@@ -165,22 +166,23 @@ class PersonController extends AbstractFOSRestController
          $getPhotoBanner = $person->getImageBanner();
          $photoBanner = $this->getParameter('url') . $getPhotoBanner;
 
-          //Calcular la edad
-          if ($person->getBirthday() != null) {
-            $age = null;
-            $dateBirth = $person->getBirthday();
-            $dateBirth = new DateTime($dateBirth->format('Y-m-d'));
+         
+        $age = null;
+        $birthday = $person->getBirthday();
+
+        if ($birthday !== null) {
             $currentDate = new DateTime();
-            $diference = $dateBirth->diff($currentDate);
-            $age = $diference->y;
-            } 
-        
+            $dateBirth = new DateTime($birthday->format('Y-m-d'));
+            $difference = $dateBirth->diff($currentDate);
+            $age = $difference->y;
+        }
+         
         $data = [
             'id' => $person->getId(),
             'image_profile' => $photoProfile,
             'name_and_lastname' => $person->getNameAndLastname(),
             'age' => $age,
-            'birthday' => $person->getBirthday()->format('d-m-Y'),
+            'birthday' => $birthday !== null ? $birthday->format('d-m-Y') : null,
             'weight' => $person->getWeight(),
             'height' => $person->getHeight(),
             'nationality' => $person->getNationality(),
@@ -203,7 +205,7 @@ class PersonController extends AbstractFOSRestController
               //  'phone' => $person->getFkUser()->getPhone(),
             ] : null,
         ];
-    
+            
         return new JsonResponse($data, Response::HTTP_OK);
     }
 
@@ -250,14 +252,15 @@ class PersonController extends AbstractFOSRestController
          $photoBanner = $this->getParameter('url') . $getPhotoBanner;
 
           //Calcular la edad
-          if ($person->getBirthday() != null) {
-            $age = null;
-            $dateBirth = $person->getBirthday();
-            $dateBirth = new DateTime($dateBirth->format('Y-m-d'));
-            $currentDate = new DateTime();
-            $diference = $dateBirth->diff($currentDate);
-            $age = $diference->y;
-            } 
+          $age = null;
+          $birthday = $person->getBirthday();
+  
+          if ($birthday !== null) {
+              $currentDate = new DateTime();
+              $dateBirth = new DateTime($birthday->format('Y-m-d'));
+              $difference = $dateBirth->diff($currentDate);
+              $age = $difference->y;
+          }
 
         
         $data = [
@@ -265,7 +268,7 @@ class PersonController extends AbstractFOSRestController
             'image_profile' => $photoProfile,
             'name_and_lastname' => $person->getNameAndLastname(),
             'age' => $age,
-            'birthday' => $person->getBirthday()->format('d-m-Y'),
+            'birthday' => $birthday !== null ? $birthday->format('d-m-Y') : null,
             'weight' => $person->getWeight(),
             'height' => $person->getHeight(),
             'nationality' => $person->getNationality(),
