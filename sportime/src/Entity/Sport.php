@@ -49,10 +49,16 @@ class Sport
      */
     private $logo_sportcenter;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Price::class, mappedBy="fk_sport")
+     */
+    private $prices;
+
     public function __construct()
     {
         $this->sportCenters = new ArrayCollection();
         $this->events = new ArrayCollection();
+        $this->prices = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -161,6 +167,36 @@ class Sport
     public function setLogoSportcenter(?string $logo_sportcenter): self
     {
         $this->logo_sportcenter = $logo_sportcenter;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Price>
+     */
+    public function getPrices(): Collection
+    {
+        return $this->prices;
+    }
+
+    public function addPrice(Price $price): self
+    {
+        if (!$this->prices->contains($price)) {
+            $this->prices[] = $price;
+            $price->setFkSport($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrice(Price $price): self
+    {
+        if ($this->prices->removeElement($price)) {
+            // set the owning side to null (unless already changed)
+            if ($price->getFkSport() === $this) {
+                $price->setFkSport(null);
+            }
+        }
 
         return $this;
     }

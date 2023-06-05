@@ -109,6 +109,11 @@ class SportCenter
      */
     private $reservedTimes;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Price::class, mappedBy="fk_sportcenter")
+     */
+    private $prices;
+
     public function __construct()
     {
         $this->fk_sport = new ArrayCollection();
@@ -116,6 +121,7 @@ class SportCenter
         $this->fk_services = new ArrayCollection();
         $this->scheduleCenters = new ArrayCollection();
         $this->reservedTimes = new ArrayCollection();
+        $this->prices = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -411,6 +417,36 @@ class SportCenter
             // set the owning side to null (unless already changed)
             if ($reservedTime->getFkSportCenterId() === $this) {
                 $reservedTime->setFkSportCenterId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Price>
+     */
+    public function getPrices(): Collection
+    {
+        return $this->prices;
+    }
+
+    public function addPrice(Price $price): self
+    {
+        if (!$this->prices->contains($price)) {
+            $this->prices[] = $price;
+            $price->setFkSportcenter($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrice(Price $price): self
+    {
+        if ($this->prices->removeElement($price)) {
+            // set the owning side to null (unless already changed)
+            if ($price->getFkSportcenter() === $this) {
+                $price->setFkSportcenter(null);
             }
         }
 
