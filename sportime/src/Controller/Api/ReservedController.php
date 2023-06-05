@@ -590,6 +590,16 @@ class ReservedController extends AbstractFOSRestController
         $state= $this->getDoctrine()->getRepository(State::class)->findOneBy(['id' => 5]);
         $event->setFkState($state);
         $entityManager = $this->getDoctrine()->getManager();
+
+        $cancellationReason = $request->get('cancellationReason');
+        if (empty($cancellationReason)) {
+            $cancellationReason = 'Sin especificar';
+        }
+        else{
+            $reservation->setCancellationReason($cancellationReason);
+        }
+        
+
         $entityManager->persist($reservation);
         $entityManager->persist($event);
         $entityManager->flush();
