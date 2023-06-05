@@ -541,7 +541,9 @@ class ReservedController extends AbstractFOSRestController
             $start = new DateTime($availableTime['start_free']);
             $end = new DateTime($availableTime['start_free']);
             $end->add(new DateInterval('PT1H'));
+            //actualTime + 2 horas
             $actualTime = new DateTime();
+            $actualTime->add(new DateInterval('PT2H'));
 
             //solo pintar las horas que no hayan pasado
             if ($start < $actualTime) {
