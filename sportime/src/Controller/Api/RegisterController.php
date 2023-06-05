@@ -11,10 +11,21 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+
 
 
 
 class RegisterController extends AbstractController{
+
+    private $jwtEncoder;
+
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder, JWTEncoderInterface $jwtEncoder)
+    {
+        // ...
+        $this->jwtEncoder = $jwtEncoder;
+    }
 
 
    /**
@@ -34,8 +45,7 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
     $user->setUsername($data['username']);
     //$person->setNameAndLastname($data['name_lastname']);
     $user->setPhone($data['phone']);
-    $token = $jwtManager->create($user);
-
+    
 
      //Verifica si ya existe un usuario con este correo electrónico en la base de datos
      $existingUser = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $data['email']]);
@@ -78,6 +88,27 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
     $entityManager->persist($person);
     $entityManager->flush();
 
+    //get de las fotos de perfil con la url
+    $getPhotoProfile = $person->getImageProfile();
+    $photoProfile = $this->getParameter('url') . $getPhotoProfile;
+    
+    //get de las fotos de banner con la url
+    $getPhotoBanner = $person->getImageBanner();
+    $photoBanner = $this->getParameter('url') . $getPhotoBanner;
+
+    $payload = [
+        'id' => $user->getId(),
+        'email' => $user->getEmail(),
+        'username' => $user->getUsername(),
+        'name_and_lastname' => $person->getNameAndLastname(),
+        'image_profile' => $photoProfile,
+        'image_banner' =>  $photoBanner,
+    ];
+
+
+    $token = $this->jwtEncoder->encode($payload);
+  
+
     $response = [
         'status' => 'success',
         'message' => 'El usuario ha sido registrado exitosamente',
@@ -89,6 +120,7 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
             'name_and_lastname' => $person->getNameAndLastname(), // 'name_lastname' es el nombre de la propiedad en la entidad 'Person
             'phone' => $user->getPhone(),
             'token' => $token,
+            
             // ...
         ]
     ];
