@@ -78,11 +78,14 @@ class PersonController extends AbstractFOSRestController
             $photoBanner = $this->getParameter('url') . $getPhotoBanner;
 
              //Calcular la edad
-            $dateBirth = $person->getBirthday();
-            $dateBirth = new DateTime($dateBirth->format('Y-m-d'));
-            $currentDate = new DateTime();
-            $diference = $dateBirth->diff($currentDate);
-            $age = $diference->y;
+             if ($person->getBirthday() != null) {
+                $age = null;
+                $dateBirth = $person->getBirthday();
+                $dateBirth = new DateTime($dateBirth->format('Y-m-d'));
+                $currentDate = new DateTime();
+                $diference = $dateBirth->diff($currentDate);
+                $age = $diference->y;
+                } 
 
             $sex = $person->getFkSex();
             $data[] = [
@@ -163,11 +166,14 @@ class PersonController extends AbstractFOSRestController
          $photoBanner = $this->getParameter('url') . $getPhotoBanner;
 
           //Calcular la edad
-           $dateBirth = $person->getBirthday();
-           $dateBirth = new DateTime($dateBirth->format('Y-m-d'));
-           $currentDate = new DateTime();
-           $diference = $dateBirth->diff($currentDate);
-           $age = $diference->y;
+          if ($person->getBirthday() != null) {
+            $age = null;
+            $dateBirth = $person->getBirthday();
+            $dateBirth = new DateTime($dateBirth->format('Y-m-d'));
+            $currentDate = new DateTime();
+            $diference = $dateBirth->diff($currentDate);
+            $age = $diference->y;
+            } 
         
         $data = [
             'id' => $person->getId(),
@@ -244,11 +250,14 @@ class PersonController extends AbstractFOSRestController
          $photoBanner = $this->getParameter('url') . $getPhotoBanner;
 
           //Calcular la edad
-          $dateBirth = $person->getBirthday();
-          $dateBirth = new DateTime($dateBirth->format('Y-m-d'));
-          $currentDate = new DateTime();
-          $diference = $dateBirth->diff($currentDate);
-          $age = $diference->y;
+          if ($person->getBirthday() != null) {
+            $age = null;
+            $dateBirth = $person->getBirthday();
+            $dateBirth = new DateTime($dateBirth->format('Y-m-d'));
+            $currentDate = new DateTime();
+            $diference = $dateBirth->diff($currentDate);
+            $age = $diference->y;
+            } 
 
         
         $data = [
