@@ -596,14 +596,18 @@ class ReservedController extends AbstractFOSRestController
      */
     public function cancelReservation($id, Request $request): Response
     {
-
+        $entityManager = $this->getDoctrine()->getManager();
         $event = $this->getDoctrine()->getRepository(Events::class)->findOneBy(['id' => $id]);
-        $reservation = $this->getDoctrine()->getRepository(ReservedTime::class)->findOneBy(['fk_event_id' => $event->getId()]);
-        $reservation->setCanceled(true);
+        if ($event->getSportCenterCustom() == null) {
+            $reservation = $this->getDoctrine()->getRepository(ReservedTime::class)->findOneBy(['fk_event_id' => $event->getId()]);
+            $reservation->setCanceled(true);
+            $entityManager->persist($reservation);
+        }
+       
         $event = $this->getDoctrine()->getRepository(Events::class)->findOneBy(['id' => $reservation->getFkEventId()]);
         $state= $this->getDoctrine()->getRepository(State::class)->findOneBy(['id' => 5]);
         $event->setFkState($state);
-        $entityManager = $this->getDoctrine()->getManager();
+        
 
         $cancellationReason = $request->get('cancellationReason');
         if (empty($cancellationReason)) {
@@ -613,8 +617,6 @@ class ReservedController extends AbstractFOSRestController
             $reservation->setCancellationReason($cancellationReason);
         }
         
-
-        $entityManager->persist($reservation);
         $entityManager->persist($event);
         $entityManager->flush();
         return new JsonResponse(['status' => 'Reservation canceled'], Response::HTTP_OK);
