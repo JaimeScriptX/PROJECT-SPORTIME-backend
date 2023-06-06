@@ -231,6 +231,8 @@ class ReservedController extends AbstractFOSRestController
                     $end = new DateTime($end2);
 
                 }
+                $em = $this->getDoctrine()->getManager();
+                $state = $em->getRepository(State::class)->find(1);
 
                    //Creación del evento
                   $events = new Events();
@@ -242,7 +244,7 @@ class ReservedController extends AbstractFOSRestController
                   $events->setTime(new \DateTime($data['start']));
                   $events->setNumberPlayers($data['number_players']);
                   $events->setDuration($duration);
-                  $events->setFkState($data[1]);
+                  $events->setFkState($state);
                   
                   // fk
                   $sport = $entityManager->getRepository(Sport::class)->findOneBy(['name' => $data['fk_sport']]);
