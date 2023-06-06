@@ -511,6 +511,8 @@ class EventsController extends AbstractFOSRestController
         $events->setDuration(new \DateTime($data['duration']));
         $events->setNumberPlayers($data['number_players']);
         $events->setSportCenterCustom($data['sport_center_custom']);
+        $events->setFkState($data[1]);
+     
 
         // fk
         $sport = $entityManager->getRepository(Sport::class)->findOneBy(['name' => $data['fk_sport']]);
@@ -531,6 +533,7 @@ class EventsController extends AbstractFOSRestController
         $teamColorTwo = $entityManager->getRepository(TeamColor::class)->findOneBy(['colour' => $data['fk_teamcolor_two']]);
         $events->setFkTeamcolorTwo($teamColorTwo);
 
+       
         $entityManager->persist($events);
         $entityManager->flush();
 

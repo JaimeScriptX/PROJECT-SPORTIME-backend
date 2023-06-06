@@ -242,6 +242,7 @@ class ReservedController extends AbstractFOSRestController
                   $events->setTime(new \DateTime($data['start']));
                   $events->setNumberPlayers($data['number_players']);
                   $events->setDuration($duration);
+                  $events->setFkState($data[1]);
                   
                   // fk
                   $sport = $entityManager->getRepository(Sport::class)->findOneBy(['name' => $data['fk_sport']]);
