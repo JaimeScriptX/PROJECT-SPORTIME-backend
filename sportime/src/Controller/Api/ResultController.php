@@ -24,28 +24,35 @@ class ResultController extends AbstractFOSRestController
     public function getResults(EventsResultsRepository $eventsResultsRepository, EntityManagerInterface $entityManager)
     {
         $eventsResultsRepository = $entityManager->getRepository(EventsResults::class);
-        $eventsResults = $eventsResultsRepository->findAll();
+        $Results = $eventsResultsRepository->findAll();
 
-        if (!$eventsResults) {
+        if (!$Results) {
             return new JsonResponse(
-                ['code' => 204, 'message' => 'No results found for this query.'],
+                ['code' => 204, 'message' => 'No Results found for this query.'],
                 Response::HTTP_NO_CONTENT
             );
         } else {
 
             $data = [];
-            foreach ($eventsResults as $eventsResult) {
+            foreach ($Results as $Result) {
+
+                $event = $Result->getFkEvent();
 
                 $data[] = [
-                    'id' => $eventsResult->getId(),
-                    'team_a' => $eventsResult->getTeamA(),
-                    'team_b' => $eventsResult->getTeamB(),
+                    'id' => $Result->getId(),
+                    'team_a' => $Result->getTeamA(),
+                    'team_b' => $Result->getTeamB(),
+                    'event' => [
+                        'id' => $event->getId(),
+                    ]
                 ];
+                
             }
             return new JsonResponse($data, Response::HTTP_OK);
         }
+    
     }
-
+    
     /**
      * @Rest\Get(path="/result/{id}")
      * @Rest\View(serializerGroups={"EventsResult"}, serializerEnableMaxDepthChecks=true)
@@ -53,104 +60,74 @@ class ResultController extends AbstractFOSRestController
     public function getResult(EventsResultsRepository $eventsResultsRepository, EntityManagerInterface $entityManager, $id)
     {
         $eventsResultsRepository = $entityManager->getRepository(EventsResults::class);
-        $eventsResult = $eventsResultsRepository->find($id);
+        $Result = $eventsResultsRepository->find($id);
 
-        if (!$eventsResult) {
+        if (!$Result) {
             return new JsonResponse(
-                ['code' => 204, 'message' => 'No result found for this query.'],
+                ['code' => 204, 'message' => 'No Result found for this query.'],
                 Response::HTTP_NO_CONTENT
             );
         } else {
 
+            $event = $Result->getFkEvent();
+
             $data = [
-                'id' => $eventsResult->getId(),
-                'team_a' => $eventsResult->getTeamA(),
-                'team_b' => $eventsResult->getTeamB(),
+                'id' => $Result->getId(),
+                'team_a' => $Result->getTeamA(),
+                'team_b' => $Result->getTeamB(),
+                'event' => [
+                    'id' => $event->getId(),
+                ]
             ];
             return new JsonResponse($data, Response::HTTP_OK);
         }
+    
     }
 
-    /**
-     * @Rest\Post(path="/result")
-     * @Rest\View(serializerGroups={"EventsResult"}, serializerEnableMaxDepthChecks=true)
-     */
-    public function postResult(Request $request, EntityManagerInterface $entityManager)
-    {
-        $eventsResult = new EventsResults();
+   
 
-        $eventsResult->setTeamA($request->get('team_a'));
-        $eventsResult->setTeamB($request->get('team_b'));
+/**
+ * @Rest\Put(path="/result/{id}")
+ * @Rest\View(serializerGroups={"EventsResult"}, serializerEnableMaxDepthChecks=true)
+ */
+public function putResult(Request $request, EventsResultsRepository $eventsResultsRepository, EntityManagerInterface $entityManager, $id)
+{
+    $teamA = $request->request->get('team_a');
+    $teamB = $request->request->get('team_b');
 
-        $entityManager->persist($eventsResult);
-        $entityManager->flush();
+    // Busca el resultado existente con el ID proporcionado
+    $existingResult = $eventsResultsRepository->findOneBy(['fk_event' => $id]);
 
-        $data = [
-            'id' => $eventsResult->getId(),
-            'team_a' => $eventsResult->getTeamA(),
-            'team_b' => $eventsResult->getTeamB(),
-        ];
-
-        return new JsonResponse($data, Response::HTTP_CREATED);
+    if (!$existingResult) {
+        return new JsonResponse(
+            ['code' => 404, 'message' => 'No Result found for this ID.'],
+            Response::HTTP_NOT_FOUND
+        );
     }
 
-    /**
-     * @Rest\Put(path="/result/{id}")
-     * @Rest\View(serializerGroups={"EventsResult"}, serializerEnableMaxDepthChecks=true)
-     */
-    public function putResult(Request $request, EntityManagerInterface $entityManager, $id)
-    {
-        $eventsResultsRepository = $entityManager->getRepository(EventsResults::class);
-        $eventsResult = $eventsResultsRepository->find($id);
+  
 
-        if (!$eventsResult) {
-            return new JsonResponse(
-                ['code' => 204, 'message' => 'No result found for this query.'],
-                Response::HTTP_NO_CONTENT
-            );
-        } else {
+    // Actualiza el resultado existente
+    $existingResult->setTeamA($teamA);
+    $existingResult->setTeamB($teamB);
 
-            $eventsResult->setTeamA($request->get('team_a'));
-            $eventsResult->setTeamB($request->get('team_b'));
+    // Persiste los cambios en la base de datos
+    $entityManager->flush();
 
-            $entityManager->persist($eventsResult);
-            $entityManager->flush();
+    $event = $existingResult->getFkEvent();
 
-            $data = [
-                'id' => $eventsResult->getId(),
-                'team_a' => $eventsResult->getTeamA(),
-                'team_b' => $eventsResult->getTeamB(),
-            ];
+    $data = [
+        'id' => $existingResult->getId(),
+        'team_a' => $existingResult->getTeamA(),
+        'team_b' => $existingResult->getTeamB(),
+        'event' => [
+            'id' => $event->getId(),
+        ]
+    ];
 
-            return new JsonResponse($data, Response::HTTP_OK);
-        }
-    }
+    return new JsonResponse($data, Response::HTTP_OK);
+}
 
-    /**
-     * @Rest\Delete(path="/result/{id}")
-     * @Rest\View(serializerGroups={"EventsResult"}, serializerEnableMaxDepthChecks=true)
-     */
-    public function deleteResult(Request $request, EntityManagerInterface $entityManager, $id)
-    {
-        $eventsResultsRepository = $entityManager->getRepository(EventsResults::class);
-        $eventsResult = $eventsResultsRepository->find($id);
-
-        if (!$eventsResult) {
-            return new JsonResponse(
-                ['code' => 204, 'message' => 'No result found for this query.'],
-                Response::HTTP_NO_CONTENT
-            );
-        } else {
-
-            $entityManager->remove($eventsResult);
-            $entityManager->flush();
-
-            return new JsonResponse(
-                ['code' => 200, 'message' => 'Result deleted successfully.'],
-                Response::HTTP_OK
-            );
-        }
-    }
-        
-
+ 
+    
 }

@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\Difficulty;
 use App\Entity\EventPlayers as EntityEventPlayers;
 use App\Repository\EventsRepository;
+use App\Repository\EventsResultsRepository;
 
 use App\Entity\Sport;
 use App\Entity\Sex;
@@ -36,7 +37,8 @@ class EventsController extends AbstractFOSRestController
     public function getEventsSportime(
         EventsRepository $eventsRepository,
         EntityManagerInterface $entityManager,
-        EventPlayersRepository $eventPlayersRepository
+        EventPlayersRepository $eventPlayersRepository,
+        EventsResultsRepository $eventsResultsRepository
     ) {
         $eventsRepository = $entityManager ->getRepository(Events::class);
         $events = $eventsRepository->findAll();
@@ -89,6 +91,20 @@ class EventsController extends AbstractFOSRestController
                     ];
                 }
             }
+
+            $idResult = $event->getId();
+            $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
+
+            foreach ($ResultEvents as $resultEvent) {
+
+                $resultA = $resultEvent->getTeamA();
+                $resultB = $resultEvent->getTeamB();
+                
+            }
+
+
+
+
             
             $duration = $event->getDuration();
             $hours = $duration->format('H');
@@ -169,15 +185,14 @@ class EventsController extends AbstractFOSRestController
                     'type' => $event->getFkState()->getType(),
                     'colour' => $event->getFkState()->getColour(),
                 ] : null,
+                'events_results' => [
+                    'team_a' => $resultA,
+                    'team_b' => $resultB,
+                ],
                 'fk_teamcolor_two_id' => $event->getFkTeamcolorTwo() ? [
                     'id' => $event->getFkTeamcolorTwo()->getId(),
                     'colour' => $event->getFkTeamcolorTwo()->getColour(),
                     'image_shirt' => $shirtTwo,
-                ] : null,
-                'fk_results_id' => $event->getFkResults() ? [
-                    'id' => $event->getFkResults()->getId(),
-                    'team_a' => $event->getFkResults()->getTeamA(),
-                    'team_b' => $event->getFkResults()->getTeamB(),
                 ] : null,
                 'fk_person_id' => $event->getFkPerson() ? [
                     'id' => $event->getFkPerson()->getId(),
@@ -360,11 +375,6 @@ class EventsController extends AbstractFOSRestController
                     'id' => $event->getFkTeamcolorTwo()->getId(),
                     'colour' => $event->getFkTeamcolorTwo()->getColour(),
                     'image_shirt' => $shirtTwo,
-                ] : null,
-                'fk_results_id' => $event->getFkResults() ? [
-                    'id' => $event->getFkResults()->getId(),
-                    'team_a' => $event->getFkResults()->getTeamA(),
-                    'team_b' => $event->getFkResults()->getTeamB(),
                 ] : null,
                 'fk_person_id' => $event->getFkPerson() ? [
                     'id' => $event->getFkPerson()->getId(),
@@ -783,11 +793,6 @@ class EventsController extends AbstractFOSRestController
                             'colour' => $event->getFkTeamcolorTwo()->getColour(),
                             'image_shirt' => $shirt,
                         ] : null,
-                        'fk_results_id' => $event->getFkResults() ? [
-                            'id' => $event->getFkResults()->getId(),
-                            'team_a' => $event->getFkResults()->getTeamA(),
-                            'team_b' => $event->getFkResults()->getTeamB(),
-                        ] : null,
                         'fk_person_id' => $event->getFkPerson() ? [
                             'id' => $event->getFkPerson()->getId(),
                             'image_profile' =>  $photoProfile,
@@ -932,11 +937,6 @@ class EventsController extends AbstractFOSRestController
                                 'id' => $event->getFkTeamcolorTwo()->getId(),
                                 'colour' => $event->getFkTeamcolorTwo()->getColour(),
                                 'image_shirt' => $shirt,
-                            ] : null,
-                            'fk_results_id' => $event->getFkResults() ? [
-                                'id' => $event->getFkResults()->getId(),
-                                'team_a' => $event->getFkResults()->getTeamA(),
-                                'team_b' => $event->getFkResults()->getTeamB(),
                             ] : null,
                             'fk_person_id' => $event->getFkPerson() ? [
                                 'id' => $event->getFkPerson()->getId(),

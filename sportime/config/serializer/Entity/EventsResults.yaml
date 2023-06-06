@@ -1,0 +1,10 @@
+App\Entity\EventsResults:
+    attributes:
+        id:
+            groups: ['eventsresults']
+        team_a:
+            groups: ['eventsresults']
+        team_b:
+            groups: ['eventsresults']
+      #  fk_event:
+      #       groups: ['eventsResults']

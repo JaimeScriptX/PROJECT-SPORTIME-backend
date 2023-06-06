@@ -59,8 +59,6 @@ class Events
      */
     private $number_players;
 
-
-
     /**
      * @ORM\ManyToOne(targetEntity=Sport::class, inversedBy="events")
      */
@@ -122,9 +120,10 @@ class Events
     private $fk_state;
 
     /**
-     * @ORM\ManyToOne(targetEntity=EventsResults::class, inversedBy="events")
+     * @ORM\OneToMany(targetEntity=EventsResults::class, mappedBy="fk_event")
      */
-    private $fk_results;
+    private $eventsResults;
+
 
 
     public function __construct()
@@ -132,6 +131,7 @@ class Events
         $this->eventPlayers = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->reservedTimes = new ArrayCollection();
+        $this->eventsResults = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -413,17 +413,34 @@ class Events
         return $this;
     }
 
-    public function getFkResults(): ?EventsResults
+    /**
+     * @return Collection<int, EventsResults>
+     */
+    public function getEventsResults(): Collection
     {
-        return $this->fk_results;
+        return $this->eventsResults;
     }
 
-    public function setFkResults(?EventsResults $fk_results): self
+    public function addEventsResult(EventsResults $eventsResult): self
     {
-        $this->fk_results = $fk_results;
+        if (!$this->eventsResults->contains($eventsResult)) {
+            $this->eventsResults[] = $eventsResult;
+            $eventsResult->setFkEvent($this);
+        }
 
         return $this;
     }
 
+    public function removeEventsResult(EventsResults $eventsResult): self
+    {
+        if ($this->eventsResults->removeElement($eventsResult)) {
+            // set the owning side to null (unless already changed)
+            if ($eventsResult->getFkEvent() === $this) {
+                $eventsResult->setFkEvent(null);
+            }
+        }
+
+        return $this;
+    }
 
 }

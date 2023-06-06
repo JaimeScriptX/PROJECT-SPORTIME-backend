@@ -34,6 +34,11 @@ class EventsResults
      */
     private $events;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Events::class, inversedBy="eventsResults")
+     */
+    private $fk_event;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -77,26 +82,17 @@ class EventsResults
         return $this->events;
     }
 
-    public function addEvent(Events $event): self
+    public function getFkEvent(): ?Events
     {
-        if (!$this->events->contains($event)) {
-            $this->events[] = $event;
-            $event->setFkResults($this);
-        }
+        return $this->fk_event;
+    }
+
+    public function setFkEvent(?Events $fk_event): self
+    {
+        $this->fk_event = $fk_event;
 
         return $this;
     }
 
-    public function removeEvent(Events $event): self
-    {
-        if ($this->events->removeElement($event)) {
-            // set the owning side to null (unless already changed)
-            if ($event->getFkResults() === $this) {
-                $event->setFkResults(null);
-            }
-        }
-
-        return $this;
-    }
 
 }
