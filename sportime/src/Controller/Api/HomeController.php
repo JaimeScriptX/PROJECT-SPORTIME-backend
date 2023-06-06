@@ -65,8 +65,6 @@ class HomeController extends AbstractFOSRestController
             foreach ($eventPlayers as $eventPlayer) {
                 $numParticipantes++;
                 
-                
-
                 $allEventPlayers[] = [
                     'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
 

@@ -499,8 +499,13 @@ class EventsController extends AbstractFOSRestController
     ) {
         $entityManager = $this->getDoctrine()->getManager();
 
-        $data = json_decode($request->getContent(), true);
 
+
+        $data = json_decode($request->getContent(), true);
+        $em = $this->getDoctrine()->getManager();
+        $state = $em->getRepository(State::class)->find(1);
+
+        
         $events = new Events();
         $events->setName($data['name']);
         $events->setIsPrivate($data['is_private']);
@@ -511,7 +516,7 @@ class EventsController extends AbstractFOSRestController
         $events->setDuration(new \DateTime($data['duration']));
         $events->setNumberPlayers($data['number_players']);
         $events->setSportCenterCustom($data['sport_center_custom']);
-        $events->setFkState($data[1]);
+        $events->setFkState($state);
      
 
         // fk
