@@ -548,8 +548,10 @@ class ReservedController extends AbstractFOSRestController
             $actualTime = new DateTime();
             $actualTime->add(new DateInterval('PT2H'));
 
+           $actualDay = $actualTime->format('Y-m-d');
+
             //solo pintar las horas que no hayan pasado
-            if ($start < $actualTime) {
+            if ($start < $actualTime && $actualDay == $date) {
                 continue;
             }
             
