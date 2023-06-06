@@ -555,6 +555,7 @@ class ReservedController extends AbstractFOSRestController
                 continue;
             }
             
+            
 
             if ($start->format('H') <= 12) {
                 $morning[] = [
