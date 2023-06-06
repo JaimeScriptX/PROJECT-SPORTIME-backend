@@ -6,7 +6,6 @@ use App\Entity\Difficulty;
 use App\Entity\EventPlayers as EntityEventPlayers;
 use App\Repository\EventsRepository;
 use App\Repository\EventsResultsRepository;
-
 use App\Entity\Sport;
 use App\Entity\Sex;
 use App\Service\EventsManager;
@@ -19,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Events;
 use App\Entity\Person;
+use App\Entity\State;
 use App\Entity\SportCenter;
 use App\Entity\TeamColor;
 use App\Form\Type\EventsFormType;
