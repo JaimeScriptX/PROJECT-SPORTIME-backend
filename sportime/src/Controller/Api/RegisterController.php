@@ -97,10 +97,10 @@ public function registro(Request $request, UserPasswordEncoderInterface $encoder
     $photoBanner = $this->getParameter('url') . $getPhotoBanner;
 
     $payload = [
-        'id' => $user->getId(),
         'email' => $user->getEmail(),
         'username' => $user->getUsername(),
         'name_and_lastname' => $person->getNameAndLastname(),
+        'id' => $person->getId(),
         'image_profile' => $photoProfile,
         'image_banner' =>  $photoBanner,
     ];
