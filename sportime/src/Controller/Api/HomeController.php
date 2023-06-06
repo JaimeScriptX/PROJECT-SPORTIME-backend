@@ -9,12 +9,14 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
 use App\Repository\EventPlayersRepository;
 use App\Repository\EventsRepository;
+use App\Repository\EventsResultsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use DateInterval;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use App\Entity\Events;
+
 
 
 
@@ -36,7 +38,8 @@ class HomeController extends AbstractFOSRestController
     public function getEventsSportime(
         EventsRepository $eventsRepository,
         EntityManagerInterface $entityManager,
-        EventPlayersRepository $eventPlayersRepository
+        EventPlayersRepository $eventPlayersRepository,
+        EventsResultsRepository $eventsResultsRepository
     ) {
         $eventsRepository = $entityManager ->getRepository(Events::class);
         $events = $eventsRepository->findAll();
@@ -90,6 +93,17 @@ class HomeController extends AbstractFOSRestController
                         'image_profile' => $photoProfile,
                     ];
                 }
+            }
+
+            //obtiene el marcador 
+            $idResult = $event->getId();
+            $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
+
+            foreach ($ResultEvents as $resultEvent) {
+
+                $resultA = $resultEvent->getTeamA();
+                $resultB = $resultEvent->getTeamB();
+                
             }
             
             $duration = $event->getDuration();
@@ -174,6 +188,10 @@ class HomeController extends AbstractFOSRestController
                     'colour' => $event->getFkTeamcolorTwo()->getColour(),
                     'image_shirt' => $shirtTwo,
                 ] : null,
+                'events_results' => [
+                    'team_a' => $resultA,
+                    'team_b' => $resultB,
+                ],
                 'fk_person_id' => $event->getFkPerson() ? [
                     'id' => $event->getFkPerson()->getId(),
                     'image_profile' => $photoProfile,

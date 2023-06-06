@@ -24,6 +24,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use App\Repository\EventsRepository;
 use App\Repository\EventPlayersRepository;
+use App\Repository\EventsResultsRepository;
 use DateInterval;
 
 
@@ -622,7 +623,8 @@ class PersonController extends AbstractFOSRestController
     public function getPersonLastEvents(
         int $id,
         EventsRepository $eventsRepository,
-        EventPlayersRepository $eventPlayersRepository
+        EventPlayersRepository $eventPlayersRepository,
+        EventsResultsRepository $eventsResultsRepository
     ){
 
         $participatingEvents = $eventPlayersRepository->findBy(['fk_person' => $id]);
@@ -689,6 +691,17 @@ class PersonController extends AbstractFOSRestController
                     $minutes = $duration->format('i');
 
                     $event=$participatingEvent->getFkEvent();
+
+                      //obtiene el marcador 
+                      $idResult = $event->getId();
+                      $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
+  
+                      foreach ($ResultEvents as $resultEvent) {
+  
+                          $resultA = $resultEvent->getTeamA();
+                          $resultB = $resultEvent->getTeamB();
+                          
+                      }
 
                      //get de las fotos de perfil con la url
                     $getPhotoProfile = $event->getFkPerson()->getImageProfile();
@@ -770,6 +783,10 @@ class PersonController extends AbstractFOSRestController
                             'colour' => $event->getFkTeamcolorTwo()->getColour(),
                             'image_shirt' => $shirt,
                         ] : null,
+                        'events_results' => [
+                            'team_a' => $resultA,
+                            'team_b' => $resultB,
+                        ],
                         'fk_person_id' => $event->getFkPerson() ? [
                             'id' => $event->getFkPerson()->getId(),
                             'image_profile' =>  $photoProfile,

@@ -27,6 +27,7 @@ use App\Service\EventsFormProcessor;
 use DateInterval;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class EventsController extends AbstractFOSRestController
 {
@@ -246,7 +247,8 @@ class EventsController extends AbstractFOSRestController
     public function getEventsById(
         int $id,
         EventsRepository $eventsRepository,
-        EventPlayersRepository $eventPlayersRepository
+        EventPlayersRepository $eventPlayersRepository,
+        EventsResultsRepository $eventsResultsRepository
         ){
             $event = $eventsRepository->find($id);
             $eventPlayers = $eventPlayersRepository->findBy(['fk_event' => $id]);
@@ -291,6 +293,17 @@ class EventsController extends AbstractFOSRestController
                         'image_profile' => $photoProfile,
                     ];
                 }
+            }
+
+            //obtiene el marcador 
+            $idResult = $event->getId();
+            $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
+
+            foreach ($ResultEvents as $resultEvent) {
+
+                $resultA = $resultEvent->getTeamA();
+                $resultB = $resultEvent->getTeamB();
+                
             }
             
             $duration = $event->getDuration();
@@ -376,6 +389,10 @@ class EventsController extends AbstractFOSRestController
                     'colour' => $event->getFkTeamcolorTwo()->getColour(),
                     'image_shirt' => $shirtTwo,
                 ] : null,
+                'events_results' => [
+                    'team_a' => $resultA,
+                    'team_b' => $resultB,
+                ],
                 'fk_person_id' => $event->getFkPerson() ? [
                     'id' => $event->getFkPerson()->getId(),
                     'image_profile' => $photoProfile,
@@ -649,7 +666,8 @@ class EventsController extends AbstractFOSRestController
     public function getEventsByPersonId(
         int $id,
         EventsRepository $eventsRepository,
-        EventPlayersRepository $eventPlayersRepository
+        EventPlayersRepository $eventPlayersRepository,
+        EventsResultsRepository $eventsResultsRepository
     ){
         $createdEvents = $eventsRepository->findBy(['fk_person' => $id]);
         $participatingEvents = $eventPlayersRepository->findBy(['fk_person' => $id]);
@@ -711,11 +729,25 @@ class EventsController extends AbstractFOSRestController
                             ];
                         }
                     }
+
+                    
+                    
                     $duration = $participatingEvent->getFkEvent()->getDuration();
                     $hours = $duration->format('H');
                     $minutes = $duration->format('i');
 
                     $event=$participatingEvent->getFkEvent();
+
+                           //obtiene el marcador 
+                           $idResult = $event->getId();
+                           $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
+       
+                           foreach ($ResultEvents as $resultEvent) {
+       
+                               $resultA = $resultEvent->getTeamA();
+                               $resultB = $resultEvent->getTeamB();
+                               
+                           }
 
                      //get de las fotos de perfil con la url
                     $getPhotoProfile = $event->getFkPerson()->getImageProfile();
@@ -793,6 +825,10 @@ class EventsController extends AbstractFOSRestController
                             'colour' => $event->getFkTeamcolorTwo()->getColour(),
                             'image_shirt' => $shirt,
                         ] : null,
+                        'events_results' => [
+                            'team_a' => $resultA,
+                            'team_b' => $resultB,
+                        ],
                         'fk_person_id' => $event->getFkPerson() ? [
                             'id' => $event->getFkPerson()->getId(),
                             'image_profile' =>  $photoProfile,
@@ -861,6 +897,17 @@ class EventsController extends AbstractFOSRestController
                             $minutes = $duration->format('i');
                          
                             $event=$participatingEvent->getFkEvent();
+
+                             //obtiene el marcador 
+                           $idResult = $event->getId();
+                           $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
+       
+                           foreach ($ResultEvents as $resultEvent) {
+       
+                               $resultA = $resultEvent->getTeamA();
+                               $resultB = $resultEvent->getTeamB();
+                               
+                           }
 
                              //get de las fotos de perfil con la url
                             $getPhotoProfile = $event->getFkPerson()->getImageProfile();
@@ -938,6 +985,10 @@ class EventsController extends AbstractFOSRestController
                                 'colour' => $event->getFkTeamcolorTwo()->getColour(),
                                 'image_shirt' => $shirt,
                             ] : null,
+                            'events_results' => [
+                                'team_a' => $resultA,
+                                'team_b' => $resultB,
+                            ],
                             'fk_person_id' => $event->getFkPerson() ? [
                                 'id' => $event->getFkPerson()->getId(),
                                'name_and_lastname' => $event->getFkPerson()->getNameAndLastname(),
