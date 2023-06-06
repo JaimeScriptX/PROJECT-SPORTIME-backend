@@ -94,19 +94,20 @@ class EventsController extends AbstractFOSRestController
             }
 
             $idResult = $event->getId();
-            $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
+                      $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
+          
+                      $resultA = 0;
+                      $resultB = 0;
+          
+                      if($ResultEvents){
+                          foreach ($ResultEvents as $resultEvent) {
+          
+                              $resultA = $resultEvent->getTeamA();
+                              $resultB = $resultEvent->getTeamB();
+          
+                          }
+                      }
 
-            foreach ($ResultEvents as $resultEvent) {
-
-                $resultA = $resultEvent->getTeamA();
-                $resultB = $resultEvent->getTeamB();
-                
-            }
-
-
-
-
-            
             $duration = $event->getDuration();
             $hours = $duration->format('H');
             $minutes = $duration->format('i');
@@ -299,11 +300,16 @@ class EventsController extends AbstractFOSRestController
             $idResult = $event->getId();
             $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
 
-            foreach ($ResultEvents as $resultEvent) {
+            $resultA = 0;
+            $resultB = 0;
 
-                $resultA = $resultEvent->getTeamA();
-                $resultB = $resultEvent->getTeamB();
-                
+            if($ResultEvents){
+                foreach ($ResultEvents as $resultEvent) {
+
+                    $resultA = $resultEvent->getTeamA();
+                    $resultB = $resultEvent->getTeamB();
+
+                }
             }
             
             $duration = $event->getDuration();
@@ -738,16 +744,21 @@ class EventsController extends AbstractFOSRestController
 
                     $event=$participatingEvent->getFkEvent();
 
-                           //obtiene el marcador 
-                           $idResult = $event->getId();
-                           $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
-       
-                           foreach ($ResultEvents as $resultEvent) {
-       
-                               $resultA = $resultEvent->getTeamA();
-                               $resultB = $resultEvent->getTeamB();
-                               
-                           }
+                      //obtiene el marcador 
+                      $idResult = $event->getId();
+                      $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
+          
+                      $resultA = 0;
+                      $resultB = 0;
+          
+                      if($ResultEvents){
+                          foreach ($ResultEvents as $resultEvent) {
+          
+                              $resultA = $resultEvent->getTeamA();
+                              $resultB = $resultEvent->getTeamB();
+          
+                          }
+                      }
 
                      //get de las fotos de perfil con la url
                     $getPhotoProfile = $event->getFkPerson()->getImageProfile();
@@ -899,15 +910,20 @@ class EventsController extends AbstractFOSRestController
                             $event=$participatingEvent->getFkEvent();
 
                              //obtiene el marcador 
-                           $idResult = $event->getId();
-                           $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
-       
-                           foreach ($ResultEvents as $resultEvent) {
-       
-                               $resultA = $resultEvent->getTeamA();
-                               $resultB = $resultEvent->getTeamB();
-                               
-                           }
+                             $idResult = $event->getId();
+                             $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
+                 
+                             $resultA = 0;
+                             $resultB = 0;
+                 
+                             if($ResultEvents){
+                                 foreach ($ResultEvents as $resultEvent) {
+                 
+                                     $resultA = $resultEvent->getTeamA();
+                                     $resultB = $resultEvent->getTeamB();
+                 
+                                 }
+                             }
 
                              //get de las fotos de perfil con la url
                             $getPhotoProfile = $event->getFkPerson()->getImageProfile();

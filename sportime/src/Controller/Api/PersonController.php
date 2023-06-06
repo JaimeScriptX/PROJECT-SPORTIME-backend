@@ -695,12 +695,17 @@ class PersonController extends AbstractFOSRestController
                       //obtiene el marcador 
                       $idResult = $event->getId();
                       $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
-  
-                      foreach ($ResultEvents as $resultEvent) {
-  
-                          $resultA = $resultEvent->getTeamA();
-                          $resultB = $resultEvent->getTeamB();
-                          
+          
+                      $resultA = 0;
+                      $resultB = 0;
+          
+                      if($ResultEvents){
+                          foreach ($ResultEvents as $resultEvent) {
+          
+                              $resultA = $resultEvent->getTeamA();
+                              $resultB = $resultEvent->getTeamB();
+          
+                          }
                       }
 
                      //get de las fotos de perfil con la url

@@ -97,14 +97,19 @@ class HomeController extends AbstractFOSRestController
 
             //obtiene el marcador 
             $idResult = $event->getId();
-            $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
-
-            foreach ($ResultEvents as $resultEvent) {
-
-                $resultA = $resultEvent->getTeamA();
-                $resultB = $resultEvent->getTeamB();
-                
-            }
+                      $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
+          
+                      $resultA = 0;
+                      $resultB = 0;
+          
+                      if($ResultEvents){
+                          foreach ($ResultEvents as $resultEvent) {
+          
+                              $resultA = $resultEvent->getTeamA();
+                              $resultB = $resultEvent->getTeamB();
+          
+                          }
+                      }
             
             $duration = $event->getDuration();
             $hours = $duration->format('H');
