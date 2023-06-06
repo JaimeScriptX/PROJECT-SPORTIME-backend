@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EventsResultsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -28,9 +30,15 @@ class EventsResults
     private $team_b;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Events::class, inversedBy="eventsResults")
+     * @ORM\OneToMany(targetEntity=Events::class, mappedBy="fk_results")
      */
-    private $fk_events;
+    private $events;
+
+    public function __construct()
+    {
+        $this->events = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -61,15 +69,34 @@ class EventsResults
         return $this;
     }
 
-    public function getFkEvents(): ?Events
+    /**
+     * @return Collection<int, Events>
+     */
+    public function getEvents(): Collection
     {
-        return $this->fk_events;
+        return $this->events;
     }
 
-    public function setFkEvents(?Events $fk_events): self
+    public function addEvent(Events $event): self
     {
-        $this->fk_events = $fk_events;
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->setFkResults($this);
+        }
 
         return $this;
     }
+
+    public function removeEvent(Events $event): self
+    {
+        if ($this->events->removeElement($event)) {
+            // set the owning side to null (unless already changed)
+            if ($event->getFkResults() === $this) {
+                $event->setFkResults(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

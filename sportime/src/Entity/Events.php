@@ -59,10 +59,7 @@ class Events
      */
     private $number_players;
 
-    /**
-     * @ORM\OneToMany(targetEntity=EventsResults::class, mappedBy="fk_events")
-     */
-    private $eventsResults;
+
 
     /**
      * @ORM\ManyToOne(targetEntity=Sport::class, inversedBy="events")
@@ -124,10 +121,14 @@ class Events
      */
     private $fk_state;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=EventsResults::class, inversedBy="events")
+     */
+    private $fk_results;
+
 
     public function __construct()
     {
-        $this->eventsResults = new ArrayCollection();
         $this->eventPlayers = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->reservedTimes = new ArrayCollection();
@@ -234,36 +235,7 @@ class Events
         return $this;
     }
 
-    /**
-     * @return Collection<int, EventsResults>
-     */
-    public function getEventsResults(): Collection
-    {
-        return $this->eventsResults;
-    }
-
-    public function addEventsResult(EventsResults $eventsResult): self
-    {
-        if (!$this->eventsResults->contains($eventsResult)) {
-            $this->eventsResults[] = $eventsResult;
-            $eventsResult->setFkEvents($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEventsResult(EventsResults $eventsResult): self
-    {
-        if ($this->eventsResults->removeElement($eventsResult)) {
-            // set the owning side to null (unless already changed)
-            if ($eventsResult->getFkEvents() === $this) {
-                $eventsResult->setFkEvents(null);
-            }
-        }
-
-        return $this;
-    }
-
+  
     public function getFkSport(): ?Sport
     {
         return $this->fk_sport;
@@ -437,6 +409,18 @@ class Events
     public function setFkState(?State $fk_state): self
     {
         $this->fk_state = $fk_state;
+
+        return $this;
+    }
+
+    public function getFkResults(): ?EventsResults
+    {
+        return $this->fk_results;
+    }
+
+    public function setFkResults(?EventsResults $fk_results): self
+    {
+        $this->fk_results = $fk_results;
 
         return $this;
     }
