@@ -43,6 +43,7 @@ class EventsController extends AbstractFOSRestController
     ) {
         $eventsRepository = $entityManager ->getRepository(Events::class);
         $events = $eventsRepository->findAll();
+        
 
         if (!$events) {
             return new JsonResponse(
