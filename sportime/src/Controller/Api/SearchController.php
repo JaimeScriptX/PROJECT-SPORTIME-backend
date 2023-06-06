@@ -17,6 +17,7 @@ use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Events;
+use App\Entity\EventsResults;
 use App\Entity\Person;
 use App\Entity\SportCenter;
 use App\Entity\TeamColor;
@@ -80,6 +81,7 @@ class SearchController extends AbstractFOSRestController
         $sportCenterRepository = $entityManager->getRepository(SportCenter::class);
         $sportRepository = $entityManager->getRepository(Sport::class);
         $eventPlayersRepository = $entityManager->getRepository(EventPlayers::class);
+        $eventsResultsRepository = $entityManager->getRepository(EventsResults::class);
 
         $resultsSearch = [];
         $resultsDate = [];
@@ -475,6 +477,7 @@ class SearchController extends AbstractFOSRestController
                 continue;
             }
             if ($result->getDate() > $dateNow){
+                
                 $datos['events' ][] = [
                     'id' => $result->getId(),
                     'name' => $result->getName(),
@@ -506,6 +509,7 @@ class SearchController extends AbstractFOSRestController
                         'latitude' => $result->getFkSportcenter()->getLatitude() ? $result->getFkSportcenter()->getLatitude() : null,
                         'longitude' => $result->getFkSportcenter()->getLongitude() ? $result->getFkSportcenter()->getLongitude() : null,
                         'destination' => $result->getFkSportcenter()->getDestination() ? $result->getFkSportcenter()->getDestination() : null,
+                        'price' => $result->getFkSportcenter()->getPrice() ? $result->getFkSportcenter()->getPrice() : null,
                     ] : null,
                     'fk_difficulty_id' => $result->getFkDifficulty() ?[
                         'id' => $result->getFkDifficulty()->getId(),
@@ -537,6 +541,10 @@ class SearchController extends AbstractFOSRestController
                         'event_players_A' => $eventPlayersA,
                         'event_players_B' => $eventPlayersB,
                     ],
+                //    'events_results' => [
+                //        'team_a' => $resultA,
+                //        'team_b' => $resultB,
+                //    ],
                     'event_players_list' => $allEventPlayers,
                     'players_registered' => $numParticipantes,
                     'missing_players' => $result->getNumberPlayers() *2 - $numParticipantes,
@@ -584,7 +592,8 @@ class SearchController extends AbstractFOSRestController
                         }
                 
             }
-
+            
+            if ($result->getDate() > $dateNow){
                 $datos['events' ][] = [
                     'id' => $result->getId(),
                     'name' => $result->getName(),
@@ -644,12 +653,16 @@ class SearchController extends AbstractFOSRestController
                         'event_players_A' => $eventPlayersA,
                         'event_players_B' => $eventPlayersB,
                     ],
+                //    'events_results' => [
+                //        'team_a' => $resultA,
+                //        'team_b' => $resultB,
+                //    ],
                     'event_players_list' => $allEventPlayers,
                     'players_registered' => $numParticipantes,
                     'missing_players' => $result->getNumberPlayers() *2 - $numParticipantes,
                 ];
 
-            
+            }
             }
             
 
