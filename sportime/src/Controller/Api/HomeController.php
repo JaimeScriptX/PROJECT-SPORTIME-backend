@@ -65,6 +65,8 @@ class HomeController extends AbstractFOSRestController
             foreach ($eventPlayers as $eventPlayer) {
                 $numParticipantes++;
                 
+                
+
                 $allEventPlayers[] = [
                     'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
 
@@ -92,22 +94,6 @@ class HomeController extends AbstractFOSRestController
                     ];
                 }
             }
-
-            //obtiene el marcador 
-            $idResult = $event->getId();
-                      $ResultEvents = $eventsResultsRepository->findBy(['fk_event' => $idResult]);
-          
-                      $resultA = 0;
-                      $resultB = 0;
-          
-                      if($ResultEvents){
-                          foreach ($ResultEvents as $resultEvent) {
-          
-                              $resultA = $resultEvent->getTeamA();
-                              $resultB = $resultEvent->getTeamB();
-          
-                          }
-                      }
             
             $duration = $event->getDuration();
             $hours = $duration->format('H');
@@ -143,9 +129,7 @@ class HomeController extends AbstractFOSRestController
             $data[] =[
                 'id' => $event->getId(),
                 'name' => $event->getName(),
-                'is_private' => $event->isIsPrivate(),
                 'details' => $event->getDetails(),
-                'price' => $event->getPrice(),
                 'date' => $event->getDate()->format('d/m/Y'),
                 'time' => $event->getTime()->format('H:i'),                
                 'time_end' => $timeEnd->format('H:i'), // 'H:i:s
@@ -175,48 +159,6 @@ class HomeController extends AbstractFOSRestController
                 'fk_sex_id' => $event->getFkSex() ? [
                     'id' => $event->getFkSex()->getId(),
                     'gender' => $event->getFkSex()->getGender(),
-                ] : null,
-                'fk_teamcolor_id' => $event->getFkTeamColor() ? [
-                    'id' => $event->getFkTeamColor()->getId(),
-                    'colour' => $event->getFkTeamColor()->getColour(),
-                    'image_shirt' => $shirt,
-                ] : null,
-                'state' => $event->getFkState() ? [
-                    'id' => $event->getFkState()->getId(),
-                    'type' => $event->getFkState()->getType(),
-                    'colour' => $event->getFkState()->getColour(),
-                ] : null,
-                'fk_teamcolor_two_id' => $event->getFkTeamcolorTwo() ? [
-                    'id' => $event->getFkTeamcolorTwo()->getId(),
-                    'colour' => $event->getFkTeamcolorTwo()->getColour(),
-                    'image_shirt' => $shirtTwo,
-                ] : null,
-                'events_results' => [
-                    'team_a' => $resultA,
-                    'team_b' => $resultB,
-                ],
-                'fk_person_id' => $event->getFkPerson() ? [
-                    'id' => $event->getFkPerson()->getId(),
-                    'image_profile' => $photoProfile,
-                    'name_and_lastname' => $event->getFkPerson()->getNameAndLastname(),
-                //    'birthday' => $event->getFkPerson()->getBirthday(),
-                //    'weight' => $event->getFkPerson()->getWeight(),
-                //    'height' => $event->getFkPerson()->getHeight(),
-                //    'nationality' => $event->getFkPerson()->getNationality(),
-                //    'fk_sex_id' => $event->getFkPerson()->getFkSex() ? [
-                //        'id' => $event->getFkPerson()->getFkSex()->getId(),
-                //        'gender' => $event->getFkPerson()->getFkSex()->getGender(),
-                //    ] : null,
-                    'fk_user_id' => [
-                    //    'id' => $event->getFkPerson()->getFkUser()->getId(),
-                    //    'email' => $event->getFkPerson()->getFkUser()->getEmail(),
-                    //  'roles' => $event->getFkPerson()->getFkUser()->getRoles(),
-                    //    'password' => $event->getFkPerson()->getFkUser()->getPassword(),
-                        'username' => $event->getFkPerson()->getFkUser()->getUsername(),
-                    //    'name_and_lastname' => $event->getFkPerson()->getFkUser()->getNameAndLastname(),
-                    //    'phone' => $event->getFkPerson()->getFkUser()->getPhone(),
-                    ],
-                    
                 ] : null,
                 'event_players' => [
                     'event_players_A' => $eventPlayersA,
