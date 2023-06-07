@@ -150,10 +150,10 @@ class ReservedController extends AbstractFOSRestController
         }
         else{
             //Comprobación de que la hora es correcta
-            $start = $data['start'];
-            $end = $data['end'];
+            $start = (new DateTime($data['start']))->format('H:i:s');
+            $end = (new DateTime($data['end']. ' + 1 hour'))->format('H:i:s');
 
-            //$end = date('H:i:s', strtotime($start. ' + 1 hour'));
+
             
             $sportCenterSchedules = $entityManager->getRepository(ScheduleCenter::class)->findBy(['fk_sport_center_id' => $data['sportCenter'], 'day' => $day]);
             
@@ -221,16 +221,9 @@ class ReservedController extends AbstractFOSRestController
                 }
                 
                else{
-                //si start y end duran 1 hora y si duran más de 1 hora $end se le suma 1 hora
-                $durationSE = strtotime($end) - strtotime($start);
-                $durationSE = date('H:i:s', $durationSE);
-                $duration = new DateTime($durationSE);
-
-                if ($duration->format('H') > 1) {
-                    $end2 = date('H:i:s', strtotime($end. ' + 1 hour'));
-                    $end = new DateTime($end2);
-
-                }
+                
+                $duration = date('H:i:s', strtotime($data['end']. ' + 1 hour') - strtotime($data['start']));
+                
                 $em = $this->getDoctrine()->getManager();
                 $state = $em->getRepository(State::class)->find(1);
 
@@ -243,7 +236,7 @@ class ReservedController extends AbstractFOSRestController
                   $events->setDate(new \DateTime($data['date']));
                   $events->setTime(new \DateTime($data['start']));
                   $events->setNumberPlayers($data['number_players']);
-                  $events->setDuration($duration);
+                  $events->setDuration(new \DateTime($duration));
                   $events->setFkState($state);
                   
                   // fk
@@ -274,10 +267,10 @@ class ReservedController extends AbstractFOSRestController
 
 
                  $eventPlayer = new EventPlayers();
-                 $event = $entityManager->getRepository(Events::class)->find(['id' => $events->getId()]);
+                 $event = $entityManager->getRepository(Events::class)->findOneBy(['name' => $data['name']]);
                  $eventPlayer->setFkEvent($event);
          
-                 $person = $entityManager->getRepository(Person::class)->find(['id' => $data['fk_person']]);
+                 $person = $entityManager->getRepository(Person::class)->findOneBy(['id' => $data['fk_person']]);
                  $eventPlayer->setFkPerson($person);
          
                  $eventPlayer->setEquipo(1);
@@ -288,10 +281,11 @@ class ReservedController extends AbstractFOSRestController
                    //Creación de la reserva
                    $reser = new ReservedTime();
                    $reser->setDay($day);
-                   $reser->setDate($date);
-                   $reser->setStart(new \DateTime($start));
-                   $reser->setEnd(new \DateTime($end));
-                   $reser->setDateCreated($date);
+                   $reser->setDate(new \DateTime($data['date']));
+                   $reser->setStart(new \DateTime($data['start']));
+                   $reser->setEnd(new \DateTime($data['end']. ' + 1 hour'));
+                   $actualDate = new \DateTime();
+                   $reser->setDateCreated($actualDate);
                    $reser->setCanceled(false);
                    
                    //fk
@@ -305,6 +299,7 @@ class ReservedController extends AbstractFOSRestController
                    $entityManager->persist($reser);
                    $entityManager->flush();
 
+                    
                    
                    return new JsonResponse(['status' => 'Reserved time created!'], Response::HTTP_CREATED);
                }
@@ -555,7 +550,7 @@ class ReservedController extends AbstractFOSRestController
                 continue;
             }
             
-            
+
 
             if ($start->format('H') <= 12) {
                 $morning[] = [
