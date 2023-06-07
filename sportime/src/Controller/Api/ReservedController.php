@@ -545,10 +545,19 @@ class ReservedController extends AbstractFOSRestController
 
            $actualDay = $actualTime->format('Y-m-d');
 
-            //solo pintar las horas que no hayan pasado
-            if ($start < $actualTime && $actualDay == $date) {
+            //$timeD = $actualTime - $start
+            $timeD = $start->diff($actualTime);
+
+            // si el tiempo es inferior a 1 hora no lo pinto
+            if ($timeD->format('%h') < 1 && $actualDay == $date) {
                 continue;
             }
+
+
+            //solo pintar las horas que no hayan pasado
+           if ($start < $actualTime && $actualDay == $date) {
+               continue;
+           }
             
 
 

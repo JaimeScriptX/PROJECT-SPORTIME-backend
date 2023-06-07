@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Events;
 use App\Entity\Person;
+use App\Entity\State;
 use App\Entity\SportCenter;
 use App\Entity\TeamColor;
 use App\Form\Type\EventsFormType;
@@ -107,6 +108,7 @@ class EventPlayersController extends AbstractFOSRestController
     ){
         $entityManager = $this->getDoctrine()->getManager();
         $eventPlayersRepository = $entityManager->getRepository(EventPlayers::class);
+        $eventRepository = $entityManager->getRepository(Events::class);
 
         $data = json_decode($request->getContent(), true);
 
@@ -133,6 +135,18 @@ class EventPlayersController extends AbstractFOSRestController
 
             $entityManager->persist($eventPlayer);
             $entityManager->flush();
+
+            $maxPlayers = $eventRepository->findOneBy(['id' => $data['fk_event_id']])->getNumberPlayers()*2;
+            $players = $eventPlayersRepository->findBy(['fk_event' => $data['fk_event_id']]);
+            $playersNumber = count($players);
+
+            if($playersNumber == $maxPlayers){
+                $event = $eventRepository->findOneBy(['id' => $data['fk_event_id']]);
+                $state = $entityManager->getRepository(State::class)->find(['id' => 2]);
+                $event->setFkState($state);
+                $entityManager->persist($event);
+                $entityManager->flush();
+            }
 
             return new JsonResponse(
                 ['code' => 201, 'message' => 'Event player created successfully.'],
@@ -204,6 +218,20 @@ class EventPlayersController extends AbstractFOSRestController
         } else {
             $entityManager->remove($eventPlayer);
             $entityManager->flush();
+
+            $eventPlayersRepository = $entityManager->getRepository(EventPlayers::class);
+
+            $maxPlayers = $eventPlayersRepository->findOneBy(['fk_event' => $request->query->get('event_id')])->getFkEvent()->getNumberPlayers()*2;
+            $players = $eventPlayersRepository->findBy(['fk_event' => $request->query->get('event_id')]);
+            $playersNumber = count($players);
+
+            if($playersNumber < $maxPlayers){
+                $event = $entityManager->getRepository(Events::class)->find(['id' => $request->query->get('event_id')]);
+                $state = $entityManager->getRepository(State::class)->find(['id' => 1]);
+                $event->setFkState($state);
+                $entityManager->persist($event);
+                $entityManager->flush();
+            }
 
             return new JsonResponse(
                 ['code' => 201, 'message' => 'Event player deleted successfully.'],
