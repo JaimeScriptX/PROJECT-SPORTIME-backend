@@ -247,7 +247,7 @@ class EventsController extends AbstractFOSRestController
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
     public function getEventsById(
-        int $id,
+        $id,
         EventsRepository $eventsRepository,
         EventPlayersRepository $eventPlayersRepository,
         EventsResultsRepository $eventsResultsRepository
@@ -504,7 +504,7 @@ class EventsController extends AbstractFOSRestController
 
         $data = json_decode($request->getContent(), true);
         $em = $this->getDoctrine()->getManager();
-        $state = $em->getRepository(State::class)->find(1);
+        $state = $em->getRepository(State::class)->find(1); //poner codigo uuid para estado de evento creado
 
         
         $events = new Events();
@@ -569,7 +569,7 @@ class EventsController extends AbstractFOSRestController
      */
     public function putEventsSportime(
         Request $request, 
-        int $id,
+        $id,
         EventsRepository $eventsRepository
         )
     {
@@ -610,7 +610,7 @@ class EventsController extends AbstractFOSRestController
      */
     public function putEventsCustom(
         Request $request, 
-        int $id,
+        $id,
         EventsRepository $eventsRepository
         )
     {
@@ -653,7 +653,7 @@ class EventsController extends AbstractFOSRestController
     public function deleteEventsSportime(
         EntityManagerInterface $entityManager,
         Request $request,
-        int $id
+        $id
     ) {
         $eventRepository = $entityManager->getRepository(Events::class);
         $event = $eventRepository->find($id);
@@ -679,7 +679,7 @@ class EventsController extends AbstractFOSRestController
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
     public function getEventsByPersonId(
-        int $id,
+        $id,
         EventsRepository $eventsRepository,
         EventPlayersRepository $eventPlayersRepository,
         EventsResultsRepository $eventsResultsRepository

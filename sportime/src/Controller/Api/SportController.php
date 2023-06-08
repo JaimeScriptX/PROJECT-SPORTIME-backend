@@ -62,7 +62,7 @@ class SportController extends AbstractFOSRestController
      * @Rest\Get(path="/sport/{id}")
      * @Rest\View(serializerGroups={"sport"}, serializerEnableMaxDepthChecks=true)
      */
-    public function getSportById(EntityManagerInterface $em, int $id){
+    public function getSportById(EntityManagerInterface $em, $id){
 
         $sport = $em->getRepository(Sport::class)->find($id);
 

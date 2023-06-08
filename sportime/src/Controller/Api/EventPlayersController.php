@@ -73,7 +73,7 @@ class EventPlayersController extends AbstractFOSRestController
     public function getEventPlayer(
         EventPlayersRepository $eventPlayersRepository,
         EntityManagerInterface $entityManager,
-        int $id
+        $id
     ){
         $eventPlayersRepository = $entityManager->getRepository(EventPlayers::class);
         $eventPlayer = $eventPlayersRepository->find($id);
@@ -164,7 +164,7 @@ class EventPlayersController extends AbstractFOSRestController
     public function putEventPlayer(
         Request $request,
         EntityManagerInterface $entityManager,
-        int $id
+        $id
     ){
         $entityManager = $this->getDoctrine()->getManager();
         $eventPlayer = $entityManager->getRepository(EventPlayers::class)->find($id);

@@ -6,17 +6,21 @@ use App\Repository\EventsResultsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Doctrine\UuidGenerator;
 
 /**
  * @ORM\Entity(repositoryClass=EventsResultsRepository::class)
  */
 class EventsResults
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+   /**
+    * @var \Ramsey\Uuid\UuidInterface
+    *
+    * @ORM\Id
+    * @ORM\Column(type="uuid", unique=true)
+    * @ORM\GeneratedValue(strategy="CUSTOM")
+    * @ORM\CustomIdGenerator(class=UuidGenerator::class)
+    */
     private $id;
 
     /**
@@ -45,7 +49,7 @@ class EventsResults
     }
 
 
-    public function getId(): ?int
+    public function getId()
     {
         return $this->id;
     }

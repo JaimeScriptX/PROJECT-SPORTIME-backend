@@ -130,7 +130,7 @@ class PersonController extends AbstractFOSRestController
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
      */
     public function getPersonById(
-        int $id,
+        $id,
         PersonRepository $personRepository,
         EntityManagerInterface $em
     ){
@@ -382,7 +382,7 @@ class PersonController extends AbstractFOSRestController
      */
     public function putPerson(
         Request $request, 
-        int $id,
+        $id,
         PersonRepository $personRepository,
         EntityManagerInterface $em,
         TokenStorageInterface $tokenStorage,
@@ -595,7 +595,7 @@ class PersonController extends AbstractFOSRestController
     public function deletePerson(
         EntityManagerInterface $entityManager,
         Request $request,
-        int $id
+        $id
     ) {
         $personRepository = $entityManager->getRepository(Person::class);
         $person = $personRepository->find($id);
@@ -621,7 +621,7 @@ class PersonController extends AbstractFOSRestController
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
     public function getPersonLastEvents(
-        int $id,
+        $id,
         EventsRepository $eventsRepository,
         EventPlayersRepository $eventPlayersRepository,
         EventsResultsRepository $eventsResultsRepository

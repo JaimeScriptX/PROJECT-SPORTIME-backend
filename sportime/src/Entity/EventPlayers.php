@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\EventPlayersRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Doctrine\UuidGenerator;
 
 /**
  * @ORM\Entity(repositoryClass=EventPlayersRepository::class)
@@ -11,10 +12,13 @@ use Doctrine\ORM\Mapping as ORM;
 class EventPlayers
 {
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    * @var \Ramsey\Uuid\UuidInterface
+    *
+    * @ORM\Id
+    * @ORM\Column(type="uuid", unique=true)
+    * @ORM\GeneratedValue(strategy="CUSTOM")
+    * @ORM\CustomIdGenerator(class=UuidGenerator::class)
+    */
     private $id;
 
     /**
@@ -32,7 +36,7 @@ class EventPlayers
      */
     private $team;
 
-    public function getId(): ?int
+    public function getId()
     {
         return $this->id;
     }

@@ -235,7 +235,7 @@ class SportCenterController extends AbstractFOSRestController
      * @Rest\Get(path="/sportcenter/{id}/sport")
      * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
      */
-    public function getSportCenterSport(Request $request, int $id)
+    public function getSportCenterSport(Request $request, $id)
     {
         
         $entityManager = $this->getDoctrine()->getManager();

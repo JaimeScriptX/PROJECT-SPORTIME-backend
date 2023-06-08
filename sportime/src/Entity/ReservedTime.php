@@ -4,17 +4,21 @@ namespace App\Entity;
 
 use App\Repository\ReservedTimeRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Doctrine\UuidGenerator;
 
 /**
  * @ORM\Entity(repositoryClass=ReservedTimeRepository::class)
  */
 class ReservedTime
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+   /**
+    * @var \Ramsey\Uuid\UuidInterface
+    *
+    * @ORM\Id
+    * @ORM\Column(type="uuid", unique=true)
+    * @ORM\GeneratedValue(strategy="CUSTOM")
+    * @ORM\CustomIdGenerator(class=UuidGenerator::class)
+    */
     private $id;
 
     /**
@@ -62,7 +66,7 @@ class ReservedTime
      */
     private $fk_event_id;
 
-    public function getId(): ?int
+    public function getId()
     {
         return $this->id;
     }
