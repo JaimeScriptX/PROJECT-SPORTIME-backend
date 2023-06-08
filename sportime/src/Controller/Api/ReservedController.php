@@ -71,6 +71,10 @@ class ReservedController extends AbstractFOSRestController
         $entityManager = $this->getDoctrine()->getManager();
         $reservedTime = $entityManager->getRepository(ReservedTime::class)->find($id);
 
+        if (!$reservedTime) {
+            return new JsonResponse(['status' => 'Reserved time not found'], Response::HTTP_NOT_FOUND);
+        }
+
         $reservedTimeData = [];
 
         $reservedTimeData[] = [
