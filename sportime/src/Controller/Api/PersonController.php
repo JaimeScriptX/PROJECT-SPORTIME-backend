@@ -145,6 +145,13 @@ class PersonController extends AbstractFOSRestController
             );
         }
 
+        if ($person === null){
+            return new JsonResponse(
+                ['code' => 204, 'message' => 'No person found for this query.'],
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
         // Calcular el ratio de victorias y derrotas
         $gamesPlayed = $person->getGamesPlayed();
         $victories = $person->getVictories();
@@ -229,6 +236,13 @@ class PersonController extends AbstractFOSRestController
             return new JsonResponse(
                 ['code' => 204, 'message' => 'No person found for this query.'],
                 Response::HTTP_NO_CONTENT
+            );
+        }
+
+        if ($person === null){
+            return new JsonResponse(
+                ['code' => 204, 'message' => 'No person found for this query.'],
+                Response::HTTP_NOT_FOUND
             );
         }
 

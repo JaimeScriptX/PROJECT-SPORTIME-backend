@@ -73,6 +73,13 @@ class SportController extends AbstractFOSRestController
             );
         }
 
+        if ($sport === null){
+            return new JsonResponse(
+                ['code' => 204, 'message' => 'No person found for this query.'],
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
                 //get imagesport
                 $getPhotoSport = $sport->getImage();
                 $photoSport = $this->getParameter('url') . $getPhotoSport;

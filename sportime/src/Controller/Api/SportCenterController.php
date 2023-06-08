@@ -135,6 +135,13 @@ class SportCenterController extends AbstractFOSRestController
             throw $this->createNotFoundException('SportCenter not found');
         }
 
+        if ($sportCenter === null){
+            return new JsonResponse(
+                ['code' => 204, 'message' => 'No person found for this query.'],
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
         //Devuelve los servicios
         $services = $sportCenter->getFkServices();
         $servicesData = [];
@@ -244,6 +251,13 @@ class SportCenterController extends AbstractFOSRestController
         
             $sport = $sportCenter->getFkSport();
             $sportData = [];
+
+            if ($sport === null){
+                return new JsonResponse(
+                    ['code' => 204, 'message' => 'No person found for this query.'],
+                    Response::HTTP_NOT_FOUND
+                );
+            }
 
             foreach ($sport as $sport) {
 
