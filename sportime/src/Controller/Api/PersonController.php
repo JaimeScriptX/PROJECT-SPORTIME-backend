@@ -62,7 +62,10 @@ class PersonController extends AbstractFOSRestController
 
             if ($gamesPlayed === 0) {
                 $winLossRatio = 0;
-            } else {
+            } elseif ($defeats === 0 && $victories === 0) {
+                $winLossRatio = 0;
+            } 
+            else {
                 $winLossRatio = ($victories / ($victories + $defeats)) * 100;
             }
         
@@ -159,7 +162,10 @@ class PersonController extends AbstractFOSRestController
 
         if ($gamesPlayed === 0) {
             $winLossRatio = 0;
-        } else {
+        } elseif ($defeats === 0 && $victories === 0) {
+            $winLossRatio = 0;
+        } 
+        else {
             $winLossRatio = ($victories / ($victories + $defeats)) * 100;
         }
     
@@ -254,7 +260,10 @@ class PersonController extends AbstractFOSRestController
 
         if ($gamesPlayed === 0) {
             $winLossRatio = 0;
-        } else {
+        } elseif ($defeats === 0 && $victories === 0) {
+            $winLossRatio = 0;
+        } 
+        else {
             $winLossRatio = ($victories / ($victories + $defeats)) * 100;
         }
 
