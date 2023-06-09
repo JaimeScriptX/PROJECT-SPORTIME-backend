@@ -183,7 +183,7 @@ class SearchController extends AbstractFOSRestController
                 // Limpieza duplicados
                 $tempArray = [];
                 foreach ($resultsSport as $eventSport) {
-                    $tempArray[$eventSport->getId()] = $eventSport;
+                    $tempArray[] = $eventSport;
                 }
                 $resultsSport = array_values($tempArray);
                 $results = array_values($tempArray);
@@ -225,7 +225,7 @@ class SearchController extends AbstractFOSRestController
                 // Limpieza duplicados
                 $tempArray = [];
                 foreach ($resultsDate as $eventDate) {
-                    $tempArray[$eventDate->getId()] = $eventDate;
+                    $tempArray[] = $eventDate;
                 }
                 $resultsDate = array_values($tempArray);
                 $results = array_values($tempArray);
@@ -243,7 +243,7 @@ class SearchController extends AbstractFOSRestController
                 // Limpieza duplicados
                 $tempArray = [];
                 foreach ($resultsDate as $eventDate) {
-                    $tempArray[$eventDate->getId()] = $eventDate;
+                    $tempArray[] = $eventDate;
                 }
                 $resultsDate = array_values($tempArray);
                 $results = array_values($tempArray);
@@ -262,7 +262,7 @@ class SearchController extends AbstractFOSRestController
                 // Limpieza duplicados
                 $tempArray = [];
                 foreach ($resultsDate as $eventDate) {
-                    $tempArray[$eventDate->getId()] = $eventDate;
+                    $tempArray[] = $eventDate;
                 }
                 $resultsDate = array_values($tempArray);
                 $results = array_values($tempArray);
@@ -292,7 +292,7 @@ class SearchController extends AbstractFOSRestController
                 // Limpieza duplicados
                 $tempArray = [];
                 foreach ($resultsTime as $eventTime) {
-                    $tempArray[$eventTime->getId()] = $eventTime;
+                    $tempArray[] = $eventTime;
                 }
                 $resultsDate = array_values($tempArray);
                 $results = array_values($tempArray);
@@ -310,7 +310,7 @@ class SearchController extends AbstractFOSRestController
                 // Limpieza duplicados
                 $tempArray = [];
                 foreach ($resultsTime as $eventTime) {
-                    $tempArray[$eventTime->getId()] = $eventTime;
+                    $tempArray[] = $eventTime;
                 }
                 $resultsDate = array_values($tempArray);
                 $results = array_values($tempArray);
@@ -328,7 +328,7 @@ class SearchController extends AbstractFOSRestController
                 // Limpieza duplicados
                 $tempArray = [];
                 foreach ($resultsTime as $eventTime) {
-                    $tempArray[$eventTime->getId()] = $eventTime;
+                    $tempArray[] = $eventTime;
                 }
                 $resultsDate = array_values($tempArray);
                 $results = array_values($tempArray);
@@ -346,7 +346,7 @@ class SearchController extends AbstractFOSRestController
                 // Limpieza duplicados
                 $tempArray = [];
                 foreach ($resultsTime as $eventTime) {
-                    $tempArray[$eventTime->getId()] = $eventTime;
+                    $tempArray[] = $eventTime;
                 }
                 $resultsDate = array_values($tempArray);
                 $results = array_values($tempArray);
@@ -364,7 +364,7 @@ class SearchController extends AbstractFOSRestController
                 // Limpieza duplicados
                 $tempArray = [];
                 foreach ($resultsTime as $eventTime) {
-                    $tempArray[$eventTime->getId()] = $eventTime;
+                    $tempArray[] = $eventTime;
                 }
                 $resultsDate = array_values($tempArray);
                 $results = array_values($tempArray);
@@ -382,7 +382,7 @@ class SearchController extends AbstractFOSRestController
                 // Limpieza duplicados
                 $tempArray = [];
                 foreach ($resultsTime as $eventTime) {
-                    $tempArray[$eventTime->getId()] = $eventTime;
+                    $tempArray[] = $eventTime;
                 }
                 $resultsDate = array_values($tempArray);
                 $results = array_values($tempArray);
@@ -400,7 +400,7 @@ class SearchController extends AbstractFOSRestController
                 // Limpieza duplicados
                 $tempArray = [];
                 foreach ($resultsTime as $eventTime) {
-                    $tempArray[$eventTime->getId()] = $eventTime;
+                    $tempArray[] = $eventTime;
                 }
                 $resultsDate = array_values($tempArray);
                 $results = array_values($tempArray);
@@ -460,7 +460,7 @@ class SearchController extends AbstractFOSRestController
             $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
 
             //fecha actual
-            $dateNow = new \DateTime();
+            $dateNow = (new \DateTime())->format('Y-m-d');
 
             
             
@@ -476,7 +476,7 @@ class SearchController extends AbstractFOSRestController
             if ($result->isIsPrivate()==true){
                 continue;
             }
-            if ($result->getDate() > $dateNow){
+            if ($result->getDate() >= $dateNow){
                 
                 $datos['events' ][] = [
                     'id' => $result->getId(),
@@ -593,7 +593,7 @@ class SearchController extends AbstractFOSRestController
                 
             }
             
-            if ($result->getDate() > $dateNow){
+            if ($result->getDate() >= $dateNow){
                 $datos['events' ][] = [
                     'id' => $result->getId(),
                     'name' => $result->getName(),
