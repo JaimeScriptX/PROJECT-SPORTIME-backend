@@ -32,6 +32,10 @@ class HomeController extends AbstractFOSRestController
     }
 
     /**
+     * List all events
+     * 
+     * This call list all events in the database and return a JSON object with the data of the events.
+     * 
      * @Rest\Get(path="/homeEvents")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
