@@ -51,8 +51,8 @@ class HomeController extends AbstractFOSRestController
             );
         } else {
             $data = [];
-            //ordenar eventos por id descendente y solo mostrar los 7 primeros y que no esten cancelados
-            $events = $eventsRepository->findBy([], ['id' => 'DESC'], 7);
+            //ordenar eventos por los que tengan la fecha y la hora más proxima a celebrarse y solo mostrar los 7 primeros y que no esten cancelados
+            $events = $eventsRepository->findBy([], ['date' => 'ASC', 'time' => 'ASC'], 7);
         foreach ($events as $event){
             $id = $event->getId();
             $eventPlayers = $eventPlayersRepository->findBy(['fk_event' => $id]);
