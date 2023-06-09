@@ -53,11 +53,17 @@ class Sport
      */
     private $logo_sportcenter;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Favorites::class, mappedBy="fk_sport")
+     */
+    private $favorites;
+
 
     public function __construct()
     {
         $this->sportCenters = new ArrayCollection();
         $this->events = new ArrayCollection();
+        $this->favorites = new ArrayCollection();
 
     }
 
@@ -167,6 +173,36 @@ class Sport
     public function setLogoSportcenter(?string $logo_sportcenter): self
     {
         $this->logo_sportcenter = $logo_sportcenter;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Favorites>
+     */
+    public function getFavorites(): Collection
+    {
+        return $this->favorites;
+    }
+
+    public function addFavorite(Favorites $favorite): self
+    {
+        if (!$this->favorites->contains($favorite)) {
+            $this->favorites[] = $favorite;
+            $favorite->setFkSport($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavorite(Favorites $favorite): self
+    {
+        if ($this->favorites->removeElement($favorite)) {
+            // set the owning side to null (unless already changed)
+            if ($favorite->getFkSport() === $this) {
+                $favorite->setFkSport(null);
+            }
+        }
 
         return $this;
     }

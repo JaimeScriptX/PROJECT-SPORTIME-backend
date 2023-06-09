@@ -101,12 +101,18 @@ class Person
      */
     private $name_and_lastname;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Favorites::class, mappedBy="fk_person")
+     */
+    private $favorites;
+
    
 
     public function __construct()
     {
         $this->events = new ArrayCollection();
         $this->eventPlayers = new ArrayCollection();
+        $this->favorites = new ArrayCollection();
    
     }
 
@@ -329,6 +335,36 @@ class Person
     public function setNameAndLastname(string $name_and_lastname): self
     {
         $this->name_and_lastname = $name_and_lastname;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Favorites>
+     */
+    public function getFavorites(): Collection
+    {
+        return $this->favorites;
+    }
+
+    public function addFavorite(Favorites $favorite): self
+    {
+        if (!$this->favorites->contains($favorite)) {
+            $this->favorites[] = $favorite;
+            $favorite->setFkPerson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavorite(Favorites $favorite): self
+    {
+        if ($this->favorites->removeElement($favorite)) {
+            // set the owning side to null (unless already changed)
+            if ($favorite->getFkPerson() === $this) {
+                $favorite->setFkPerson(null);
+            }
+        }
 
         return $this;
     }
