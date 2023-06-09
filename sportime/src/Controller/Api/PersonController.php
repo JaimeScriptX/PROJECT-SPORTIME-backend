@@ -643,7 +643,7 @@ class PersonController extends AbstractFOSRestController
      * @Rest\Get(path="/lastEventsPersona/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
-    public function getPersonLastEvents(
+    public function getPersonLastEventsFinish(
         $id,
         EventsRepository $eventsRepository,
         EventPlayersRepository $eventPlayersRepository,
@@ -758,79 +758,84 @@ class PersonController extends AbstractFOSRestController
 
                     $timeEnd = new \DateTime($participatingEvent->getFkEvent()->getTime()->format('H:i'));
                     $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
+                    
+                    //mostrar los eventos donde el state sea "012ae017-0628-11ee-84aa-28e70f93b3c9"
+                    if ($event->getFkState()->getId() == "012ae017-0628-11ee-84aa-28e70f93b3c9"){
+                        $data['participating_events'][] = [
+                            'id' => $event->getId(),
+                            'name' => $event->getName(),
+                            'is_private' => $event->isIsPrivate(),
+                            'details' => $event->getDetails(),
+                            'price' => $event->getPrice(),
+                            'date' => $event->getDate()->format('Y/m/d'),
+                            'time' => $event->getTime()->format('H:i'),                
+                            'time_end' => $timeEnd->format('H:i'), // 'H:i:s
+                            'duration' => $event->getDuration()->format('H:i'),
+                            'number_players' => $event->getNumberPlayers(),
+                            'sport_center_custom' => $event->getSportCenterCustom(),
+                            'fk_sports_id' => $event->getFkSport() ?[
+                                'id' => $event->getFkSport()->getId(),
+                                'name' => $event->getFkSport()->getName(),
+                                // 'image' => $event->getFkSport()->getImage(),
+                                'logo_event' => $LogoEvent,
+                            ] : null,
+                            'fk_sportcenter_id' => $event->getFkSportcenter() ? [
+                                'id' => $event->getFkSportcenter()->getId(),
+                                'name' => $event->getFkSportcenter()->getName(),
+                                'municipality' => $event->getFkSportcenter()->getMunicipality(),
+                                'address' => $event->getFkSportcenter()->getAddress(),
+                                'image' => $imageSportCenter,
+                                'phone' => $event->getFkSportcenter()->getPhone(),
+                                'latitude' => $event->getFkSportcenter()->getLatitude(),
+                                'longitude' => $event->getFkSportcenter()->getLongitude(),
+                                'destination' => $event->getFkSportcenter()->getDestination(),
+                            ] : null,
+                            'fk_difficulty_id' => $event->getFkDifficulty() ?[
+                                'id' => $event->getFkDifficulty()->getId(),
+                                'type' => $event->getFkDifficulty()->getType(),
+                            ] : null,
+                            'fk_sex_id' => $event->getFkSex() ? [
+                                'id' => $event->getFkSex()->getId(),
+                                'gender' => $event->getFkSex()->getGender(),
+                            ] : null,
+                            'fk_teamcolor_id' => $event->getFkTeamColor() ? [
+                                'id' => $event->getFkTeamColor()->getId(),
+                                'colour' => $event->getFkTeamColor()->getColour(),
+                                'image_shirt' => $shirt,
+                            ] : null,
+                            'state' => $event->getFkState() ? [
+                                'id' => $event->getFkState()->getId(),
+                                'type' => $event->getFkState()->getType(),
+                                'colour' => $event->getFkState()->getColour(),
+                            ] : null,
+                            'fk_teamcolor_two_id' => $event->getFkTeamcolorTwo() ? [
+                                'id' => $event->getFkTeamcolorTwo()->getId(),
+                                'colour' => $event->getFkTeamcolorTwo()->getColour(),
+                                'image_shirt' => $shirt,
+                            ] : null,
+                            'events_results' => [
+                                'team_a' => $resultA,
+                                'team_b' => $resultB,
+                            ],
+                            'fk_person_id' => $event->getFkPerson() ? [
+                                'id' => $event->getFkPerson()->getId(),
+                                'image_profile' =>  $photoProfile,
+                                'name_and_lastname' => $event->getFkPerson()->getNameAndLastname(), 
+                                'fk_user_id' => [
+                                    'username' => $event->getFkPerson()->getFkUser()->getUsername(),
+                                ]
+                            ] : null,
+                            'event_players' => [
+                                'event_players_A' => $eventPlayersA,
+                                'event_players_B' => $eventPlayersB,
+                            ],
+                            'event_players_list' => $allEventPlayers,
+                            'players_registered' => $numParticipantes,
+                            'missing_players' => $event->getNumberPlayers() *2 - $numParticipantes,
+                                ];
+                    }
 
-                    $data['participating_events'][] = [
-                        'id' => $event->getId(),
-                        'name' => $event->getName(),
-                        'is_private' => $event->isIsPrivate(),
-                        'details' => $event->getDetails(),
-                        'price' => $event->getPrice(),
-                        'date' => $event->getDate()->format('Y/m/d'),
-                        'time' => $event->getTime()->format('H:i'),                
-                        'time_end' => $timeEnd->format('H:i'), // 'H:i:s
-                        'duration' => $event->getDuration()->format('H:i'),
-                        'number_players' => $event->getNumberPlayers(),
-                        'sport_center_custom' => $event->getSportCenterCustom(),
-                        'fk_sports_id' => $event->getFkSport() ?[
-                            'id' => $event->getFkSport()->getId(),
-                            'name' => $event->getFkSport()->getName(),
-                            // 'image' => $event->getFkSport()->getImage(),
-                            'logo_event' => $LogoEvent,
-                        ] : null,
-                        'fk_sportcenter_id' => $event->getFkSportcenter() ? [
-                            'id' => $event->getFkSportcenter()->getId(),
-                            'name' => $event->getFkSportcenter()->getName(),
-                            'municipality' => $event->getFkSportcenter()->getMunicipality(),
-                            'address' => $event->getFkSportcenter()->getAddress(),
-                            'image' => $imageSportCenter,
-                            'phone' => $event->getFkSportcenter()->getPhone(),
-                            'latitude' => $event->getFkSportcenter()->getLatitude(),
-                            'longitude' => $event->getFkSportcenter()->getLongitude(),
-                            'destination' => $event->getFkSportcenter()->getDestination(),
-                        ] : null,
-                        'fk_difficulty_id' => $event->getFkDifficulty() ?[
-                            'id' => $event->getFkDifficulty()->getId(),
-                            'type' => $event->getFkDifficulty()->getType(),
-                        ] : null,
-                        'fk_sex_id' => $event->getFkSex() ? [
-                            'id' => $event->getFkSex()->getId(),
-                            'gender' => $event->getFkSex()->getGender(),
-                        ] : null,
-                        'fk_teamcolor_id' => $event->getFkTeamColor() ? [
-                            'id' => $event->getFkTeamColor()->getId(),
-                            'colour' => $event->getFkTeamColor()->getColour(),
-                            'image_shirt' => $shirt,
-                        ] : null,
-                        'state' => $event->getFkState() ? [
-                            'id' => $event->getFkState()->getId(),
-                            'type' => $event->getFkState()->getType(),
-                            'colour' => $event->getFkState()->getColour(),
-                        ] : null,
-                        'fk_teamcolor_two_id' => $event->getFkTeamcolorTwo() ? [
-                            'id' => $event->getFkTeamcolorTwo()->getId(),
-                            'colour' => $event->getFkTeamcolorTwo()->getColour(),
-                            'image_shirt' => $shirt,
-                        ] : null,
-                        'events_results' => [
-                            'team_a' => $resultA,
-                            'team_b' => $resultB,
-                        ],
-                        'fk_person_id' => $event->getFkPerson() ? [
-                            'id' => $event->getFkPerson()->getId(),
-                            'image_profile' =>  $photoProfile,
-                            'name_and_lastname' => $event->getFkPerson()->getNameAndLastname(), 
-                            'fk_user_id' => [
-                                'username' => $event->getFkPerson()->getFkUser()->getUsername(),
-                            ]
-                        ] : null,
-                        'event_players' => [
-                            'event_players_A' => $eventPlayersA,
-                            'event_players_B' => $eventPlayersB,
-                        ],
-                        'event_players_list' => $allEventPlayers,
-                        'players_registered' => $numParticipantes,
-                        'missing_players' => $event->getNumberPlayers() *2 - $numParticipantes,
-                            ];
+                    
 
                             // ordenar por date y time de menor a mayor
                             usort($data['participating_events'], function ($a, $b) {
