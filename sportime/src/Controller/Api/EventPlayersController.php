@@ -142,7 +142,7 @@ class EventPlayersController extends AbstractFOSRestController
 
             if($playersNumber == $maxPlayers){
                 $event = $eventRepository->findOneBy(['id' => $data['fk_event_id']]);
-                $state = $entityManager->getRepository(State::class)->find(['id' => 2]);
+                $state = $entityManager->getRepository(State::class)->find(['id' => "e94de16a-0627-11ee-84aa-28e70f93b3c9"]);
                 $event->setFkState($state);
                 $entityManager->persist($event);
                 $entityManager->flush();
@@ -227,7 +227,7 @@ class EventPlayersController extends AbstractFOSRestController
 
             if($playersNumber < $maxPlayers){
                 $event = $entityManager->getRepository(Events::class)->find(['id' => $request->query->get('event_id')]);
-                $state = $entityManager->getRepository(State::class)->find(['id' => 1]);
+                $state = $entityManager->getRepository(State::class)->find(['id' => "d2e73d4c-0627-11ee-84aa-28e70f93b3c9"]);
                 $event->setFkState($state);
                 $entityManager->persist($event);
                 $entityManager->flush();
