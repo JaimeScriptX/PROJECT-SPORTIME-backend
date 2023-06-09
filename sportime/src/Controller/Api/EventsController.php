@@ -642,13 +642,13 @@ class EventsController extends AbstractFOSRestController
         
     }
 
-    //crear eventsResults a un evento
     /**
      * @Rest\Post(path="/eventsResults/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
     public function postEventsResultsAction(Request $request, $id)
     {
+        //lo mas probable es que esta función no se utilice --------------------------------------------------------
         $event = $this->getDoctrine()->getRepository(Events::class)->find($id);
         if (empty($event)) {
             return new JsonResponse(['message' => 'Event not found'], Response::HTTP_NOT_FOUND);
