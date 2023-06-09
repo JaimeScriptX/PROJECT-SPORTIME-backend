@@ -7,6 +7,7 @@ use App\Entity\EventPlayers as EntityEventPlayers;
 use App\Repository\EventsRepository;
 use App\Repository\EventsResultsRepository;
 use App\Entity\Sport;
+use App\Entity\EventsResults;
 use App\Entity\Sex;
 use App\Service\EventsManager;
 use App\Entity\EventPlayers;
@@ -639,6 +640,165 @@ class EventsController extends AbstractFOSRestController
             return new JsonResponse($data, Response::HTTP_OK);
         }
         
+    }
+
+    //crear eventsResults a un evento
+    /**
+     * @Rest\Post(path="/eventsResults/{id}")
+     * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function postEventsResultsAction(Request $request, $id)
+    {
+        $event = $this->getDoctrine()->getRepository(Events::class)->find($id);
+        if (empty($event)) {
+            return new JsonResponse(['message' => 'Event not found'], Response::HTTP_NOT_FOUND);
+        }else{
+            $dataE = $this->getDoctrine()->getRepository(EventsResults::class)->findOneBy(['fk_event' => $id]);
+            if (!empty($dataE)) {
+            return new JsonResponse(['message' => 'EventsResults already exists'], Response::HTTP_CONFLICT);
+            }else{
+                $data = new EventsResults();
+                $resultA = 0;
+                $resultB = 0;
+
+                $data->setTeamA($resultA);
+                $data->setTeamB($resultB);
+                $data->setFkEvent($event);
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($data);
+                $em->flush();
+
+                //sumar 1 a todos los participantes del evento en el campo gamesPlayed de Person
+                $eventPlayers = $this->getDoctrine()->getRepository(EventPlayers::class)->findBy(['fk_event' => $id]);
+                foreach ($eventPlayers as $eventPlayer) {
+                    $person = $this->getDoctrine()->getRepository(Person::class)->find($eventPlayer->getFkPerson()->getId());
+                    $gamesPlayed = $person->getGamesPlayed();
+                    $gamesPlayed = $gamesPlayed + 1;
+                    $person->setGamesPlayed($gamesPlayed);
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($person);
+                    $em->flush();
+                }
+
+                return new JsonResponse(['status' => 'EventsResults created!'], Response::HTTP_CREATED);
+            }
+        }
+    }
+
+
+    /**
+     * @Rest\Put(path="/eventsResults/{id}")
+     * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function putEventsResultsAction(Request $request, $id)
+    {
+        $data = json_decode($request->getContent(), true);
+        $event = $this->getDoctrine()->getRepository(Events::class)->find($id);
+        if (empty($event)) {
+            return new JsonResponse(['message' => 'Event not found'], Response::HTTP_NOT_FOUND);
+        }else{
+            $dataE = $this->getDoctrine()->getRepository(EventsResults::class)->findOneBy(['fk_event' => $id]);
+            if (empty($dataE)) {
+            return new JsonResponse(['message' => 'EventsResults not found'], Response::HTTP_NOT_FOUND);
+            }else{
+                //conseguir marcadores antes de actualizar
+                $oldResultA = $dataE->getTeamA();
+                $oldResultB = $dataE->getTeamB();
+
+                $oldBestResult = 0;
+
+                if ($oldResultA > $oldResultB) {
+                    $oldBbestResult = 1;
+                }elseif ($oldResultA < $oldResultB) {
+                    $oldBbestResult = 2;
+                }else{
+                    $oldBbestResult = 0;
+                }
+
+                $resultA = $data['team_a'];
+                $resultB = $data['team_b'];
+
+                $bestResult = 0;
+
+                if ($resultA > $resultB) {
+                    $bestResult = 1;
+                }elseif ($resultA < $resultB) {
+                    $bestResult = 2;
+                }else{
+                    $bestResult = 0;
+                }
+
+                $dataE->setTeamA($resultA);
+                $dataE->setTeamB($resultB);
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($dataE);
+                $em->flush();
+
+                $eventPlayers = $this->getDoctrine()->getRepository(EventPlayers::class)->findBy(['fk_event' => $id]);
+                foreach ($eventPlayers as $eventPlayer) {
+                    $person = $this->getDoctrine()->getRepository(Person::class)->find($eventPlayer->getFkPerson()->getId());
+                    $team = $eventPlayer->getEquipo();
+                    $victories = $person->getVictories();
+                    $defeat = $person->getDefeat();
+
+                    if ($oldBbestResult == 0) {
+                        if ($bestResult == 1) {
+                            if ($team == 1) {
+                                $victories = $victories + 1;
+                            }else{
+                                $defeat = $defeat + 1;
+                            }
+                        }elseif ($bestResult == 2) {
+                            if ($team == 2) {
+                                $victories = $victories + 1;
+                            }else{
+                                $defeat = $defeat + 1;
+                            }
+                        }
+                    }elseif ($oldBbestResult == 1) {
+                        if ($bestResult == 0) {
+                            if ($team == 1) {
+                                $victories = $victories - 1;
+                            }else{
+                                $defeat = $defeat - 1;
+                            }
+                        }elseif ($bestResult == 2) {
+                            if ($team == 2) {
+                                $victories = $victories + 1;
+                                $defeat = $defeat - 1;
+                            }else{
+                                $victories = $victories - 1;
+                                $defeat = $defeat + 1;
+                            }
+                        }
+                    }elseif ($oldBbestResult == 2) {
+                        if ($bestResult == 0) {
+                            if ($team == 2) {
+                                $victories = $victories - 1;
+                            }else{
+                                $defeat = $defeat - 1;
+                            }
+                        }elseif ($bestResult == 1) {
+                            if ($team == 1) {
+                                $victories = $victories + 1;
+                                $defeat = $defeat - 1;
+                            }else{
+                                $victories = $victories - 1;
+                                $defeat = $defeat + 1;
+                            }
+                        }
+                    }
+                        
+                    $person->setVictories($victories);
+                    $person->setDefeat($defeat);
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($person);
+                    $em->flush();
+                }
+
+                return new JsonResponse(['status' => 'EventsResults updated!'], Response::HTTP_CREATED);
+            }
+        }
     }
         
 }
