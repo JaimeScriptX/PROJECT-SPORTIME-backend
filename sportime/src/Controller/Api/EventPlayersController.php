@@ -26,17 +26,38 @@ use App\Service\EventsFormProcessor;
 use Doctrine\ORM\Mapping\Entity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\EventDispatcher\Event;
+use OpenApi\Annotations as OA;
+
+
 
 class EventPlayersController extends AbstractFOSRestController
 {
+    
+
     /**
      * @Rest\Get(path="/eventPlayers")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
+     * 
+     * @OA\Get(
+     *     path="/eventPlayers",
+     *     operationId="getEventPlayers",
+     *     tags={"Event Players"},
+     *     summary="Get event players",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/EventPlayer")
+     *         )
+     *     )
+     * )
      */
     public function getEventPlayers(
         EventPlayersRepository $eventPlayersRepository,
         EntityManagerInterface $entityManager
     ){
+        
         $eventPlayersRepository = $entityManager->getRepository(EventPlayers::class);
         $eventPlayers = $eventPlayersRepository->findAll();
 
