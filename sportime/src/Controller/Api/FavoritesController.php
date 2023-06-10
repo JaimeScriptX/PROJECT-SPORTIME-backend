@@ -27,10 +27,13 @@ use App\Service\EventsFormProcessor;
 use Doctrine\ORM\Mapping\Entity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\EventDispatcher\Event;
+use OpenApi\Annotations as OA;
 
 class FavoritesController extends AbstractFOSRestController
 {
     /**
+     * @OA\Tag(name="Favorites")
+     * 
      * @Rest\Get(path="/favorites/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
@@ -63,6 +66,8 @@ class FavoritesController extends AbstractFOSRestController
     }
 
     /**
+     * @OA\Tag(name="Favorites")
+     * 
      * @Rest\Post(path="/favorites")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
@@ -96,6 +101,8 @@ class FavoritesController extends AbstractFOSRestController
     }
 
     /**
+     * @OA\Tag(name="Favorites")
+     * 
      * @Rest\Delete(path="/favorites/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */

@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
-
+use OpenApi\Annotations as OA;
 
 
 
@@ -29,7 +29,8 @@ class RegisterController extends AbstractController{
 
 
    /**
-     *@Route("/register", name="register", methods={"POST","GET"})
+    * @OA\Tag(name="Register")
+    * @Route("/register", name="register", methods={"POST","GET"})
     */
 
 public function registro(Request $request, UserPasswordEncoderInterface $encoder, JWTTokenManagerInterface $jwtManager): JsonResponse

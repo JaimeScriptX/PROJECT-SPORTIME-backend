@@ -28,10 +28,13 @@ use DateInterval;
 use DateTime;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use openApi\Annotations as OA;
 
 class SearchController extends AbstractFOSRestController
 {
     /**
+     * @OA\Tag(name="Search")
+     * 
      * @Rest\Get(path="/search")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */

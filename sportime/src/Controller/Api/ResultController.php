@@ -13,11 +13,14 @@ use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use LDAP\Result;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use OpenApi\Annotations as OA;
 
 class ResultController extends AbstractFOSRestController
 {
 
     /**
+     * @OA\Tag(name="Result")
+     * 
      * @Rest\Get(path="/result")
      * @Rest\View(serializerGroups={"EventsResult"}, serializerEnableMaxDepthChecks=true)
      */
@@ -54,6 +57,8 @@ class ResultController extends AbstractFOSRestController
     }
     
     /**
+     * @OA\Tag(name="Result")
+     * 
      * @Rest\Get(path="/result/{id}")
      * @Rest\View(serializerGroups={"EventsResult"}, serializerEnableMaxDepthChecks=true)
      */
@@ -87,6 +92,8 @@ class ResultController extends AbstractFOSRestController
    
 
 /**
+ * @OA\Tag(name="Result")
+ * 
  * @Rest\Put(path="/result/{id}")
  * @Rest\View(serializerGroups={"EventsResult"}, serializerEnableMaxDepthChecks=true)
  */

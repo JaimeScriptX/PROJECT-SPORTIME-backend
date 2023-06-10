@@ -16,13 +16,15 @@ use DateInterval;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use App\Entity\Events;
-
+use OpenApi\Annotations as OA;
 
 
 
 class HomeController extends AbstractFOSRestController
 {
     /**
+     * @OA\Tag(name="Home")
+     * 
      * @Route("/home", name="app_home")
      */
     public function index(ManagerRegistry $doctrine): JsonResponse
@@ -32,9 +34,7 @@ class HomeController extends AbstractFOSRestController
     }
 
     /**
-     * List all events
-     * 
-     * This call list all events in the database and return a JSON object with the data of the events.
+     * @OA\Tag(name="Home")
      * 
      * @Rest\Get(path="/homeEvents")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
@@ -183,6 +183,5 @@ class HomeController extends AbstractFOSRestController
         return new JsonResponse($data, Response::HTTP_OK);
 
         }
-        
     }
 }

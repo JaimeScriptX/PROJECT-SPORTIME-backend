@@ -26,12 +26,15 @@ use App\Repository\EventsRepository;
 use App\Repository\EventPlayersRepository;
 use App\Repository\EventsResultsRepository;
 use DateInterval;
+use OpenApi\Annotations as OA;
 
 
 
 class PersonController extends AbstractFOSRestController
 {
     /**
+     * @OA\Tag(name="Person")
+     * 
      * @Rest\Get(path="/persons")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
      */
@@ -129,6 +132,8 @@ class PersonController extends AbstractFOSRestController
     }
 
     /**
+     * @OA\Tag(name="Person")
+     * 
      * @Rest\Get(path="/persons/{id}")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
      */
@@ -225,6 +230,8 @@ class PersonController extends AbstractFOSRestController
 
 
     /**
+     * @OA\Tag(name="Person")
+     * 
      * @Rest\Get(path="/personsByName/{username}")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
      */
@@ -322,6 +329,8 @@ class PersonController extends AbstractFOSRestController
 
 
     /**
+     * @OA\Tag(name="Person")
+     * 
      * @Rest\Post(path="/persons")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
      */
@@ -399,6 +408,8 @@ class PersonController extends AbstractFOSRestController
     }
 
     /**
+     * @OA\Tag(name="Person")
+     * 
      * @Rest\Put(path="/persons/{id}")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
      * @IsGranted("ROLE_USER")
@@ -612,6 +623,8 @@ class PersonController extends AbstractFOSRestController
     }
 
     /**
+     * @OA\Tag(name="Person")
+     * 
      * @Rest\Delete(path="/persons/{id}")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
      */
@@ -640,6 +653,8 @@ class PersonController extends AbstractFOSRestController
     }
 
     /**
+     * @OA\Tag(name="Person")
+     * 
      * @Rest\Get(path="/lastEventsPersona/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */

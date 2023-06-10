@@ -10,11 +10,14 @@ use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use OpenApi\Annotations as OA;
 
 class SportCenterController extends AbstractFOSRestController
 {
     
     /**
+     * @OA\Tag(name="SportCenter")
+     * 
      * @Rest\Get(path="/sportcenter")
      * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
      */
@@ -122,6 +125,8 @@ class SportCenterController extends AbstractFOSRestController
     
 
     /**
+     * @OA\Tag(name="SportCenter")
+     * 
      * @Rest\Get(path="/sportcenter/{id}")
      * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
      */
@@ -239,6 +244,8 @@ class SportCenterController extends AbstractFOSRestController
     }
 
     /**
+     * @OA\Tag(name="SportCenter")
+     * 
      * @Rest\Get(path="/sportcenter/{id}/sport")
      * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
      */

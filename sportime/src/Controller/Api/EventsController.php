@@ -29,10 +29,23 @@ use DateInterval;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\EventDispatcher\Event;
+use OpenApi\Annotations as OA;
 
 class EventsController extends AbstractFOSRestController
 {
     /**
+     * getEventsSportime
+     * 
+     * Descripción
+     * 
+     * @OA\Tag(name="Events")
+     * 
+     * @OA\Response(
+     *    response=200,
+     *   description="Returns the events"
+     * )
+     * 
+     * 
      * @Rest\Get(path="/events")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
@@ -243,7 +256,26 @@ class EventsController extends AbstractFOSRestController
         
     }
 
-     /**
+    /**
+     * getEventsById
+     * 
+     * Descripción
+     * 
+     * @OA\Tag(name="Events") 
+     * 
+     * @OA\Parameter(
+     *     name="id",
+     *    in="path",
+     *   description="Id of the event",
+     *   @OA\Schema(type="chart", format="int32"),
+     *  required=true
+     * )
+     * 
+     * @OA\Response(
+     *    response=200,
+     *  description="Return the event"
+     * )
+     * 
      * @Rest\Get(path="/events/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
@@ -439,6 +471,53 @@ class EventsController extends AbstractFOSRestController
 
 
     /**
+     * postEventsSportime
+     * 
+     * Descripción
+     * 
+     * @OA\Tag(name="Events")
+     * 
+     * @OA\RequestBody(
+     *     required=true,
+     *    description="Json con los datos del evento",
+     *   @OA\JsonContent(
+     * 
+     *     @OA\Property(property="name", type="string", example="Partido de futbol"),
+     *    @OA\Property(property="is_private", type="boolean", example="false"),
+     *   @OA\Property(property="details", type="string", example="Partido de futbol 5"),
+     * @OA\Property(property="price", type="float", example="10.5"),
+     * @OA\Property(property="date", type="date", example="2021-05-05"),
+     * @OA\Property(property="time", type="time", example="12:00:00"),
+     * @OA\Property(property="duration", type="time", example="01:00:00"),
+     * @OA\Property(property="number_players", type="integer", example="10"),
+     * @OA\Property(property="fk_sport_id", type="chart", example="1"),
+     * @OA\Property(property="fk_sportcenter_id", type="chart", example="1"),
+     * @OA\Property(property="fk_difficulty_id", type="chart", example="1"),
+     * 
+     *    )
+     * )
+     * 
+     * @OA\Response(
+     *    response=200,
+     *   description="Devuelve el evento creado",
+     *  @OA\JsonContent(
+     * 
+     *    @OA\Property(property="id", type="chart", example="1"),
+     *  @OA\Property(property="name", type="string", example="Partido de futbol"),
+     * @OA\Property(property="is_private", type="boolean", example="false"),
+     * @OA\Property(property="details", type="string", example="Partido de futbol 5"),
+     * @OA\Property(property="price", type="float", example="10.5"),
+     * @OA\Property(property="date", type="date", example="2021-05-05"),
+     * @OA\Property(property="time", type="time", example="12:00:00"),
+     * @OA\Property(property="duration", type="time", example="01:00:00"),
+     * @OA\Property(property="number_players", type="integer", example="10"),
+     * @OA\Property(property="fk_sport_id", type="chart", example="1"),
+     * @OA\Property(property="fk_sportcenter_id", type="chart", example="1"),
+     * @OA\Property(property="fk_difficulty_id", type="chart", example="1"),
+     * 
+     * )
+     * )
+     * 
      * @Rest\Post(path="/eventsSportime")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
@@ -492,6 +571,12 @@ class EventsController extends AbstractFOSRestController
     }
 
     /**
+     * postEventsCustom
+     * 
+     * Descripcion
+     * 
+     * @OA\Tag(name="Events")
+     * 
      * @Rest\Post(path="/eventsCustom")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
@@ -565,6 +650,8 @@ class EventsController extends AbstractFOSRestController
 
     
     /**
+     * @OA\Tag(name="Events")
+     * 
      * @Rest\Put(path="/eventsSportime/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
@@ -606,6 +693,8 @@ class EventsController extends AbstractFOSRestController
     
 
     /**
+     * @OA\Tag(name="Events")
+     * 
      * @Rest\Put(path="/eventsCustom/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
@@ -648,9 +737,11 @@ class EventsController extends AbstractFOSRestController
     }
 
     /**
-    * @Rest\Delete(path="/eventsSportime/{id}")
-    * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
-    */
+     * @OA\Tag(name="Events")
+     * 
+     * @Rest\Delete(path="/eventsSportime/{id}")
+     * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
+     */
     public function deleteEventsSportime(
         EntityManagerInterface $entityManager,
         Request $request,
@@ -676,6 +767,8 @@ class EventsController extends AbstractFOSRestController
     }
 
     /**
+     * @OA\Tag(name="Events")
+     * 
      * @Rest\Get(path="/eventsPersona/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
@@ -1046,6 +1139,8 @@ class EventsController extends AbstractFOSRestController
     }
 
     /**
+     * @OA\Tag(name="Events")
+     * 
      * @Rest\Post(path="/eventsResults/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */
@@ -1090,6 +1185,8 @@ class EventsController extends AbstractFOSRestController
 
 
     /**
+     * @OA\Tag(name="Events")
+     * 
      * @Rest\Put(path="/eventsResults/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
      */

@@ -25,10 +25,13 @@ use DateTime;
 use DateTimeInterface;
 use DateInterval;
 use DatePeriod;
+use OpenApi\Annotations as OA;
 
 class ReservedController extends AbstractFOSRestController
 {
     /**
+     * @OA\Tag(name="Reserved")
+     * 
      * @Rest\Get(path="/reservedTime")
      * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
      */
@@ -63,6 +66,8 @@ class ReservedController extends AbstractFOSRestController
 
 
     /**
+     * @OA\Tag(name="Reserved")
+     * 
      * @Rest\Get(path="/reservedTime/{id}")
      * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
      */
@@ -98,6 +103,8 @@ class ReservedController extends AbstractFOSRestController
     }
 
     /**
+     * @OA\Tag(name="Reserved")
+     * 
      * @Rest\Get(path="/reservedTime/event/{id}")
      * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
      */
@@ -134,6 +141,8 @@ class ReservedController extends AbstractFOSRestController
     }
 
     /**
+     * @OA\Tag(name="Reserved")
+     * 
      * @Rest\Post(path="/reservedTime")
      * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
      */
@@ -335,6 +344,8 @@ class ReservedController extends AbstractFOSRestController
 
 
     /**
+     * @OA\Tag(name="Reserved")
+     * 
      * @Rest\Get(path="/reservedTime/{sportCenter}/{date}/{sport}")
      * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
      */
@@ -602,6 +613,8 @@ class ReservedController extends AbstractFOSRestController
 
 
     /**
+     * @OA\Tag(name="Reserved")
+     * 
      * @Rest\Delete(path="/reservedTime/{id}")
      * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
      */
