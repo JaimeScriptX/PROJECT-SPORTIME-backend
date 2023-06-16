@@ -246,7 +246,7 @@ class ReservedController extends AbstractFOSRestController
                 $duration = date('H:i:s', strtotime($data['end']. ' + 1 hour') - strtotime($data['start']));
                 
                 $em = $this->getDoctrine()->getManager();
-                $state = $em->getRepository(State::class)->find(1);
+                $state = $em->getRepository(State::class)->find("d2e73d4c-0627-11ee-84aa-28e70f93b3c9");
 
                    //Creación del evento
                   $events = new Events();
@@ -637,7 +637,7 @@ class ReservedController extends AbstractFOSRestController
         }
        
         $event = $this->getDoctrine()->getRepository(Events::class)->findOneBy(['id' => $reservation->getFkEventId()]);
-        $state= $this->getDoctrine()->getRepository(State::class)->findOneBy(['id' => 5]);
+        $state= $this->getDoctrine()->getRepository(State::class)->findOneBy(['id' => "0b349f7f-0628-11ee-84aa-28e70f93b3c9"]);
         $event->setFkState($state);
         
 

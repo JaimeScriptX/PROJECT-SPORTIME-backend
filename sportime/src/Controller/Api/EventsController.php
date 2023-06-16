@@ -598,7 +598,7 @@ class EventsController extends AbstractFOSRestController
 
         $data = json_decode($request->getContent(), true);
         $em = $this->getDoctrine()->getManager();
-        $state = $em->getRepository(State::class)->find(1); //poner codigo uuid para estado de evento creado
+        $state = $em->getRepository(State::class)->find("d2e73d4c-0627-11ee-84aa-28e70f93b3c9"); //poner codigo uuid para estado de evento creado
 
         
         $events = new Events();
