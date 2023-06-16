@@ -14,6 +14,14 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use LDAP\Result;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenAPI\Annotations\Get;
+use OpenAPI\Annotations\Items;
+use OpenAPI\Annotations\JsonContent;
+use OpenAPI\Annotations\Parameter;
+use OpenAPI\Annotations\Response as OAResponse;
+use OpenAPI\Annotations\Schema;
+use OpenAPI\Annotations\Tag;
 
 class ResultController extends AbstractFOSRestController
 {

@@ -14,6 +14,14 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenAPI\Annotations\Get;
+use OpenAPI\Annotations\Items;
+use OpenAPI\Annotations\JsonContent;
+use OpenAPI\Annotations\Parameter;
+use OpenAPI\Annotations\Response as OAResponse;
+use OpenAPI\Annotations\Schema;
+use OpenAPI\Annotations\Tag;
 
 
 

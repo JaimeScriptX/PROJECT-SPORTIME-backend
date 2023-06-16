@@ -29,6 +29,15 @@ use DateTime;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use openApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenAPI\Annotations\Get;
+use OpenAPI\Annotations\Items;
+use OpenAPI\Annotations\JsonContent;
+use OpenAPI\Annotations\Parameter;
+use OpenAPI\Annotations\Response as OAResponse;
+use OpenAPI\Annotations\Schema;
+use OpenAPI\Annotations\Tag;
+
 
 class SearchController extends AbstractFOSRestController
 {
@@ -118,13 +127,13 @@ class SearchController extends AbstractFOSRestController
            ->getResult();
            
            if (!empty($sportCentersName)){
-			$sportCentersName2 = $eventRepository->findBy(['fk_sportcenter' => $sportCentersName]);
-           foreach ($sportCentersName2 as $sportCenterName2) {
-               $resultsSearch[] = $sportCenterName2;
-               $results[] = $sportCenterName2;
-           }
-       }
-       }
+			    $sportCentersName2 = $eventRepository->findBy(['fk_sportcenter' => $sportCentersName]);
+                foreach ($sportCentersName2 as $sportCenterName2) {
+                    $resultsSearch[] = $sportCenterName2;
+                    $results[] = $sportCenterName2;
+                }
+            }
+        }
 
         // Búsqueda por nombre personalizado de centro deportivo
         if (isset($searchQ)) {
@@ -157,9 +166,9 @@ class SearchController extends AbstractFOSRestController
                foreach ($eventsAddress2 as $eventAddress2) {
                    $resultsSearch[] = $eventAddress2;
                    $results[] = $eventAddress2;
-               }
-           }
-       }
+                }
+            }
+        }
 
     // Sport
         if (isset($sportQ)) {
@@ -179,21 +188,17 @@ class SearchController extends AbstractFOSRestController
                         }
                     }
                                             
-                    
-               // $resultsSport = array_merge($resultsSport, $eventsSport);
-                $results = array_merge($results, $eventsSport);
+                    // $resultsSport = array_merge($resultsSport, $eventsSport);
+                    $results = array_merge($results, $eventsSport);
 
-                // Limpieza duplicados
-                $tempArray = [];
-                foreach ($resultsSport as $eventSport) {
-                    $tempArray[] = $eventSport;
+                    // Limpieza duplicados
+                    $tempArray = [];
+                    foreach ($resultsSport as $eventSport) {
+                        $tempArray[] = $eventSport;
+                    }
+                    $resultsSport = array_values($tempArray);
+                    $results = array_values($tempArray);
                 }
-                $resultsSport = array_values($tempArray);
-                $results = array_values($tempArray);
-                
-                  
-                }
-
             }else {
                 $sport = $sportRepository->findOneBy(['name' => $sportQ]);
             
@@ -463,7 +468,7 @@ class SearchController extends AbstractFOSRestController
             $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
 
             //fecha actual
-            $dateNow = (new \DateTime())->format('Y-m-d');
+            $dateNow = new \DateTime();
 
             
             

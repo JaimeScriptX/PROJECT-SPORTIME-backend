@@ -36,7 +36,8 @@
         "symfony/validator": "5.4.*",
         "symfony/yaml": "5.4.*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "openapi/php-annotations": "^3.0"
     },
     "config": {
         "allow-plugins": {
