@@ -137,6 +137,35 @@ class HomeController extends AbstractFOSRestController
                     $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
                 }
 
+                //if is_private 
+            if ($event->isIsPrivate()==true){
+                continue;
+            }
+            // fecha actual
+            $dateNow = new \DateTime();
+            $dateNow=$dateNow->format('Y-m-d');
+            // fecha del evento
+            $dateEvent = $event->getDate();
+            $dateEvent=$dateEvent->format('Y-m-d');
+            //hora actual +2 horas
+            $timeNow = new \DateTime();
+            $timeNow->add(new DateInterval('PT2H'));
+            $timeNow=$timeNow->format('H:i');
+            //hora del evento
+            $timeEvent = $event->getTime();
+            $timeEvent=$timeEvent->format('H:i');
+            //si la fecha del evento es menor que la fecha actual
+            if ($dateEvent < $dateNow) {
+                continue;
+            }
+            //si la fecha del evento es igual que la fecha actual
+            if ($dateEvent == $dateNow) {
+                //si la hora del evento es menor que la hora actual
+                if ($timeEvent < $timeNow) {
+                    continue;
+                }
+            }
+        
 
             $data[] =[
                 'id' => $event->getId(),
@@ -188,8 +217,15 @@ class HomeController extends AbstractFOSRestController
                 
             ];
         }
+        if (empty($data)) {
+            $data = [
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'No hay eventos disponibles',
+            ];
+            return new JsonResponse($data, Response::HTTP_NOT_FOUND);
+        } else {
         return new JsonResponse($data, Response::HTTP_OK);
-
+        }
         }
     }
 }

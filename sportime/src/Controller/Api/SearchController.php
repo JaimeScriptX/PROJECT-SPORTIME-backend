@@ -634,6 +634,12 @@ class SearchController extends AbstractFOSRestController
                     continue;
                 }
                 else{
+
+                    //if is_private 
+                    if ($result->isIsPrivate()==true){
+                        continue;
+                    }
+
                     $datos['events' ][] = [
                         'id' => $result->getId(),
                         'name' => $result->getName(),
