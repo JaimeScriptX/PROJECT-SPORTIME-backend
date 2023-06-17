@@ -611,6 +611,11 @@ class ReservedController extends AbstractFOSRestController
             'night' => $night,
         ];
 
+        //ordenar por hora en afternoon
+        usort($availableTime['afternoon'], function ($a, $b) {
+            return $a['hour'] <=> $b['hour'];
+        });
+
         if (empty($availableTime)) {
             return new JsonResponse(['error' => 'There are no available times'], Response::HTTP_NOT_FOUND);
         }
