@@ -653,4 +653,24 @@ class ReservedController extends AbstractFOSRestController
         $entityManager->flush();
         return new JsonResponse(['status' => 'Reservation canceled'], Response::HTTP_OK);
     }
+
+    //CancellationReason
+
+    /**
+     * @OA\Tag(name="Reserved")
+     * 
+     * @Rest\Put(path="/cancellationReason")
+     * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function addCancellationReason(Request $request): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $data = json_decode($request->getContent(), true);
+        $reservation = $this->getDoctrine()->getRepository(ReservedTime::class)->findOneBy(['id' => $data['id']]);
+        $cancel= $data['cancellationReason'];
+        $reservation->setCancellationReason($cancel);
+        $entityManager->persist($reservation);
+        $entityManager->flush();
+        return new JsonResponse(['status' => 'Cancellation reason added'], Response::HTTP_OK);
+    }
 }
