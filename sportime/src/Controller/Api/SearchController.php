@@ -100,6 +100,7 @@ class SearchController extends AbstractFOSRestController
         $resultsTime = [];
         $resultsSport = [];
         $results= [];
+        $sportCenterbySport = [];
 
         // Búsqueda de eventos
         if (isset($searchQ)) {
@@ -178,7 +179,7 @@ class SearchController extends AbstractFOSRestController
 
                 if ($sport) {
                     $eventsSport = $eventRepository->findBy(['fk_sport' => $sport->getId()]);
-
+                    
                    foreach ($resultsSearch as $result) {
                         foreach ($eventsSport as $eventSport) {
                             if ($result->getId() == $eventSport->getId()) {
@@ -201,10 +202,19 @@ class SearchController extends AbstractFOSRestController
                 }
             }else {
                 $sport = $sportRepository->findOneBy(['name' => $sportQ]);
-            
+                
                 if ($sport) {
                     $eventsSport = $eventRepository->findBy(['fk_sport' => $sport]);
-                    
+                    $sportCenterSport = $sportCenterRepository->findAll();
+                    // cosas nuevas
+                    foreach ($sportCenterSport as $sportCenter) {
+                        if ($sportCenter->getFkSport()->contains($sport)) {
+                            $sportCenterbySport[] = $sportCenter;
+                            
+                        }
+                    }
+
+
                     foreach ($eventsSport as $eventSport) {
                         $resultsSport[] = $eventSport;
                         $results[] = $eventSport;
@@ -421,6 +431,8 @@ class SearchController extends AbstractFOSRestController
             
         }
 
+        
+
         if (!$results) {
     return new JsonResponse([
         'events' => [],
@@ -432,75 +444,75 @@ class SearchController extends AbstractFOSRestController
                 'sport_centers' => []
             ];
             foreach($results as $result){
-            $id = $result->getId();
-            $eventPlayers = $eventPlayersRepository->findBy(['fk_event' => $id]);
+                $id = $result->getId();
+                $eventPlayers = $eventPlayersRepository->findBy(['fk_event' => $id]);
 
-            $eventPlayersA=[];
-            $eventPlayersB=[];
+                $eventPlayersA=[];
+                $eventPlayersB=[];
 
             
-            $numParticipantes=0;
-            foreach ($eventPlayers as $eventPlayer) {
-                $numParticipantes++;
-                $allEventPlayers[] = [
-                    'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
-
-                ];
-                if ($eventPlayer->getEquipo() == 1){
-                    $eventPlayersA[] = [
+                $numParticipantes=0;
+                foreach ($eventPlayers as $eventPlayer) {
+                    $numParticipantes++;
+                    $allEventPlayers[] = [
                         'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
-                        'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
-                    ];
 
-                }else{
-                    $eventPlayersB[] = [
-                        'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
-                        'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
                     ];
+                    if ($eventPlayer->getEquipo() == 1){
+                        $eventPlayersA[] = [
+                            'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
+                            'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                        ];
+
+                    }else{
+                        $eventPlayersB[] = [
+                            'fk_person_id' => $eventPlayer->getFkPerson()->getId(),
+                            'image_profile' => $eventPlayer->getFkPerson()->getImageProfile(),
+                        ];
+                    }
                 }
-            }
             
-            $duration = $result->getDuration();
-            $hours = $duration->format('H');
-            $minutes = $duration->format('i');
+                $duration = $result->getDuration();
+                $hours = $duration->format('H');
+                $minutes = $duration->format('i');
 
-            $timeEnd = new \DateTime($result->getTime()->format('H:i'));
-            $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
+                $timeEnd = new \DateTime($result->getTime()->format('H:i'));
+                $timeEnd->add(new DateInterval('PT' . $hours . 'H' . $minutes . 'M'));
 
-            //fecha actual
-            $dateNow = new \DateTime();
-            $dateNow= $dateNow->format('Y-m-d');
-            //hora actual + 2h
-            $time = time();
-            $timeNow = date("H:i:s", $time + 7200);
+                //fecha actual
+                $dateNow = new \DateTime();
+                $dateNow= $dateNow->format('Y-m-d');
+                //hora actual + 2h
+                $time = time();
+                $timeNow = date("H:i:s", $time + 7200);
 
             
-            if ($result->getFkSportcenter()){
-                if ($dateQ!=null){
-                    if ($result->getDate() < $dateNow){
+                if ($result->getFkSportcenter()){
+                    if ($dateQ!=null){
+                        if ($result->getDate() < $dateNow){
+                            continue;
+                        }
+                    }
+           
+                    $fkSportCenter = $result->getFkSportcenter();
+                    $imageSportCenter = null;
+
+                    if ($fkSportCenter) {
+                        $getImageSportCenter = $fkSportCenter->getImage();
+                        $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
+                    }
+
+                    //if is_private 
+                    if ($result->isIsPrivate()==true){
                         continue;
                     }
-            }
-           
-            $fkSportCenter = $result->getFkSportcenter();
-            $imageSportCenter = null;
-
-            if ($fkSportCenter) {
-                $getImageSportCenter = $fkSportCenter->getImage();
-                $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
-            }
-
-            //if is_private 
-            if ($result->isIsPrivate()==true){
-                continue;
-            }
-            if ($result->getDate()->format('Y-m-d') >= $dateNow ){
-                $timeStart = $result->getTime()->format('H:i:s');
-                if ($result->getDate()->format('Y-m-d') == $dateNow && $timeStart < $timeNow){
-                    continue;
-                }
-                else{
-                    $datos['events' ][] = [
+                    if ($result->getDate()->format('Y-m-d') >= $dateNow ){
+                        $timeStart = $result->getTime()->format('H:i:s');
+                        if ($result->getDate()->format('Y-m-d') == $dateNow && $timeStart < $timeNow){
+                            continue;
+                        }
+                    else{
+                        $datos['events' ][] = [
                         'id' => $result->getId(),
                         'name' => $result->getName(),
                         'is_private' => $result->isIsPrivate(),
@@ -563,18 +575,17 @@ class SearchController extends AbstractFOSRestController
                             'event_players_A' => $eventPlayersA,
                             'event_players_B' => $eventPlayersB,
                         ],
-                    //    'events_results' => [
-                    //        'team_a' => $resultA,
-                    //        'team_b' => $resultB,
-                    //    ],
-                        'event_players_list' => $allEventPlayers,
-                        'players_registered' => $numParticipantes,
-                        'missing_players' => $result->getNumberPlayers() *2 - $numParticipantes,
-                    ];
-                }
+                        //    'events_results' => [
+                        //        'team_a' => $resultA,
+                        //        'team_b' => $resultB,
+                        //    ],
+                            'event_players_list' => $allEventPlayers,
+                            'players_registered' => $numParticipantes,
+                            'missing_players' => $result->getNumberPlayers() *2 - $numParticipantes,
+                        ];
 
-                
-            }
+                        }
+                    }
                 
 
                 //sport_centers tiene que ser unico por id
@@ -598,6 +609,9 @@ class SearchController extends AbstractFOSRestController
                     continue;
                 }
 
+                if ($sportCenterbySport != null){
+                    continue;
+                }
 
                 $datos['sport_centers'][] = [
                     'id' => $result->getFkSportcenter()->getId(),
@@ -613,20 +627,21 @@ class SearchController extends AbstractFOSRestController
                         'latitude' => $result->getFkSportcenter()->getLatitude() ? $result->getFkSportcenter()->getLatitude() : null,
                         'longitude' => $result->getFkSportcenter()->getLongitude() ? $result->getFkSportcenter()->getLongitude() : null,
                         'destination' => $result->getFkSportcenter()->getDestination() ? $result->getFkSportcenter()->getDestination() : null,
-                    
-
                 ];
-            }
-            else{
+
+                
+
+                }
+                else{
                 if ($dateQ!=null){
 
                         if ($result->getDate() < $dateNow){
                             continue;
                         }
                 
-            }
+                }
             
-            if ($result->getDate()->format('Y-m-d') >= $dateNow){
+                if ($result->getDate()->format('Y-m-d') >= $dateNow){
                 $timeStart = $result->getTime()->format('H:i:s');
 
             
@@ -710,9 +725,35 @@ class SearchController extends AbstractFOSRestController
                 }
                
 
-            }
+                }
             }
             
+            if ($sportCenterbySport!=null){
+                foreach($sportCenterbySport as $center){
+                    $fkSportCenter = $center;
+                    $imageSportCenter = null;
+    
+                    if ($fkSportCenter) {
+                        $getImageSportCenter = $fkSportCenter->getImage();
+                        $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
+                    }
+
+                    $datos['sport_centers'][] = [
+                        'id' => $center->getId(),
+                        'name' => $center->getName(),
+                        'image' => $imageSportCenter ? $imageSportCenter : null,
+                        'address' => $center->getAddress() ? $center->getAddress() : null,
+                        'phone' => $center->getPhone() ? $center->getPhone() : null,
+                        'image_gallery1' => $center->getImageGallery1() ? $center->getImageGallery1() : null,
+                        'image_gallery2' => $center->getImageGallery2() ? $center->getImageGallery2() : null,
+                        'image_gallery3' => $center->getImageGallery3() ? $center->getImageGallery3() : null,
+                        'image_gallery4' => $center->getImageGallery4() ? $center->getImageGallery4() : null,
+                        'latitude' => $center->getLatitude() ? $center->getLatitude() : null,
+                        'longitude' => $center->getLongitude() ? $center->getLongitude() : null,
+                        'destination' => $center->getDestination() ? $center->getDestination() : null,
+                    ];
+                }
+            }
 
             }
             return new JsonResponse($datos, Response::HTTP_OK);
