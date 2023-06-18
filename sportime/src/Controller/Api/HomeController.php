@@ -64,7 +64,7 @@ class HomeController extends AbstractFOSRestController
         } else {
             $data = [];
             //ordenar eventos por los que tengan la fecha y la hora más proxima a celebrarse y solo mostrar los 7 primeros y que no esten cancelados
-            $events = $eventsRepository->findBy([], ['date' => 'ASC', 'time' => 'ASC'], 7);
+            $events = $eventsRepository->findBy([], ['date' => 'ASC', 'time' => 'ASC']);
         foreach ($events as $event){
             $id = $event->getId();
             $eventPlayers = $eventPlayersRepository->findBy(['fk_event' => $id]);
@@ -141,6 +141,13 @@ class HomeController extends AbstractFOSRestController
             if ($event->isIsPrivate()==true){
                 continue;
             }
+
+            //if fk_state is 0b349f7f-0628-11ee-84aa-28e70f93b3c9
+            if ($event->getFkState()->getId()=='0b349f7f-0628-11ee-84aa-28e70f93b3c9'){
+                continue;
+            }
+            
+
             // fecha actual
             $dateNow = new \DateTime();
             $dateNow=$dateNow->format('Y-m-d');
@@ -166,6 +173,10 @@ class HomeController extends AbstractFOSRestController
                 }
             }
         
+            //mostrar solo 7 eventos
+            if (count($data) == 7) {
+                break;
+            }
 
             $data[] =[
                 'id' => $event->getId(),

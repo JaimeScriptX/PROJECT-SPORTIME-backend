@@ -639,20 +639,23 @@ class ReservedController extends AbstractFOSRestController
             $reservation = $this->getDoctrine()->getRepository(ReservedTime::class)->findOneBy(['fk_event_id' => $event->getId()]);
             $reservation->setCanceled(true);
             $entityManager->persist($reservation);
+
+            $cancellationReason = $request->get('cancellationReason');
+            if (empty($cancellationReason)) {
+                $cancellationReason = 'Sin especificar';
+            }
+            else{
+                $reservation->setCancellationReason($cancellationReason);
+            }
+
         }
        
-        $event = $this->getDoctrine()->getRepository(Events::class)->findOneBy(['id' => $reservation->getFkEventId()]);
+        
         $state= $this->getDoctrine()->getRepository(State::class)->findOneBy(['id' => "0b349f7f-0628-11ee-84aa-28e70f93b3c9"]);
         $event->setFkState($state);
         
 
-        $cancellationReason = $request->get('cancellationReason');
-        if (empty($cancellationReason)) {
-            $cancellationReason = 'Sin especificar';
-        }
-        else{
-            $reservation->setCancellationReason($cancellationReason);
-        }
+        
         
         $entityManager->persist($event);
         $entityManager->flush();
@@ -671,7 +674,7 @@ class ReservedController extends AbstractFOSRestController
     {
         $entityManager = $this->getDoctrine()->getManager();
         $data = json_decode($request->getContent(), true);
-        $reservation = $this->getDoctrine()->getRepository(ReservedTime::class)->findOneBy(['id' => $data['id']]);
+        $reservation = $this->getDoctrine()->getRepository(ReservedTime::class)->findOneBy(['fk_event_id' => $data['id']]);
         $cancel= $data['cancellationReason'];
         $reservation->setCancellationReason($cancel);
         $entityManager->persist($reservation);
