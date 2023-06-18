@@ -179,6 +179,53 @@ class SearchController extends AbstractFOSRestController
                    $sportCenterbySport[] = $sportCenterRepository->findOneBy(['id' => $eventAddress2->getFkSportcenter()->getId()]);
                 }
             }
+            
+            $eventsAddress = $sportCenterRepository->createQueryBuilder('sc')
+           ->where('sc.municipality LIKE :search')
+           ->setParameter('search', '%' . $searchQ . '%')
+           ->getQuery()
+           ->getResult();
+           if (!empty($eventsAddress)) {
+               $firstEventAddress = reset($eventsAddress);
+               $eventsAddress2 = $eventRepository->findBy(['fk_sportcenter' => $firstEventAddress->getId()]);
+               foreach ($eventsAddress2 as $eventAddress2) {
+                   $resultsSearch[] = $eventAddress2;
+                   $results[] = $eventAddress2;
+                   $sportCenterbySport[] = $sportCenterRepository->findOneBy(['id' => $eventAddress2->getFkSportcenter()->getId()]);
+                }
+            }
+            
+            $eventsAddress = $sportCenterRepository->createQueryBuilder('sc')
+           ->where('sc.municipality LIKE :search')
+           ->setParameter('search', '%' . $searchQ . '%')
+           ->getQuery()
+           ->getResult();
+           if (!empty($eventsAddress)) {
+               $firstEventAddress = reset($eventsAddress);
+               $eventsAddress2 = $sportCenterRepository->findBy(['id' => $firstEventAddress->getId()]);
+               foreach ($eventsAddress2 as $eventAddress2) {
+                   
+                   $sportCenterbySport[] = $sportCenterRepository->findOneBy(['id' => $eventAddress2->getId()]);
+                }
+            }
+            
+            //borrar duplicados $resultsSearch y $results
+            $temp = [];
+            foreach ($resultsSearch as $key => $val) {
+                if (!in_array($val, $temp)) {
+                    $temp[$key] = $val;
+                }
+            }
+            $resultsSearch = array_values($temp);
+
+            $temp = [];
+            foreach ($results as $key => $val) {
+                if (!in_array($val, $temp)) {
+                    $temp[$key] = $val;
+                }
+            }
+            $results = array_values($temp);
+            
         }
 
     // Sport
@@ -236,7 +283,7 @@ class SearchController extends AbstractFOSRestController
                             $results[] = $eventSport;
                         }
                         
-                    }   
+                   }   
                 }
             
             }
@@ -815,7 +862,7 @@ class SearchController extends AbstractFOSRestController
                         $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
                     }
                     if (!$results){
-                      //  $datos['events'][]=[];
+                        
                     }
 
                     $datos['sport_centers'][] = [
