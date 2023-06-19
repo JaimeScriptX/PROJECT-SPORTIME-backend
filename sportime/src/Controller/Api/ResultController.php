@@ -27,7 +27,25 @@ class ResultController extends AbstractFOSRestController
 {
 
     /**
+     * getResults
+     * 
+     * Get all results
+     * 
      * @OA\Tag(name="Result")
+     * 
+     * @OA\Response(
+     *   response=200,
+     *  description="Returns all results",
+     *  @OA\JsonContent(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="team_a", type="string", example="1"),
+     *  @OA\Property(property="team_b", type="string", example="1"),
+     *  @OA\Property(property="event", type="array", @OA\Items(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  ))
+     *  )
+     *  )
+     * 
      * 
      * @Rest\Get(path="/result")
      * @Rest\View(serializerGroups={"EventsResult"}, serializerEnableMaxDepthChecks=true)
@@ -65,7 +83,24 @@ class ResultController extends AbstractFOSRestController
     }
     
     /**
+     * getResult
+     * 
+     * Get result by id
+     * 
      * @OA\Tag(name="Result")
+     * 
+     * @OA\Response(
+     *  response=200,
+     *  description="Returns result by id",
+     *  @OA\JsonContent(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="team_a", type="string", example="1"),
+     *  @OA\Property(property="team_b", type="string", example="1"),
+     *  @OA\Property(property="event", type="array", @OA\Items(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  ))
+     *  )
+     *  )
      * 
      * @Rest\Get(path="/result/{id}")
      * @Rest\View(serializerGroups={"EventsResult"}, serializerEnableMaxDepthChecks=true)
@@ -100,7 +135,35 @@ class ResultController extends AbstractFOSRestController
    
 
 /**
+ * putResult
+ * 
+ * Update result by id
+ * 
  * @OA\Tag(name="Result")
+ * 
+ * @OA\RequestBody(
+ *  request="Result",
+ *  required=true,
+ *  description="Update result by id",
+ *  @OA\JsonContent(
+ *  @OA\Property(property="team_a", type="string", example="1"),
+ *  @OA\Property(property="team_b", type="string", example="1"),
+ *  )
+ *  )
+ *  )
+ * 
+ *  @OA\Response(
+ *  response=200,
+ *  description="Returns result updated",
+ *  @OA\JsonContent(
+ *  @OA\Property(property="id", type="string", example="1"),
+ *  @OA\Property(property="team_a", type="string", example="1"),
+ *  @OA\Property(property="team_b", type="string", example="1"),
+ *  @OA\Property(property="event", type="array", @OA\Items(
+ *  @OA\Property(property="id", type="string", example="1"),
+ *  ))
+ *  )
+ *  )
  * 
  * @Rest\Put(path="/result/{id}")
  * @Rest\View(serializerGroups={"EventsResult"}, serializerEnableMaxDepthChecks=true)

@@ -40,7 +40,23 @@ use OpenAPI\Annotations\Tag;
 class FavoritesController extends AbstractFOSRestController
 {
     /**
+     * getFavoritesById
+     * 
+     * Get all favorites by person id
+     * 
      * @OA\Tag(name="Favorites")
+     * 
+     * @OA\Response(
+     *    response=200,
+     *   description="Returns all favorites by person id",
+     *   @OA\JsonContent(
+     *   @OA\Property(property="id", type="string", example="1"),
+     *   @OA\Property(property="fk_person_id", type="string", example="1"),
+     *   @OA\Property(property="fk_sport_id", type="string", example="1"),
+     *   @OA\Property(property="sport_name", type="string", example="Football"),
+     *   @OA\Property(property="sport_image", type="string", example="/football.png"),
+     *  )
+     * )
      * 
      * @Rest\Get(path="/favorites/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
@@ -74,7 +90,25 @@ class FavoritesController extends AbstractFOSRestController
     }
 
     /**
+     * postFavorites
+     * 
+     * Create a new favorite.
+     * 
      * @OA\Tag(name="Favorites")
+     * 
+     * @OA\RequestBody(
+     *   required=true,
+     *  description="Create a new favorite",
+     *  @OA\JsonContent(
+     *  @OA\Property(property="fk_person_id", type="string", example="1"),
+     *  @OA\Property(property="fk_sport_id", type="string", example="1"),
+     *  )
+     *  )
+     * 
+     *  @OA\Response(
+     *  response=200,
+     *  description="Favorite created successfully",
+     *  )
      * 
      * @Rest\Post(path="/favorites")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
@@ -109,7 +143,16 @@ class FavoritesController extends AbstractFOSRestController
     }
 
     /**
+     * deleteFavorites
+     * 
+     * Delete a favorite
+     * 
      * @OA\Tag(name="Favorites")
+     * 
+     * @OA\Response(
+     *   response=200,
+     *  description="Favorite deleted successfully",
+     * )
      * 
      * @Rest\Delete(path="/favorites/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)

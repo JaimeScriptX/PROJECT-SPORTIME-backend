@@ -320,9 +320,14 @@ class ReservedController extends AbstractFOSRestController
                    $entityManager->persist($reser);
                    $entityManager->flush();
 
-                    
+                    $responseData = [
+                    'status' => 'Reserved time created!',
+                        'events' => [
+                            'id' => $events->getId(),
+                        ]
+                    ];
                    
-                   return new JsonResponse(['status' => 'Reserved time created!'], Response::HTTP_CREATED);
+                    return new JsonResponse($responseData, Response::HTTP_CREATED);
                }
             }
         }

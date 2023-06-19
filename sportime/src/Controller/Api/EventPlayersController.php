@@ -45,14 +45,22 @@ class EventPlayersController extends AbstractFOSRestController
     /**
      * getEventPlayers
      * 
-     * Descripción
+     * Get all event players from database and return a json response with the data of the event players found.
      * 
      * @OA\Tag(name="Event Players")
      * 
      * @OA\Response(
      *  response=200,
-     * description="Returns all event players"
-     * )
+     * description="Returns all event players",
+     *  @OA\JsonContent(
+     *  @OA\Property(property="id", type="string"),
+     *  @OA\Property(property="fk_event_id", type="string"),
+     *  @OA\Property(property="fk_person_id", type="string"),
+     *  @OA\Property(property="team", type="int"),
+     *  @OA\Property(property="image_profile", type="string")
+     *  )
+     *  )
+     * 
      * 
      * @Rest\Get(path="/eventPlayers")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
@@ -96,7 +104,7 @@ class EventPlayersController extends AbstractFOSRestController
     /**
      * getEventPlayer
      * 
-     * Descripción
+     * Get event player by id from database and return a json response with the data of the event player found.
      * 
      * @OA\Tag(name="Event Players")
      * 
@@ -109,8 +117,15 @@ class EventPlayersController extends AbstractFOSRestController
      * 
      * @OA\Response(
      *   response=200,
-     *  description="Returns event player by event id"
-     * )
+     *  description="Returns event player by event id",
+     *  @OA\JsonContent(
+     *  @OA\Property(property="id", type="string"),
+     *  @OA\Property(property="fk_event_id", type="string"),
+     *  @OA\Property(property="fk_person_id", type="string"),
+     *  @OA\Property(property="team", type="int"),
+     *  @OA\Property(property="image_profile", type="string")
+     *  )
+     *  )
      * 
      * @Rest\Get(path="/eventPlayers/{id}")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)
@@ -146,7 +161,7 @@ class EventPlayersController extends AbstractFOSRestController
     /**
      * postEventPlayer
      * 
-     * Descripción
+     * Create a new event player and save it into database.
      * 
      * @OA\Tag(name="Event Players")
      * 
@@ -162,8 +177,8 @@ class EventPlayersController extends AbstractFOSRestController
      * )
      * 
      * @OA\Response(
-     *  response=200,
-     * description="Returns event player created"
+     *  response=201,
+     * description="Returns confirmation that event player has been created"
      * )
      * 
      * @Rest\Post(path="/eventPlayers")
@@ -227,7 +242,7 @@ class EventPlayersController extends AbstractFOSRestController
     /**
      * putEventPlayer
      * 
-     * Descripción
+     * Update event player by id from database.
      * 
      * @OA\Tag(name="Event Players")
      * 
@@ -250,8 +265,8 @@ class EventPlayersController extends AbstractFOSRestController
      * )
      * 
      * @OA\Response(
-     * response=200,
-     * description="Returns event player updated"
+     * response=201,
+     * description="Returns confirmation message"
      * )
      * 
      * @Rest\Put(path="/eventPlayers/{id}")
@@ -292,7 +307,26 @@ class EventPlayersController extends AbstractFOSRestController
     }
 
     /**
+     * deleteEventPlayer
+     * 
+     * Delete event player by id from database.
+     * 
      * @OA\Tag(name="Event Players")
+     * 
+     * @OA\RequestBody(
+     * required=true,
+     * description="JSON Payload",
+     * @OA\JsonContent(
+     * required={"event_id", "person_id"},
+     * @OA\Property(property="event_id", type="string"),
+     * @OA\Property(property="person_id", type="string"),
+     * )
+     * )
+     * 
+     * @OA\Response(
+     * response=201,
+     * description="Returns confirmation message"
+     * )
      * 
      * @Rest\Delete(path="/eventPlayers")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)

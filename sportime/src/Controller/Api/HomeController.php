@@ -42,7 +42,17 @@ class HomeController extends AbstractFOSRestController
     }
 
     /**
+     * getEventsSportime
+     * 
+     * Get the last 7 events
+     * 
      * @OA\Tag(name="Home")
+     * 
+     * @OA\Response(
+     *   response=200,
+     *  description="Returns the last 7 events"
+     * )
+     * 
      * 
      * @Rest\Get(path="/homeEvents")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)

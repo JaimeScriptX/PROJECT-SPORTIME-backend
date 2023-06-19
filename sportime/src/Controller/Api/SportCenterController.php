@@ -24,7 +24,52 @@ class SportCenterController extends AbstractFOSRestController
 {
     
     /**
+     * getSportCenter
+     * 
+     * Get all sportcenter
+     * 
      * @OA\Tag(name="SportCenter")
+     * 
+     * @OA\Response(
+     *   response=200,
+     *  description="Returns all sportcenter",
+     *  @OA\JsonContent(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="name", type="string", example="1"),
+     *  @OA\Property(property="address", type="string", example="1"),
+     *  @OA\Property(property="phone", type="string", example="1"),
+     *  @OA\Property(property="email", type="string", example="1"),
+     *  @OA\Property(property="gallery", type="array", @OA\Items(
+     *  @OA\Property(property="image_gallery1", type="object", example="1"),
+     *  @OA\Property(property="image_gallery2", type="object", example="1"),
+     *  @OA\Property(property="image_gallery3", type="object", example="1"),
+     *  @OA\Property(property="image_gallery4", type="object", example="1"),
+     *  ),
+     *  ),
+     *  @OA\Property(property="latitude", type="string", example="1"),
+     *  @OA\Property(property="longitude", type="string", example="1"),
+     *  @OA\Property(property="destination", type="string", example="Street"),
+     *  @OA\Property(property="sport", type="array", @OA\Items(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="name", type="string", example="1"),
+     *  ),
+     *  ),
+     *  @OA\Property(property="services", type="array", @OA\Items(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="name", type="string", example="1"),
+     *  ),
+     *  ),
+     *  @OA\Property(property="schedule", type="array", @OA\Items(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="day", type="string", example="1"),
+     *  @OA\Property(property="opening_time", type="string", example="1"),
+     *  @OA\Property(property="closing_time", type="string", example="1"),
+     *  ),
+     *  ),
+     *  @OA\Property(property="description", type="string", example="Description"),
+     *  @OA\Property(property="price", type="decimal", example="1"),
+     *  )
+     *  )
      * 
      * @Rest\Get(path="/sportcenter")
      * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
@@ -133,7 +178,52 @@ class SportCenterController extends AbstractFOSRestController
     
 
     /**
+     * getSportCenterById
+     * 
+     * Get sportcenter by id.
+     * 
      * @OA\Tag(name="SportCenter")
+     * 
+     * @OA\Response(
+     *   response=200,
+     *  description="Returns all sportcenter",
+     *  @OA\JsonContent(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="name", type="string", example="1"),
+     *  @OA\Property(property="address", type="string", example="1"),
+     *  @OA\Property(property="phone", type="string", example="1"),
+     *  @OA\Property(property="email", type="string", example="1"),
+     *  @OA\Property(property="gallery", type="array", @OA\Items(
+     *  @OA\Property(property="image_gallery1", type="object", example="1"),
+     *  @OA\Property(property="image_gallery2", type="object", example="1"),
+     *  @OA\Property(property="image_gallery3", type="object", example="1"),
+     *  @OA\Property(property="image_gallery4", type="object", example="1"),
+     *  ),
+     *  ),
+     *  @OA\Property(property="latitude", type="string", example="1"),
+     *  @OA\Property(property="longitude", type="string", example="1"),
+     *  @OA\Property(property="destination", type="string", example="Street"),
+     *  @OA\Property(property="sport", type="array", @OA\Items(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="name", type="string", example="1"),
+     *  ),
+     *  ),
+     *  @OA\Property(property="services", type="array", @OA\Items(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="name", type="string", example="1"),
+     *  ),
+     *  ),
+     *  @OA\Property(property="schedule", type="array", @OA\Items(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="day", type="string", example="1"),
+     *  @OA\Property(property="opening_time", type="string", example="1"),
+     *  @OA\Property(property="closing_time", type="string", example="1"),
+     *  ),
+     *  ),
+     *  @OA\Property(property="description", type="string", example="Description"),
+     *  @OA\Property(property="price", type="decimal", example="1"),
+     *  )
+     *  )
      * 
      * @Rest\Get(path="/sportcenter/{id}")
      * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)
@@ -252,7 +342,52 @@ class SportCenterController extends AbstractFOSRestController
     }
 
     /**
+     * getSportCenterSport
+     * 
+     * Get sportcenter by sport id.
+     * 
      * @OA\Tag(name="SportCenter")
+     * 
+     * @OA\Response(
+     *   response=200,
+     *  description="Returns all sportcenter",
+     *  @OA\JsonContent(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="name", type="string", example="1"),
+     *  @OA\Property(property="address", type="string", example="1"),
+     *  @OA\Property(property="phone", type="string", example="1"),
+     *  @OA\Property(property="email", type="string", example="1"),
+     *  @OA\Property(property="gallery", type="array", @OA\Items(
+     *  @OA\Property(property="image_gallery1", type="object", example="1"),
+     *  @OA\Property(property="image_gallery2", type="object", example="1"),
+     *  @OA\Property(property="image_gallery3", type="object", example="1"),
+     *  @OA\Property(property="image_gallery4", type="object", example="1"),
+     *  ),
+     *  ),
+     *  @OA\Property(property="latitude", type="string", example="1"),
+     *  @OA\Property(property="longitude", type="string", example="1"),
+     *  @OA\Property(property="destination", type="string", example="Street"),
+     *  @OA\Property(property="sport", type="array", @OA\Items(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="name", type="string", example="1"),
+     *  ),
+     *  ),
+     *  @OA\Property(property="services", type="array", @OA\Items(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="name", type="string", example="1"),
+     *  ),
+     *  ),
+     *  @OA\Property(property="schedule", type="array", @OA\Items(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="day", type="string", example="1"),
+     *  @OA\Property(property="opening_time", type="string", example="1"),
+     *  @OA\Property(property="closing_time", type="string", example="1"),
+     *  ),
+     *  ),
+     *  @OA\Property(property="description", type="string", example="Description"),
+     *  @OA\Property(property="price", type="decimal", example="1"),
+     *  )
+     *  )
      * 
      * @Rest\Get(path="/sportcenter/{id}/sport")
      * @Rest\View(serializerGroups={"sportcenter"}, serializerEnableMaxDepthChecks=true)

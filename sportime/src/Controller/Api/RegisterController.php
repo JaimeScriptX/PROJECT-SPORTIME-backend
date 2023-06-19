@@ -37,7 +37,16 @@ class RegisterController extends AbstractController{
 
 
    /**
+    * register
+    *
+    * Register and get a new user 
+    *
     * @OA\Tag(name="Register")
+    *
+    *  @OA\Response(
+    *   response=200,
+    *   description="Returns the new user"
+    * )
     * @Route("/register", name="register", methods={"POST","GET"})
     */
 

@@ -23,7 +23,23 @@ class SportController extends AbstractFOSRestController
 {
     
     /**
+     * getSport
+     * 
+     * Get all sports
+     * 
      * @OA\Tag(name="Sport")
+     * 
+     * @OA\Response(
+     *   response=200,
+     *  description="Returns all sports",
+     *  @OA\JsonContent(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="name", type="string", example="Football"),
+     *  @OA\Property(property="image", type="string", example="/football.png"),
+     *  @OA\Property(property="logo_event", type="string", example="/football_logo1.png"),
+     *  @OA\Property(property="logo_sportcenter", type="string", example="/football_logo2.png"),
+     *  )
+     *  )
      * 
      * @Rest\Get(path="/sport")
      * @Rest\View(serializerGroups={"sport"}, serializerEnableMaxDepthChecks=true)
@@ -70,7 +86,24 @@ class SportController extends AbstractFOSRestController
     }
 
     /**
+     * getSportById
+     * 
+     * Get sport by id
+     * 
      * @OA\Tag(name="Sport")
+     * 
+     * @OA\Response(
+     *  response=200,
+     *  description="Returns sport by id",
+     *  @OA\JsonContent(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="name", type="string", example="Football"),
+     *  @OA\Property(property="image", type="string", example="/football.png"),
+     *  @OA\Property(property="logo_event", type="string", example="/football_logo1.png"),
+     *  @OA\Property(property="logo_sportcenter", type="string", example="/football_logo2.png"),
+     *  )
+     *  )
+     * 
      * @Rest\Get(path="/sport/{id}")
      * @Rest\View(serializerGroups={"sport"}, serializerEnableMaxDepthChecks=true)
      */

@@ -42,7 +42,48 @@ use OpenAPI\Annotations\Tag;
 class SearchController extends AbstractFOSRestController
 {
     /**
+     * getSearch
+     * 
+     * Get events and sport centers according to the search parameters.
+     * 
      * @OA\Tag(name="Search")
+     * 
+     *   @OA\Parameter(
+     *  name="sport",
+     *  in="query",
+     *  description="Sport",
+     *  required=true,
+     *  @OA\Schema(type="string")
+     *  ),
+     *  @OA\Parameter(
+     *  name="date",
+     *  in="query",
+     *  description="Date",
+     *  required=true,
+     *  @OA\Schema(type="string")
+     *  ),
+     *  @OA\Parameter(
+     *  name="time",
+     *  in="query",
+     *  description="Time",
+     *  required=true,
+     *  @OA\Schema(type="string")
+     *  ),
+     * 
+     *  @OA\Parameter(
+     *  name="search",
+     *  in="query",
+     *  description="Search",
+     *  required=true,
+     *  @OA\Schema(type="string")
+     *  ),
+     *  )
+     * 
+     * @OA\Response(
+     *  response=200,
+     *  description="Returns events and sport centers according to the search parameters",
+     *  )
+     * 
      * 
      * @Rest\Get(path="/search")
      * @Rest\View(serializerGroups={"Events"}, serializerEnableMaxDepthChecks=true)

@@ -11,6 +11,7 @@ use App\Entity\EventsResults;
 use App\Entity\Sex;
 use App\Service\EventsManager;
 use App\Entity\EventPlayers;
+use App\Entity\ReservedTime;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -44,7 +45,7 @@ class EventsController extends AbstractFOSRestController
     /**
      * getEventsSportime
      * 
-     * Descripción
+     * Get all events of sportime from the database.
      * 
      * @OA\Tag(name="Events")
      * 
@@ -267,7 +268,7 @@ class EventsController extends AbstractFOSRestController
     /**
      * getEventsById
      * 
-     * Descripción
+     * Get the event by id from the database.
      * 
      * @OA\Tag(name="Events") 
      * 
@@ -379,10 +380,14 @@ class EventsController extends AbstractFOSRestController
                //get image
                 $fkSportCenter = $event->getFkSportcenter();
                 $imageSportCenter = null;
-
+                $cancelationReason = null;
                 if ($fkSportCenter) {
                     $getImageSportCenter = $fkSportCenter->getImage();
                     $imageSportCenter = $this->getParameter('url') . $getImageSportCenter;
+
+                    $reservedTimeRepository = $this->getDoctrine()->getRepository(ReservedTime::class);
+                    $reservedTime = $reservedTimeRepository->findOneBy(['fk_event_id' => $id]);
+                    $cancelationReason = $reservedTime->getCancellationReason();
                 }
 
             $data = [
@@ -414,6 +419,10 @@ class EventsController extends AbstractFOSRestController
                     'destination' => $fkSportCenter->getDestination(),
                     'price' => $fkSportCenter->getPrice(),
                 ] : null,
+
+                'cancellation_reason' => $cancelationReason,
+
+
                 'fk_difficulty_id' => $event->getFkDifficulty() ?[
                     'id' => $event->getFkDifficulty()->getId(),
                     'type' => $event->getFkDifficulty()->getType(),
@@ -481,7 +490,7 @@ class EventsController extends AbstractFOSRestController
     /**
      * postEventsSportime
      * 
-     * Descripción
+     * Create a new Sportime event.
      * 
      * @OA\Tag(name="Events")
      * 
@@ -490,17 +499,17 @@ class EventsController extends AbstractFOSRestController
      *    description="Json con los datos del evento",
      *   @OA\JsonContent(
      * 
-     *     @OA\Property(property="name", type="string", example="Partido de futbol"),
-     *    @OA\Property(property="is_private", type="boolean", example="false"),
-     *   @OA\Property(property="details", type="string", example="Partido de futbol 5"),
-     * @OA\Property(property="price", type="float", example="10.5"),
-     * @OA\Property(property="date", type="date", example="2021-05-05"),
-     * @OA\Property(property="time", type="time", example="12:00:00"),
-     * @OA\Property(property="duration", type="time", example="01:00:00"),
-     * @OA\Property(property="number_players", type="integer", example="10"),
-     * @OA\Property(property="fk_sport_id", type="chart", example="1"),
-     * @OA\Property(property="fk_sportcenter_id", type="chart", example="1"),
-     * @OA\Property(property="fk_difficulty_id", type="chart", example="1"),
+     *  @OA\Property(property="name", type="string", example="Partido de futbol"),
+     *  @OA\Property(property="is_private", type="boolean", example="false"),
+     *  @OA\Property(property="details", type="string", example="Partido de futbol 5"),
+     *  @OA\Property(property="price", type="float", example="10.5"),
+     *  @OA\Property(property="date", type="date", example="2021-05-05"),
+     *  @OA\Property(property="time", type="time", example="12:00:00"),
+     *  @OA\Property(property="duration", type="time", example="01:00:00"),
+     *  @OA\Property(property="number_players", type="integer", example="10"),
+     *  @OA\Property(property="fk_sport_id", type="chart", example="1"),
+     *  @OA\Property(property="fk_sportcenter_id", type="chart", example="1"),
+     *  @OA\Property(property="fk_difficulty_id", type="chart", example="1"),
      * 
      *    )
      * )
@@ -510,8 +519,8 @@ class EventsController extends AbstractFOSRestController
      *   description="Devuelve el evento creado",
      *  @OA\JsonContent(
      * 
-     *    @OA\Property(property="id", type="chart", example="1"),
-     *  @OA\Property(property="name", type="string", example="Partido de futbol"),
+     *  @OA\Property(property="id", type="chart", example="1"),
+     * @OA\Property(property="name", type="string", example="Partido de futbol"),
      * @OA\Property(property="is_private", type="boolean", example="false"),
      * @OA\Property(property="details", type="string", example="Partido de futbol 5"),
      * @OA\Property(property="price", type="float", example="10.5"),
@@ -581,7 +590,7 @@ class EventsController extends AbstractFOSRestController
     /**
      * postEventsCustom
      * 
-     * Descripcion
+     * Create a new Custom event.
      * 
      * @OA\Tag(name="Events")
      * 
@@ -658,6 +667,10 @@ class EventsController extends AbstractFOSRestController
 
     
     /**
+     * putEventsSportime
+     * 
+     * Update a Sportime event.
+     * 
      * @OA\Tag(name="Events")
      * 
      * @Rest\Put(path="/eventsSportime/{id}")
@@ -701,6 +714,10 @@ class EventsController extends AbstractFOSRestController
     
 
     /**
+     * putEventsCustom
+     * 
+     * Update a Custom event.
+     * 
      * @OA\Tag(name="Events")
      * 
      * @Rest\Put(path="/eventsCustom/{id}")
@@ -745,6 +762,10 @@ class EventsController extends AbstractFOSRestController
     }
 
     /**
+     * deleteEventsSportime
+     * 
+     * Delete a Sportime event.
+     * 
      * @OA\Tag(name="Events")
      * 
      * @Rest\Delete(path="/eventsSportime/{id}")
@@ -775,6 +796,10 @@ class EventsController extends AbstractFOSRestController
     }
 
     /**
+     * getEventsByPersonId
+     * 
+     * Get all events by person id.
+     * 
      * @OA\Tag(name="Events")
      * 
      * @Rest\Get(path="/eventsPersona/{id}")
@@ -1147,6 +1172,10 @@ class EventsController extends AbstractFOSRestController
     }
 
     /**
+     * postEventsResultsAction
+     * 
+     * Create a new events results.
+     * 
      * @OA\Tag(name="Events")
      * 
      * @Rest\Post(path="/eventsResults/{id}")
@@ -1193,6 +1222,10 @@ class EventsController extends AbstractFOSRestController
 
 
     /**
+     * putEventsResultsAction
+     * 
+     * Update a events results.
+     * 
      * @OA\Tag(name="Events")
      * 
      * @Rest\Put(path="/eventsResults/{id}")

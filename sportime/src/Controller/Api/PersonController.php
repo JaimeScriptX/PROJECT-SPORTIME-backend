@@ -41,7 +41,35 @@ use OpenAPI\Annotations\Tag;
 class PersonController extends AbstractFOSRestController
 {
     /**
+     * getPerson
+     * 
+     * Get all persons
+     * 
+     * 
      * @OA\Tag(name="Person")
+     * 
+     * @OA\Response(
+     *  response=200,
+     * description="Returns all persons",
+     * @OA\JsonContent(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="image_profile", type="string", example="/image.png"),
+     *  @OA\Property(property="name_and_lastname", type="string", example="Dylan"),
+     *  @OA\Property(property="age", type="int", example="21"),
+     *  @OA\Property(property="birthday", type="date", example="2000-01-01"),
+     *  @OA\Property(property="weight", type="int", example="80"),
+     *  @OA\Property(property="height", type="int", example="180"),
+     *  @OA\Property(property="nationality", type="string", example="Spain"),
+     *  @OA\Property(property="city", type="string", example="Barcelona"),
+     *  @OA\Property(property="games_played", type="int", example="10"),
+     *  @OA\Property(property="victories", type="int", example="5"),
+     *  @OA\Property(property="defeat", type="int", example="5"),
+     *  @OA\Property(property="ratio", type="int", example="50"),
+     *  @OA\Property(property="image_banner", type="string", example="/image.png"),
+     *  @OA\Property(property="fk_sex_id", type="object", example="Male"),
+     *  @OA\Property(property="fk_user_id", type="object", example="1"),
+     *  )
+     *  ),
      * 
      * @Rest\Get(path="/persons")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
@@ -140,7 +168,34 @@ class PersonController extends AbstractFOSRestController
     }
 
     /**
+     * getPersonById
+     * 
+     * Get a person by id
+     * 
      * @OA\Tag(name="Person")
+     * 
+     * @OA\Response(
+     *  response=200,
+     * description="Returns a person",
+     * @OA\JsonContent(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="image_profile", type="string", example="/image.png"),
+     *  @OA\Property(property="name_and_lastname", type="string", example="Dylan"),
+     *  @OA\Property(property="age", type="int", example="21"),
+     *  @OA\Property(property="birthday", type="date", example="2000-01-01"),
+     *  @OA\Property(property="weight", type="int", example="80"),
+     *  @OA\Property(property="height", type="int", example="180"),
+     *  @OA\Property(property="nationality", type="string", example="Spain"),
+     *  @OA\Property(property="city", type="string", example="Barcelona"),
+     *  @OA\Property(property="games_played", type="int", example="10"),
+     *  @OA\Property(property="victories", type="int", example="5"),
+     *  @OA\Property(property="defeat", type="int", example="5"),
+     *  @OA\Property(property="ratio", type="int", example="50"),
+     *  @OA\Property(property="image_banner", type="string", example="/image.png"),
+     *  @OA\Property(property="fk_sex_id", type="object", example="Male"),
+     *  @OA\Property(property="fk_user_id", type="object", example="1"),
+     *  )
+     *  ),
      * 
      * @Rest\Get(path="/persons/{id}")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
@@ -449,7 +504,34 @@ class PersonController extends AbstractFOSRestController
 
 
     /**
+     * getPersonByUsername
+     * 
+     * Get a person by username
+     * 
      * @OA\Tag(name="Person")
+     * 
+     * @OA\Response(
+     *  response=200,
+     * description="Return a person by username",
+     * @OA\JsonContent(
+     *  @OA\Property(property="id", type="string", example="1"),
+     *  @OA\Property(property="image_profile", type="string", example="/image.png"),
+     *  @OA\Property(property="name_and_lastname", type="string", example="Dylan"),
+     *  @OA\Property(property="age", type="int", example="21"),
+     *  @OA\Property(property="birthday", type="date", example="2000-01-01"),
+     *  @OA\Property(property="weight", type="int", example="80"),
+     *  @OA\Property(property="height", type="int", example="180"),
+     *  @OA\Property(property="nationality", type="string", example="Spain"),
+     *  @OA\Property(property="city", type="string", example="Barcelona"),
+     *  @OA\Property(property="games_played", type="int", example="10"),
+     *  @OA\Property(property="victories", type="int", example="5"),
+     *  @OA\Property(property="defeat", type="int", example="5"),
+     *  @OA\Property(property="ratio", type="int", example="50"),
+     *  @OA\Property(property="image_banner", type="string", example="/image.png"),
+     *  @OA\Property(property="fk_sex_id", type="object", example="Male"),
+     *  @OA\Property(property="fk_user_id", type="object", example="1"),
+     *  )
+     *  ),
      * 
      * @Rest\Get(path="/personsByName/{username}")
      * @Rest\View(serializerGroups={"person"}, serializerEnableMaxDepthChecks=true)
@@ -756,6 +838,10 @@ class PersonController extends AbstractFOSRestController
 
 
     /**
+     * postPerson
+     * 
+     * Create a new person
+     * 
      * @OA\Tag(name="Person")
      * 
      * @Rest\Post(path="/persons")
@@ -835,6 +921,10 @@ class PersonController extends AbstractFOSRestController
     }
 
     /**
+     * putPerson
+     * 
+     * Update a person
+     * 
      * @OA\Tag(name="Person")
      * 
      * @Rest\Put(path="/persons/{id}")
@@ -1050,6 +1140,10 @@ class PersonController extends AbstractFOSRestController
     }
 
     /**
+     * deletePerson
+     * 
+     * Deletes a person
+     * 
      * @OA\Tag(name="Person")
      * 
      * @Rest\Delete(path="/persons/{id}")
